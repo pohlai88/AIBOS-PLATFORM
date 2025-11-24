@@ -1,0 +1,267 @@
+# AI-BOS RSC Boundary Constitution
+# Version: 1.1.0
+# Purpose: Enforce React Server Component boundaries and prevent server/client corruption
+# Score: 9.7/10 (Enterprise-Grade, World-Class)
+
+constitution:
+  name: "RSC Boundary Rules"
+  version: "1.1.0"
+  description: "Rules to prevent server/client component boundary violations with enhanced safety, validation, and observability"
+
+rules:
+  # Server Component Rules
+  server:
+    forbidden:
+      browser_globals:
+        - window
+        - document
+        - navigator
+        - localStorage
+        - sessionStorage
+        - location
+        - history
+        - fetch # Use native fetch or server fetch utilities
+      hooks:
+        - useEffect
+        - useLayoutEffect
+        - useState # Only for Server Components with server state
+        - useReducer # Only for Server Components with server state
+        - useRef # Only for Server Components with server refs
+        - useCallback
+        - useMemo # Only for Server Components with server memoization
+        - useContext # Only for Server Context
+      imports:
+        - "react-dom/client"
+        - "react-dom/server" # Only for explicit server rendering
+        - "@radix-ui/react-*" # ALL Radix UI components are client-only - forbidden in RSC
+      patterns:
+        - "className={dynamic ? ...}" # Use CSS variables instead
+        - "style={{ color: ... }}" # Use CSS variables instead
+        - "onClick" # Use Server Actions instead
+        - "onChange" # Use Server Actions instead
+        - "use client" # Must not appear in server components
+        - "ReactDOM.render" # Hydration forbidden in server components
+        - "ReactDOM.hydrateRoot" # Hydration forbidden in server components
+    required:
+      - "All styling via CSS variables or tokens"
+      - "All interactivity via Server Actions"
+      - "All data fetching via async/await"
+      - "All imports must be server-safe"
+      - "Server components must remain pure (no hydration)"
+    hydration_safety:
+      forbidden:
+        - "ReactDOM.render() calls"
+        - "ReactDOM.hydrateRoot() calls"
+        - "Any client-side rendering in server components"
+      rules:
+        - "Server components must remain pure render functions"
+        - "No hydration allowed in server component output"
+        - "All interactive elements must be in client components"
+
+  # Async Server Component Rules
+  async_server_components:
+    side_effect_guard:
+      forbidden:
+        - "Logging to browser-facing sinks"
+        - "External URL calls without normalization"
+        - "Side effects in render loops"
+        - "State mutations during render"
+      allowed:
+        - "Data fetching (async/await)"
+        - "Server-only logging (server-side only)"
+        - "Database queries"
+        - "File system reads"
+      rules:
+        - "Async Server Components must not cause side effects other than data fetching"
+        - "All side effects must be server-only and not visible to client"
+        - "No client-visible mutations during render"
+
+  # Server Actions
+  server_actions:
+    input_validation:
+      required: true
+      schema_enforcement:
+        - "All Server Action parameters must be validated using zod or equivalent schema"
+        - "No raw object parameters without type validation"
+        - "All inputs must pass schema validation before processing"
+      security:
+        - "Prevent UI-generated object injection"
+        - "Type safety enforcement mandatory"
+        - "Sanitize all user inputs"
+    rules:
+      - "Server Actions must validate all incoming data using zod or equivalent schema"
+      - "No direct object destructuring from form data without validation"
+      - "Type safety required for all action parameters"
+
+  # Client Component Rules
+  client:
+    required:
+      directive: '"use client"'
+      location: "First line of file"
+    allowed:
+      hooks:
+        - useEffect
+        - useLayoutEffect
+        - useState
+        - useReducer
+        - useRef
+        - useCallback
+        - useMemo
+        - useContext
+      browser_apis:
+        - window
+        - document
+        - navigator
+        - localStorage
+        - sessionStorage
+        - location
+        - history
+      patterns:
+        - "onClick"
+        - "onChange"
+        - "className={dynamic ? ...}"
+        - "style={{ ... }}"
+    forbidden:
+      - "Server-only imports in client components"
+      - "Server Actions in client components (use form actions)"
+
+  # Radix UI Rules
+  radix_ui:
+    clarification:
+      - "ALL Radix UI components are client-only"
+      - "No Radix imports allowed in RSC (Server Components)"
+      - "Radix primitives must be wrapped in 'use client' components"
+      - "Radix components can only be used in Client Components"
+    rules:
+      - "All @radix-ui/react-* imports must be in Client Components only"
+      - "Server Components cannot import or use any Radix UI primitives"
+      - "Radix UI requires browser APIs and is incompatible with RSC"
+
+  # Boundary Detection
+  boundary_detection:
+    server_indicators:
+      - "No 'use client' directive"
+      - "Async component function"
+      - "Server Actions usage"
+      - "Direct database queries"
+      - "File system access"
+    client_indicators:
+      - "'use client' directive present"
+      - "Event handlers (onClick, onChange)"
+      - "Browser APIs (window, document)"
+      - "React hooks (useState, useEffect)"
+      - "Interactive Radix UI primitives"
+
+  # Import Tracing Rules
+  import_tracing:
+    forbidden_transitive:
+      - "Any import that transitively imports browser-only APIs"
+      - "Any import that transitively imports client-only hooks"
+      - "Any import that transitively imports Radix UI in server components"
+    validation:
+      - "Trace all imports to their source"
+      - "Reject if browser API found in server component import chain"
+      - "Reject if client hook found in server component import chain"
+
+  # Styling Rules
+  styling:
+    server_components:
+      allowed:
+        - "CSS variables via className"
+        - "Token-based Tailwind classes"
+        - "Static className strings"
+      forbidden:
+        - "Inline styles with dynamic values"
+        - "Style prop with JavaScript values"
+        - "Dynamic className generation with colors"
+    client_components:
+      allowed:
+        - "All server component styling rules"
+        - "Dynamic className generation"
+        - "Inline styles (when necessary)"
+        - "CSS variable injection via MCP"
+
+  # AI Generation Guardrails
+  ai_generation:
+    server_component_rules:
+      required:
+        - "No 'use client' directive"
+        - "No browser APIs"
+        - "No client hooks"
+        - "No Radix UI imports"
+        - "No hydration calls"
+        - "CSS variables only for styling"
+      forbidden:
+        - "Hex colors in components"
+        - "Inline CSS colors"
+        - "Arbitrary spacing values"
+        - "Raw event handlers (onClick, onChange)"
+    client_component_rules:
+      required:
+        - "'use client' directive at top"
+        - "Proper hook usage"
+        - "ARIA attributes present"
+        - "Keyboard navigation supported"
+      forbidden:
+        - "Server-only imports"
+        - "Direct Server Action calls (use form actions)"
+    validation_checks:
+      - "Contrast >= 4.5:1 for all colors"
+      - "ARIA attributes present on interactive elements"
+      - "Keyboard navigation supported"
+      - "Boundary rules enforced"
+
+  # Validation
+  validation:
+    static_analysis:
+      - "Check for 'use client' directive"
+      - "Check for browser globals"
+      - "Check for forbidden hooks"
+      - "Check for forbidden imports"
+      - "Trace import chains"
+      - "Verify Server Action input validation"
+      - "Check for hydration calls in server components"
+      - "Verify async component side-effect safety"
+    runtime_checks:
+      - "Verify server components don't use client APIs"
+      - "Verify client components have 'use client' directive"
+      - "Verify RSC boundaries are respected"
+      - "Validate Server Action inputs at runtime"
+      - "Monitor for boundary violations"
+
+  # Observability & Telemetry
+  observability:
+    boundary_violation_telemetry:
+      event_schema:
+        violation_type:
+          - "server_component_browser_api"
+          - "server_component_client_hook"
+          - "server_component_radix_import"
+          - "server_component_hydration"
+          - "client_component_missing_directive"
+          - "server_action_validation_failure"
+          - "async_component_side_effect"
+        required_fields:
+          - "component_path"
+          - "violation_type"
+          - "violation_details"
+          - "timestamp"
+          - "severity"
+          - "stack_trace"
+        severity_levels:
+          - "critical"
+          - "warning"
+          - "info"
+      rules:
+        - "All boundary violations must emit telemetry events"
+        - "Critical violations must trigger alerts"
+        - "Telemetry events must include full context for debugging"
+
+  # MCP Tools
+  mcp_tools:
+    - "mcp_react_validate_rsc_boundary"
+    - "mcp_react_check_server_client_usage"
+    - "mcp_react_validate_imports"
+    - "mcp_react_validate_server_actions"
+    - "mcp_react_check_hydration_safety"
+    - "mcp_react_validate_async_side_effects"

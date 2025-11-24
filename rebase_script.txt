@@ -1,0 +1,3 @@
+edit 74a86bf feat: implement MCP UI generator system with prompt sync and validation
+pick 3275b6e feat: Add UI components and design system
+

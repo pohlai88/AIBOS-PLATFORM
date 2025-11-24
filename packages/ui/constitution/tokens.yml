@@ -1,0 +1,255 @@
+# AI-BOS Token Constitution
+# Version: 1.1.0
+# Purpose: Token governance, immutability, RSC rules, and AI generation guardrails
+# Source of Truth: apps/web/app/globals.css (CSS variables)
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "AI-BOS Token Constitution"
+version: "1.1.0"
+description: "Token governance, immutability, RSC rules, and AI generation guardrails for AI-BOS design system."
+
+# Source of Truth Reference
+sourceOfTruth:
+  file: "apps/web/app/globals.css"
+  description: "All base token values are defined in globals.css as CSS variables"
+  validation: "Tokens in this constitution must match tokens defined in globals.css"
+  sync: "When globals.css tokens change, update this constitution accordingly"
+
+constitution:
+  versioning:
+    tokenVersion: "v2.1"
+    required: true
+    rules:
+      - "Base tokens require a major version bump to change"
+      - "Semantic tokens may change in minor versions"
+      - "Tenant tokens may update without version bump"
+
+  tokenHierarchy:
+    level1:
+      name: "Base Tokens"
+      source: "globals.css"
+      immutable: true
+      description: "Canonical CSS variable tokens defined in :root"
+      examples:
+        - "--gray-50"
+        - "--accent-bg"
+        - "--radius-base"
+        - "--text-base"
+        - "--space-4"
+      validation:
+        - "Must exist in apps/web/app/globals.css"
+        - "Must follow naming convention: --{category}-{name}"
+        - "Cannot be overridden by tenants"
+
+    level2:
+      name: "Semantic Tokens"
+      source: "tokens.ts"
+      immutable: false
+      description: "Map UI intent → base tokens"
+      examples:
+        - "--color-primary"
+        - "--color-success"
+      validation:
+        - "Must reference base tokens from globals.css"
+        - "Cannot define new color values"
+
+    level3:
+      name: "Tenant Overrides"
+      source: "MCP Theme Server"
+      immutable: false
+      description: "Tenant-specific accent theming"
+      examples:
+        - "--accent-bg (dlbb)"
+      validation:
+        - "Can only override accent tokens"
+        - "Base tokens remain immutable"
+
+    level4:
+      name: "Runtime MCP Overrides"
+      source: "MCP Runtime Layer"
+      immutable: false
+      description: "Dynamic theme injection"
+      examples:
+        - "--accent-bg (runtime)"
+      validation:
+        - "Applied client-side only"
+        - "Cannot override base tokens"
+
+    level5:
+      name: "Safe Mode"
+      source: "globals.css + MCP"
+      immutable: true
+      description: "Highest precedence fallback mode"
+      examples:
+        - "--accent-bg (safe-mode)"
+      validation:
+        - "Defined in globals.css [data-safe-mode='true']"
+        - "Uses neutral grays only"
+
+  precedenceOrder:
+    - "Base Tokens"
+    - "Tenant Layer"
+    - "System Layer (dark-mode)"
+    - "Runtime MCP Overrides"
+    - "Safe Mode (HIGHEST)"
+
+  scoping:
+    rootSelector: ":root, html, [data-app-root]"
+    inheritanceRules:
+      - "All tokens must cascade from root"
+      - "Shadow DOM must explicitly receive token sheet"
+      - "Microfrontends must mount token sheet on load"
+    isolationLayers:
+      - "shadow-root"
+      - "iframe"
+
+  atomicUpdates:
+    batching: true
+    applyStrategy: "style-tag-swap"
+    rules:
+      - "Never update CSS variables individually"
+      - "Always batch overrides and apply atomically"
+      - "Rollback available on failure"
+
+  tokenCategories:
+    color:
+      required: true
+      semantic: true
+      contrast:
+        minimum: "4.5:1"
+        enhanced: "7:1"
+        largeText: "3:1"
+      rules:
+        - "Colors MUST use semantic tokens"
+        - "No hex values in components"
+        - "Contrast validation required"
+        - "Safe mode must preserve contrast"
+      baseTokens:
+        source: "globals.css"
+        examples:
+          - "--gray-50 through --gray-950"
+          - "--accent-bg, --accent-bg-hover, --accent-bg-active"
+          - "--success, --warning, --error, --info"
+
+    spacing:
+      required: true
+      semantic: false
+      scale: "4px grid"
+      rules:
+        - "Spacing must match token scale"
+        - "No arbitrary pixels allowed"
+      baseTokens:
+        source: "globals.css"
+        examples:
+          - "--space-1: 0.25rem (4px)"
+          - "--space-2: 0.5rem (8px)"
+          - "--space-4: 1rem (16px)"
+          - "--space-6: 1.5rem (24px)"
+          - "--space-8: 2rem (32px)"
+
+    typography:
+      required: true
+      semantic: true
+      scale: "Major Third (1.250)"
+      rules:
+        - "Typography must use tokens"
+        - "Line height must use tokens"
+      baseTokens:
+        source: "globals.css"
+        examples:
+          - "--text-xs through --text-5xl"
+          - "--leading-tight, --leading-normal"
+          - "--font-normal, --font-medium, --font-semibold"
+          - "--font-sans"
+
+    radius:
+      required: true
+      semantic: false
+      rules:
+        - "All radii must use tokens"
+        - "No custom radii allowed"
+      baseTokens:
+        source: "globals.css"
+        examples:
+          - "--radius-base: 0.375rem"
+          - "--radius-lg: 0.75rem"
+          - "--radius-full: 9999px"
+
+    shadow:
+      required: true
+      semantic: false
+      rules:
+        - "All shadows must use tokens"
+        - "Safe mode disables shadows"
+      baseTokens:
+        source: "globals.css"
+        examples:
+          - "--shadow-sm"
+          - "--shadow-md"
+
+  rscRules:
+    forbiddenInRSC:
+      - "window"
+      - "document"
+      - "localStorage"
+    forbiddenHooks:
+      - "useEffect"
+      - "useLayoutEffect"
+    rules:
+      - "All styling in RSC must use CSS variables"
+      - "No inline styles for colors"
+      - "Tailwind tokens only in RSC"
+      - "All dynamic themes must be injected client-side only"
+
+  aiGeneration:
+    allowed:
+      - "semantic tokens"
+      - "token-based tailwind classes"
+    forbidden:
+      - "hex colors"
+      - "inline CSS"
+      - "arbitrary spacing"
+    requiredChecks:
+      - "Contrast >= 4.5:1"
+      - "ARIA attributes present"
+      - "Keyboard navigation supported"
+
+  tenantOverrideBoundaries:
+    allowed:
+      - "--accent-bg"
+      - "--accent-bg-hover"
+      - "--accent-bg-active"
+      - "--accent-subtle"
+      - "--accent-foreground"
+    forbidden:
+      - "--gray-*"
+      - "--radius-*"
+      - "--shadow-*"
+      - "--font-*"
+      - "--space-*"
+    rules:
+      - "Tenants can only override accent tokens"
+      - "Base tokens are immutable"
+
+  safeModeRules:
+    enabled:
+      accent: "var(--gray-500)"
+      accentHover: "var(--gray-600)"
+      accentActive: "var(--gray-700)"
+      shadows: "none"
+    rules:
+      - "Safe mode uses neutral grays"
+      - "Safe mode overrides all layers"
+    source: "globals.css [data-safe-mode='true']"
+
+  validation:
+    required:
+      - "Token must exist in globals.css"
+      - "Naming conventions must match"
+      - "Token must pass contrast requirement"
+      - "Tenant override restrictions enforced"
+    mcpTools:
+      - "mcp_theme_validate_token"
+      - "mcp_theme_check_contrast"
+      - "mcp_tailwind_tokens_read_config"
+

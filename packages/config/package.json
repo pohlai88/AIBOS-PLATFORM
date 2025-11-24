@@ -1,0 +1,23 @@
+{
+  "name": "@aibos/config-eslint",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./eslint.config.mjs",
+  "exports": {
+    ".": "./eslint.config.mjs",
+    "./next": "./eslint-next.config.mjs",
+    "./base": "./eslint-base.config.mjs"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.1",
+    "typescript": "^5.9.3"
+  }
+}
+

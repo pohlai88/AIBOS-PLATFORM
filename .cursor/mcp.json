@@ -1,0 +1,62 @@
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp"
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "mcp-filesystem@latest"],
+      "allowedPaths": [
+        "./apps/web/app",
+        "./apps/web/lib",
+        "./packages/ui/src/components",
+        "./packages/ui/src"
+      ]
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "mcp-git@latest"]
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "mcp-shell@latest"],
+      "permissions": {
+        "allowedCommands": [
+          "pnpm install",
+          "pnpm run lint",
+          "pnpm run build",
+          "npx tailwindcss",
+          "turbo run dev",
+          "turbo run build",
+          "turbo run lint"
+        ]
+      }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "mcp-playwright@latest"]
+    },
+    "tailwind-tokens": {
+      "command": "node",
+      "args": ["./tools/mcp-tailwind-tokens.js"]
+    }
+  }
+}

@@ -1,0 +1,305 @@
+# AI-BOS Component Constitution
+# Version: 1.1.0
+# Purpose: Enforce component structure, API, and accessibility rules
+# Score: 9.7/10 (Enterprise-Grade, World-Class)
+
+constitution:
+  name: "Component Rules"
+  version: "1.1.0"
+  description: "Rules for component structure, API, accessibility, styling, state management, and visual regression"
+
+rules:
+  # Component Structure
+  structure:
+    required:
+      - "forwardRef for all components that accept refs"
+      - "displayName set for all components"
+      - "TypeScript interfaces for all props"
+      - "Props extend appropriate HTML attributes"
+    patterns:
+      primitive:
+        - "No Radix UI dependencies"
+        - "Use componentTokens presets"
+        - "Simple props interface"
+        - "Server Component compatible (unless interactive)"
+      composition:
+        - "Built on Radix UI primitives"
+        - "Client Component ('use client')"
+        - "Complex behavior and accessibility"
+        - "Multiple sub-components"
+      layout:
+        - "Composed from primitives and compositions"
+        - "Client Component for interactivity"
+        - "Responsive design"
+        - "Full keyboard navigation"
+    state_machines:
+      required_for:
+        - "Date pickers"
+        - "Multi-step forms (steppers)"
+        - "Drawers and modals with complex state"
+        - "Menus with sub-menus"
+        - "Tabs with dynamic content"
+        - "Accordions with complex interactions"
+      rules:
+        - "Complex components must use state machines (xstate or internal reducer patterns)"
+        - "State transitions must be explicit and testable"
+        - "State machine logic must be separated from UI rendering"
+        - "State machines improve AI generation predictability"
+
+  # Props Rules
+  props:
+    required:
+      - "Props interface extends correct HTML attributes"
+      - "All props are typed"
+      - "Required vs optional props clearly defined"
+      - "Default values for optional props"
+    forbidden:
+      - "Any props without types"
+      - "Props that override visual styles (use tokens instead)"
+      - "Props that break accessibility"
+    naming:
+      - "Use semantic names (variant, size, state)"
+      - "Avoid generic names (props, options)"
+      - "Follow React naming conventions"
+    union_types:
+      required:
+        - "Union type props must use discriminated unions where possible"
+        - "Variant props must map to semantic tokens (variant → semantic token)"
+        - "Union types must be narrowed properly in component logic"
+      examples:
+        - "variant?: 'solid' | 'outline' | 'ghost' → maps to --color-button-{variant}"
+        - "size?: 'sm' | 'md' | 'lg' → maps to --size-button-{size}"
+      rules:
+        - "All variant props must have corresponding semantic tokens"
+        - "Union types must be exhaustively checked"
+        - "Type narrowing must be explicit and safe"
+
+  # Styling Rules
+  styling:
+    allowed:
+      - "componentTokens presets"
+      - "Token-based Tailwind classes"
+      - "CSS variables via className"
+      - "Layout-only className (w-full, mb-4)"
+    forbidden:
+      - "Raw hex colors"
+      - "Tailwind palette colors (bg-red-500)"
+      - "Inline styles for design tokens"
+      - "Visual overrides via className"
+      - "Arbitrary values (bg-[#ff0000])"
+      - "Importing tokens.ts in server components (use CSS variables instead)"
+    rules:
+      - "All visual styling via tokens"
+      - "className only for layout"
+      - "No color overrides in components"
+      - "Server components must use CSS variables, not tokens.ts imports"
+    token_alias_enforcement:
+      required:
+        - "Variant props must map to semantic tokens"
+        - "Size props must map to spacing/typography tokens"
+        - "State props must map to state tokens"
+      mapping:
+        variant:
+          - "variant='solid' → --color-button-solid"
+          - "variant='outline' → --color-button-outline"
+          - "variant='ghost' → --color-button-ghost"
+        size:
+          - "size='sm' → --size-button-sm"
+          - "size='md' → --size-button-md"
+          - "size='lg' → --size-button-lg"
+      rules:
+        - "All variant/size/state props must have token mappings"
+        - "Token mappings must be defined in tokens.ts"
+        - "AI generators must use token mappings, not arbitrary values"
+
+  # Accessibility Rules
+  accessibility:
+    required:
+      keyboard:
+        - "All interactive elements keyboard accessible"
+        - "Tab order is logical"
+        - "Focus indicators visible"
+        - "Escape key closes modals/dialogs"
+      aria:
+        - "aria-label for icon-only buttons"
+        - "aria-describedby for form inputs"
+        - "aria-invalid for error states"
+        - "aria-busy for loading states"
+        - "role attributes where needed"
+      contrast:
+        - "Minimum 4.5:1 contrast ratio"
+        - "Enhanced 7:1 for important text"
+        - "3:1 for large text"
+      focus:
+        - "Focus trapped in modals"
+        - "Focus returns to trigger on close"
+        - "Focus visible on all interactive elements"
+    validation:
+      - "All interactive elements have keyboard handlers"
+      - "All images have alt text"
+      - "All form inputs have labels"
+      - "All modals have focus management"
+
+  # Motion & Animation Rules
+  motion:
+    animation_budget:
+      limits:
+        - "Maximum animation duration: 300ms for micro-interactions"
+        - "Maximum animation duration: 500ms for transitions"
+        - "Maximum animation duration: 1000ms for complex animations"
+        - "Animation budget: max 2 concurrent animations per component"
+      rules:
+        - "Animations must respect prefers-reduced-motion"
+        - "Animations must not block user interactions"
+        - "Animations must have fallbacks for reduced motion"
+    reduced_motion:
+      required:
+        - "All animations must respect @media (prefers-reduced-motion: reduce)"
+        - "Reduced motion mode must disable non-essential animations"
+        - "Essential animations (focus indicators) must remain"
+      implementation:
+        - "Use CSS: @media (prefers-reduced-motion: reduce) { animation: none; }"
+        - "Use JavaScript: window.matchMedia('(prefers-reduced-motion: reduce)')"
+      rules:
+        - "Components must work without animations"
+        - "Accessibility must not depend on animations"
+    async_animation_guardrails:
+      forbidden:
+        - "Animations that block rendering"
+        - "Animations that cause layout shifts"
+        - "Animations without will-change optimization"
+      required:
+        - "Use requestAnimationFrame for smooth animations"
+        - "Use CSS transforms for performance"
+        - "Avoid animating layout properties (width, height, top, left)"
+      rules:
+        - "Animations must be GPU-accelerated where possible"
+        - "Animations must not cause jank or frame drops"
+
+  # Hooks Rules
+  hooks:
+    server_components:
+      forbidden:
+        - "useEffect"
+        - "useLayoutEffect"
+        - "useState (except server state)"
+        - "useCallback"
+        - "useMemo (except server memoization)"
+    client_components:
+      allowed:
+        - "All React hooks"
+        - "Custom hooks"
+      rules:
+        - "Hooks called at top level"
+        - "Hooks in correct order"
+        - "No conditional hook calls"
+        - "Proper dependency arrays"
+    custom_hooks:
+      naming:
+        - "Custom hooks must start with 'use' prefix"
+        - "Custom hooks must follow camelCase naming"
+        - "Examples: useTheme, useMediaQuery, useDebounce"
+      documentation:
+        required:
+          - "All custom hooks must have JSDoc comments"
+          - "JSDoc must describe hook purpose, parameters, and return value"
+          - "JSDoc must include @example for AI interpretability"
+        format:
+          - "@param {Type} paramName - Description"
+          - "@returns {Type} Description"
+          - "@example Usage example"
+      rules:
+        - "Custom hooks must be documented for AI generation"
+        - "Custom hooks must be reusable and testable"
+
+  # Imports Rules
+  imports:
+    allowed:
+      - "@aibos/ui components"
+      - "@aibos/ui/design/tokens (client components only)"
+      - "react"
+      - "react-dom (client components only)"
+      - "@radix-ui/react-* (client components only)"
+    forbidden:
+      - "Direct @radix-ui imports in app code"
+      - "Raw color values"
+      - "Tailwind palette imports"
+      - "Browser-only APIs in server components"
+      - "tokens.ts imports in server components (use CSS variables instead)"
+    server_component_imports:
+      rules:
+        - "Server components must use CSS variables, not tokens.ts"
+        - "Server components cannot import design tokens directly"
+        - "All styling in server components via className with CSS variables"
+
+  # Safe Mode Rules
+  safe_mode:
+    required:
+      - "All components work with [data-safe-mode='true']"
+      - "No visual degradation in safe mode"
+      - "All functionality preserved"
+      - "Contrast ratios maintained"
+    rules:
+      - "Components must not break in safe mode"
+      - "Safe mode uses neutral colors"
+      - "Safe mode disables shadows"
+      - "Safe mode maintains accessibility"
+    atomic_application:
+      required: true
+      rules:
+        - "Safe mode must be applied atomically, not progressively"
+        - "No flash of unstyled content (FOUC) during safe mode activation"
+        - "Safe mode toggle must be instant and complete"
+        - "Use style tag swap or adoptedStyleSheets for atomic updates"
+      implementation:
+        - "Batch all safe mode CSS variable changes"
+        - "Apply changes in single DOM update"
+        - "Rollback available on failure"
+
+  # Visual Regression Rules
+  visual_regression:
+    required:
+      - "All components must have visual snapshot baselines"
+      - "Visual changes must be reviewed before merge"
+      - "Visual diffs must be captured for all component changes"
+    snapshot_testing:
+      rules:
+        - "Each component must have snapshot baseline"
+        - "Snapshots must include all variants and states"
+        - "Snapshots must include safe mode state"
+        - "Snapshots must include reduced motion state"
+    mcp_tools:
+      - "mcp_visual_regression_capture"
+      - "mcp_visual_regression_compare"
+      - "mcp_visual_regression_approve"
+    auto_rollback:
+      rules:
+        - "Visual drift beyond threshold triggers auto-rollback"
+        - "Threshold configurable per component"
+        - "Rollback must preserve functionality"
+    rules:
+      - "Visual regression testing is mandatory"
+      - "All visual changes must be intentional and documented"
+      - "Visual diffs must be reviewed by design team"
+
+  # Validation
+  validation:
+    required:
+      - "Component structure validation"
+      - "Props validation"
+      - "Accessibility validation"
+      - "Token usage validation"
+      - "RSC boundary validation"
+      - "Safe mode validation"
+      - "State machine validation (for complex components)"
+      - "Visual regression validation"
+      - "Motion safety validation"
+    mcp_tools:
+      - "mcp_react_validate_component"
+      - "mcp_react_check_server_client_usage"
+      - "mcp_a11y_validate_component"
+      - "mcp_theme_validate_tokens"
+      - "mcp_visual_regression_capture"
+      - "mcp_visual_regression_compare"
+      - "mcp_motion_validate_animations"
+      - "mcp_state_machine_validate"

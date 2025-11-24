@@ -1,0 +1,17 @@
+{
+  "name": "@aibos/types",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint . --config ../../eslint.config.mjs",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@aibos/config-eslint": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3"
+  }
+}
+
