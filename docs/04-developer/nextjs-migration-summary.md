@@ -1,19 +1,32 @@
 # Next.js Migration Plan - Executive Summary
 
-> **Date:** 2025-11-24  
-> **Status:** 📋 Proposed
+> **Date:** 2025-01-27  
+> **Status:** 📋 In Progress  
+> **Type:** 📄 Overview Document  
+> **SSOT:** [nextjs-migration-plan.md](./nextjs-migration-plan.md) - **Follow this for implementation**
+
+---
+
+## ⚠️ Important: Which Document to Follow?
+
+**✅ MAIN DOCUMENT (SSOT):** [nextjs-migration-plan.md](./nextjs-migration-plan.md)  
+**📄 This Document:** Executive summary only - Use for quick overview  
+**⚡ Quick Reference:** [nextjs-migration-quick-start.md](./nextjs-migration-quick-start.md) - Quick commands
+
+**👉 Always refer to the main plan document for implementation details.**
 
 ---
 
 ## Overview
 
-Comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.js application, implementing Next.js 16+ best practices and production-ready features.
+Executive summary of the comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.js application, implementing Next.js 16+ best practices and production-ready features.
 
 ---
 
 ## Current State
 
 ✅ **Already Good:**
+
 - Next.js 16.0.3 with React 19.2.0
 - App Router architecture
 - Turbopack enabled
@@ -22,6 +35,7 @@ Comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.
 - MCP integration working
 
 ⚠️ **Needs Improvement:**
+
 - Minimal application structure
 - No routing beyond root
 - No data fetching patterns
@@ -34,44 +48,52 @@ Comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.
 ## Migration Phases
 
 ### Phase 1: Foundation & Structure (Week 1)
+
 - Upgrade to latest Next.js 16
 - Create project structure
 - Setup middleware
 - Add loading/error/not-found pages
 
 ### Phase 2: Data Fetching (Week 2)
+
 - Implement Server Components
 - Setup Server Actions
 - Create data fetching utilities
 - Implement caching strategies
 
 ### Phase 3: Authentication (Week 3)
+
 - Choose authentication solution (NextAuth.js v5 recommended)
 - Implement authentication
 - Setup protected routes
 
 ### Phase 4: UI Components (Week 4)
+
 - Integrate @aibos/ui components
 - Create client components
 - Implement loading states
 
 ### Phase 5: API Routes (Week 5)
+
 - Create API route structure
 - Implement module APIs
 - Add error handling
 
 ### Phase 6: Performance (Week 6)
+
 - Optimize images and fonts
 - Implement code splitting
 - Setup caching
 - Bundle analysis
 
 ### Phase 7: SEO (Week 7)
+
 - Implement metadata API
 - Add Open Graph tags
 - Create sitemap and robots.txt
 
 ### Phase 8: Testing (Week 8)
+
 - Setup testing infrastructure
 - Write unit/integration/E2E tests
 - Setup CI/CD
@@ -87,11 +109,12 @@ Comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.
    - Review `nextjs-migration-quick-start.md` for quick reference
 
 2. **Start Phase 1:**
+
    ```bash
    # Upgrade Next.js
    cd apps/web
    pnpm add next@latest react@latest react-dom@latest
-   
+
    # Run migration script
    node .mcp/convention-validation/scripts/migrate-nextjs-phase1.mjs
    ```
@@ -119,11 +142,20 @@ Comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.
 
 ## Documentation
 
-- **Full Plan:** `docs/04-developer/nextjs-migration-plan.md`
-- **Quick Start:** `docs/04-developer/nextjs-migration-quick-start.md`
+- **✅ MAIN PLAN (SSOT):** [nextjs-migration-plan.md](./nextjs-migration-plan.md) - **Follow this**
+- **⚡ Quick Reference:** [nextjs-migration-quick-start.md](./nextjs-migration-quick-start.md) - Quick commands
+- **📄 This Summary:** Executive overview only
 - **Migration Script:** `.mcp/convention-validation/scripts/migrate-nextjs-phase1.mjs`
 
 ---
 
-**Status:** 📋 Proposed - Awaiting Approval
+## 🎯 How to Use These Documents
 
+1. **Start Here:** Read this summary for overview
+2. **For Implementation:** Follow [nextjs-migration-plan.md](./nextjs-migration-plan.md) - Complete details
+3. **For Quick Commands:** Use [nextjs-migration-quick-start.md](./nextjs-migration-quick-start.md) - Fast reference
+
+---
+
+**Status:** 📋 In Progress  
+**SSOT:** [nextjs-migration-plan.md](./nextjs-migration-plan.md)

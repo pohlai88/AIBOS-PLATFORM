@@ -1,15 +1,71 @@
 # Next.js Migration Plan
 
-> **Date:** 2025-11-24  
+> **Date:** 2025-01-27  
 > **Current Version:** Next.js 16.0.3  
 > **Target:** Next.js 16+ Best Practices & Production Ready  
-> **Status:** 📋 Proposed
+> **Status:** ⏸️ **ON HOLD** - Waiting for UI Primitives Completion  
+> **Type:** ✅ **SINGLE SOURCE OF TRUTH (SSOT)** - This is the main document to follow  
+> **Architecture Reference:** [globals-css-architecture-decision.md](./globals-css-architecture-decision.md)  
+> **Prerequisite:** [ui-primitives-completion-plan.md](./ui-primitives-completion-plan.md) - **Complete this first**
+
+---
+
+## ⚠️ Important: Prerequisites
+
+**This migration is ON HOLD until UI primitives are completed.**
+
+**Why?** Next.js migration requires React components and UI components. We need a solid foundation of UI primitives before proceeding.
+
+**👉 Complete First:** [ui-primitives-completion-plan.md](./ui-primitives-completion-plan.md)
+
+**Current Status:**
+- ✅ 6 components exported (Button, Card, Badge, Input, Tabs, DropdownMenu)
+- 🔄 Many components exist but not exported
+- 🔴 Missing validation and exports
+
+**Estimated Time:** 4 weeks to complete UI primitives
+
+---
+
+## 📖 Document Guide
+
+**✅ THIS IS THE MAIN DOCUMENT (SSOT) - Follow this for implementation**
+
+### Document Hierarchy
+
+1. **✅ [nextjs-migration-plan.md](./nextjs-migration-plan.md)** ← **YOU ARE HERE - Follow this**
+   - Complete 8-week migration plan
+   - All phases with detailed steps
+   - Implementation checklists
+   - **This is the single source of truth**
+
+2. **📄 [nextjs-migration-summary.md](./nextjs-migration-summary.md)**
+   - Executive summary only
+   - Quick overview of phases
+   - Use for high-level understanding
+
+3. **⚡ [nextjs-migration-quick-start.md](./nextjs-migration-quick-start.md)**
+   - Quick command reference
+   - Fast copy-paste commands
+   - Use when you know what to do, just need commands
+
+### When to Use Each Document
+
+- **Starting migration?** → Read this document (SSOT)
+- **Need quick overview?** → Check summary document
+- **Need commands fast?** → Use quick-start document
+- **Implementing?** → Always refer back to this document (SSOT)
 
 ---
 
 ## Overview
 
 This document outlines a comprehensive migration plan to optimize and modernize the AI-BOS Platform Next.js application. While already on Next.js 16, this plan focuses on implementing best practices, production optimizations, and leveraging Next.js 16+ features.
+
+**Architecture Foundation:**
+- ✅ **Dual CSS Architecture** approved (see [globals-css-architecture-decision.md](./globals-css-architecture-decision.md))
+- ✅ Safe mode CSS in `apps/web/app/globals.css`
+- ✅ Full design system in `packages/ui/src/design/globals.css`
 
 ---
 
@@ -95,12 +151,12 @@ apps/web/app/
 │   ├── auth/
 │   ├── modules/
 │   └── generate-ui/     # Existing
-├── layout.tsx           # Root layout
+├── layout.tsx           # Root layout (imports both CSS files)
 ├── page.tsx             # Home page
 ├── loading.tsx          # Global loading
 ├── error.tsx            # Global error boundary
 ├── not-found.tsx        # 404 page
-└── globals.css          # Global styles
+└── globals.css          # Safe mode CSS (fallback)
 ```
 
 **Files to Create:**
@@ -257,9 +313,19 @@ export default async function DashboardLayout({
 
 **Update:** `apps/web/app/layout.tsx`
 
+**Important:** Follow the approved dual CSS architecture (see [globals-css-architecture-decision.md](./globals-css-architecture-decision.md))
+
 ```typescript
+import type { Metadata } from "next";
+import "./globals.css"; // Safe mode - always loads first
+import "@aibos/ui/design/globals.css"; // Full design system - loads if available
 import { AppShell } from '@aibos/ui';
 import { ThemeProvider } from '@aibos/ui/mcp';
+
+export const metadata: Metadata = {
+  title: "AI-BOS Platform",
+  description: "AI-BOS Platform",
+};
 
 export default function RootLayout({
   children,
@@ -279,6 +345,12 @@ export default function RootLayout({
   );
 }
 ```
+
+**CSS Import Order (Critical):**
+1. Safe mode CSS (`./globals.css`) - Always loads first
+2. Full design system CSS (`@aibos/ui/design/globals.css`) - Enhances safe mode
+
+**Rationale:** See [globals-css-architecture-decision.md](./globals-css-architecture-decision.md) for complete architecture rationale.
 
 #### 4.2 Client Components
 
@@ -590,6 +662,12 @@ apps/web/
 
 ## Related Documentation
 
+### Architecture
+- [globals-css-architecture-decision.md](./globals-css-architecture-decision.md) - **SSOT** for CSS architecture
+- [Design Tokens](../../01-foundation/ui-system/tokens.md) - Token system architecture
+- [Design Principles](../../01-foundation/philosophy/principles.md) - Core design principles
+
+### Next.js
 - [Next.js 16 Documentation](https://nextjs.org/docs)
 - [App Router Guide](https://nextjs.org/docs/app)
 - [Cache Components](https://nextjs.org/docs/app/building-your-application/caching)
@@ -599,6 +677,7 @@ apps/web/
 ---
 
 **Created By:** AI-BOS Platform Team  
-**Date:** 2025-11-24  
-**Status:** 📋 Proposed - Awaiting Approval
+**Date:** 2025-01-27  
+**Status:** 📋 In Progress  
+**Architecture:** Dual CSS (approved) - See [globals-css-architecture-decision.md](./globals-css-architecture-decision.md)
 

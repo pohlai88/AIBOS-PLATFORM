@@ -1,31 +1,13 @@
 {
   "name": "aibos-metadata-monorepo",
   "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "clean": "turbo run clean",
-    "sync-mcp-prompt": "tsx .mcp/ui-generator/tools/sync-prompt.ts",
-    "lint:ui-constitution": "tsx .mcp/component-generator/tools/validate-constitution.ts",
-    "generate:ui": "tsx .mcp/ui-generator/tools/generate-component.ts",
-    "docs:sync": "tsx apps/docs/scripts/sync-docs.ts",
-    "mcp:validate-naming": "node .mcp/convention-validation/scripts/validate-all.mjs --naming",
-    "mcp:validate-structure": "node .mcp/convention-validation/scripts/validate-all.mjs --structure",
-    "mcp:validate-coding": "node .mcp/convention-validation/scripts/validate-all.mjs --coding",
-    "mcp:validate-docs": "node .mcp/convention-validation/scripts/validate-all.mjs --docs",
-    "mcp:validate-all": "node .mcp/convention-validation/scripts/validate-all.mjs",
-    "mcp:validate-staged": "node .mcp/convention-validation/scripts/validate-staged.mjs",
-    "mcp:setup-pre-commit": "node .mcp/convention-validation/scripts/setup-pre-commit.mjs"
-  },
   "devDependencies": {
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
     "@modelcontextprotocol/sdk": "^1.22.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "syncpack": "13.0.2",
     "tsx": "^4.19.2",
     "turbo": "^2.3.0"
   },
@@ -33,5 +15,29 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "packageManager": "pnpm@8.15.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "deps:check": "syncpack list-mismatches",
+    "deps:clean": "pnpm dedupe && syncpack format",
+    "deps:fix": "syncpack fix-mismatches && syncpack format",
+    "dev": "turbo run dev",
+    "docs:sync": "tsx apps/docs/scripts/sync-docs.ts",
+    "generate:ui": "tsx .mcp/ui-generator/tools/generate-component.ts",
+    "lint": "turbo run lint",
+    "lint:ui-constitution": "tsx .mcp/component-generator/tools/validate-constitution.ts",
+    "mcp:setup-pre-commit": "node .mcp/convention-validation/scripts/setup-pre-commit.mjs",
+    "mcp:validate-all": "node .mcp/convention-validation/scripts/validate-all.mjs",
+    "mcp:validate-coding": "node .mcp/convention-validation/scripts/validate-all.mjs --coding",
+    "mcp:validate-docs": "node .mcp/convention-validation/scripts/validate-all.mjs --docs",
+    "mcp:validate-naming": "node .mcp/convention-validation/scripts/validate-all.mjs --naming",
+    "mcp:validate-staged": "node .mcp/convention-validation/scripts/validate-staged.mjs",
+    "mcp:validate-structure": "node .mcp/convention-validation/scripts/validate-all.mjs --structure",
+    "start": "turbo run start",
+    "sync-mcp-prompt": "tsx .mcp/ui-generator/tools/sync-prompt.ts",
+    "workspace:repair": "pnpm -w run deps:fix",
+    "workspace:verify": "pnpm -w run deps:check"
+  }
 }

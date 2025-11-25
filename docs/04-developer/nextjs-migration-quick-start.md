@@ -1,12 +1,24 @@
 # Next.js Migration Quick Start
 
-> **Quick reference guide for Next.js migration**
+> **Quick reference guide for Next.js migration**  
+> **Type:** ⚡ Quick Reference  
+> **SSOT:** [nextjs-migration-plan.md](./nextjs-migration-plan.md) - **Follow this for complete details**
+
+---
+
+## ⚠️ Important: Which Document to Follow?
+
+**✅ MAIN DOCUMENT (SSOT):** [nextjs-migration-plan.md](./nextjs-migration-plan.md)  
+**⚡ This Document:** Quick commands only - Use for fast reference  
+**📄 Summary:** [nextjs-migration-summary.md](./nextjs-migration-summary.md) - Executive overview
+
+**👉 Always refer to the main plan document for complete implementation details.**
 
 ---
 
 ## Overview
 
-Quick start guide for implementing the Next.js migration plan.
+Quick reference guide with essential commands for implementing the Next.js migration plan. For complete details, see the [main migration plan](./nextjs-migration-plan.md).
 
 ---
 
@@ -113,5 +125,13 @@ After each phase:
 
 ---
 
-**Quick Reference:** See full migration plan in `nextjs-migration-plan.md`
+## 📚 Related Documents
+
+- **✅ MAIN PLAN (SSOT):** [nextjs-migration-plan.md](./nextjs-migration-plan.md) - **Complete details**
+- **📄 Summary:** [nextjs-migration-summary.md](./nextjs-migration-summary.md) - Executive overview
+- **⚡ This Document:** Quick commands only
+
+---
+
+**⚠️ Remember:** This is a quick reference only. Always refer to [nextjs-migration-plan.md](./nextjs-migration-plan.md) for complete implementation details.
 

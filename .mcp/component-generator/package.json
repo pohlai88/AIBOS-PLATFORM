@@ -1,28 +1,14 @@
 {
   "name": "@aibos/mcp-component-generator",
-  "version": "3.0.0",
   "description": "AIBOS Component Generator MCP Server - AI-driven component generation with constitution governance (86 rules)",
-  "type": "module",
-  "main": "server.mjs",
+  "version": "3.0.0",
+  "author": "AIBOS Platform",
   "bin": {
     "aibos-component-generator": "./server.mjs"
   },
-  "scripts": {
-    "start": "node server.mjs"
-  },
-  "keywords": [
-    "mcp",
-    "component-generator",
-    "react",
-    "constitution",
-    "governance",
-    "validation"
-  ],
-  "author": "AIBOS Platform",
-  "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.23.0",
-    "@babel/traverse": "^7.23.0",
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
     "@modelcontextprotocol/sdk": "^1.22.0",
     "js-yaml": "^4.1.0"
   },
@@ -30,6 +16,19 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "keywords": [
+    "component-generator",
+    "constitution",
+    "governance",
+    "mcp",
+    "react",
+    "validation"
+  ],
+  "license": "MIT",
+  "main": "server.mjs",
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "type": "module"
 }
-

@@ -1,28 +1,27 @@
 {
   "name": "@aibos/mcp-theme",
-  "version": "2.0.0",
-  "type": "module",
   "description": "AIBOS Theme MCP Server - Token management, validation, and Tailwind class validation",
-  "main": "server.mjs",
-  "scripts": {
-    "start": "node server.mjs"
-  },
+  "version": "2.0.0",
+  "author": "AIBOS Platform",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0"
   },
-  "keywords": [
-    "mcp",
-    "theme",
-    "tokens",
-    "tailwind",
-    "aibos"
-  ],
-  "author": "AIBOS Platform",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "keywords": [
+    "aibos",
+    "mcp",
+    "tailwind",
+    "theme",
+    "tokens"
+  ],
+  "license": "MIT",
+  "main": "server.mjs",
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "type": "module"
 }
-

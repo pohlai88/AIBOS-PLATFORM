@@ -1,14 +1,6 @@
 {
   "name": "@aibos/docs",
   "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "sync-docs": "tsx scripts/sync-docs.ts",
-    "dev": "pnpm sync-docs && next dev -p 3001",
-    "build": "pnpm sync-docs && next build",
-    "start": "next start -p 3001",
-    "lint": "eslint . --config ../../eslint.config.mjs"
-  },
   "dependencies": {
     "next": "16.0.3",
     "nextra": "^4.6.0",
@@ -17,7 +9,7 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "@aibos/config-eslint": "workspace:*",
+    "@aibos/config-eslint": "0.1.0",
     "@types/node": "^22.19.1",
     "@types/react": "19.2.4",
     "@types/react-dom": "19.2.3",
@@ -25,6 +17,13 @@
     "eslint-config-next": "16.0.3",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
+  },
+  "private": true,
+  "scripts": {
+    "build": "pnpm sync-docs && next build",
+    "dev": "pnpm sync-docs && next dev -p 3001",
+    "lint": "eslint . --config ../../eslint.config.mjs",
+    "start": "next start -p 3001",
+    "sync-docs": "tsx scripts/sync-docs.ts"
   }
 }
-

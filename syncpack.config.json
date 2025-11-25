@@ -1,0 +1,75 @@
+{
+  "source": [
+    "apps/*/package.json",
+    "packages/*/package.json",
+    ".mcp/*/package.json"
+  ],
+  "versionGroups": [
+    {
+      "dependencies": ["react", "react-dom"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["next"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["typescript"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["eslint"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@types/react", "@types/react-dom"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@types/node"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@modelcontextprotocol/sdk"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@babel/parser", "@babel/traverse"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@headlessui/react"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["tailwindcss", "postcss", "@tailwindcss/**"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["@radix-ui/**"],
+      "policy": "sameRange"
+    },
+    {
+      "dependencies": ["tsx"],
+      "policy": "sameRange"
+    }
+  ],
+  "semverGroups": [
+    {
+      "packages": ["*"],
+      "dependencyTypes": ["dependencies", "devDependencies"],
+      "range": "patch"
+    }
+  ],
+  "sortAz": [
+    "dependencies",
+    "devDependencies",
+    "peerDependencies"
+  ],
+  "sortFirst": [
+    "name",
+    "version",
+    "private"
+  ]
+}
+

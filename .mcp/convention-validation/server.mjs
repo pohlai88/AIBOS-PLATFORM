@@ -15,12 +15,15 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createHash } from "crypto";
 import { parse } from "@babel/parser";
+import { exec } from "child_process";
+import { promisify } from "util";
 // NOTE: Using underscore prefix for ESM/CJS compatibility workaround
 // This is an acceptable exception to camelCase naming convention
 // @babel/traverse exports differently in ESM vs CJS, requiring this pattern
 import traverseDefault from "@babel/traverse";
 // Handle both ESM and CJS exports
 const traverse = traverseDefault.default || traverseDefault;
+const execAsync = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -993,6 +996,49 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["filePath"],
         },
       },
+      {
+        name: "check_dependency_drift",
+        description: "Check for dependency version mismatches across the monorepo using syncpack",
+        inputSchema: {
+          type: "object",
+          properties: {
+            filter: {
+              type: "string",
+              description: "Optional: Filter dependencies by name pattern (e.g., '@babel/**')",
+            },
+          },
+          required: [],
+        },
+      },
+      {
+        name: "fix_dependency_drift",
+        description: "Auto-fix dependency version mismatches and format package.json files using syncpack",
+        inputSchema: {
+          type: "object",
+          properties: {
+            filter: {
+              type: "string",
+              description: "Optional: Filter dependencies by name pattern (e.g., '@babel/**')",
+            },
+          },
+          required: [],
+        },
+      },
+      {
+        name: "format_package_json",
+        description: "Format all package.json files in the monorepo using syncpack",
+        inputSchema: {
+          type: "object",
+          properties: {
+            check: {
+              type: "boolean",
+              description: "If true, only check formatting without making changes",
+              default: false,
+            },
+          },
+          required: [],
+        },
+      },
     ],
   };
 });
@@ -1314,6 +1360,224 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             },
           ],
         };
+      }
+
+      case "check_dependency_drift": {
+        try {
+          const filterArg = args.filter ? `--filter "${args.filter}"` : "";
+          const command = `pnpm exec syncpack list-mismatches ${filterArg}`.trim();
+          
+          const { stdout, stderr } = await execAsync(command, {
+            cwd: workspaceRoot,
+            maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+          });
+
+          // Parse syncpack output
+          const hasMismatches = stdout.includes("✘") || stderr.includes("✘");
+          const canAutoFix = stdout.includes("can be auto-fixed");
+          const alreadyValid = stdout.includes("already valid");
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  withGovernanceMetadata(
+                    {
+                      success: true,
+                      hasMismatches,
+                      canAutoFix,
+                      alreadyValid,
+                      output: stdout,
+                      errors: stderr || null,
+                      command,
+                    },
+                    "dependency-governance",
+                    hasMismatches ? "warning" : "info"
+                  ),
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        } catch (error) {
+          // syncpack exits with code 1 when mismatches are found, which is expected
+          if (error.code === 1 && error.stdout) {
+            const hasMismatches = error.stdout.includes("✘");
+            const canAutoFix = error.stdout.includes("can be auto-fixed");
+            
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(
+                    withGovernanceMetadata(
+                      {
+                        success: true,
+                        hasMismatches,
+                        canAutoFix,
+                        output: error.stdout,
+                        errors: error.stderr || null,
+                      },
+                      "dependency-governance",
+                      hasMismatches ? "warning" : "info"
+                    ),
+                    null,
+                    2
+                  ),
+                },
+              ],
+            };
+          }
+          throw error;
+        }
+      }
+
+      case "fix_dependency_drift": {
+        try {
+          const filterArg = args.filter ? `--filter "${args.filter}"` : "";
+          const fixCommand = `pnpm exec syncpack fix-mismatches ${filterArg}`.trim();
+          const formatCommand = `pnpm exec syncpack format`;
+          
+          // First fix mismatches
+          let fixResult;
+          try {
+            const { stdout, stderr } = await execAsync(fixCommand, {
+              cwd: workspaceRoot,
+              maxBuffer: 10 * 1024 * 1024,
+            });
+            fixResult = { success: true, stdout, stderr: stderr || null };
+          } catch (error) {
+            // syncpack may exit with code 1 even on success
+            if (error.code === 1 && error.stdout) {
+              fixResult = { success: true, stdout: error.stdout, stderr: error.stderr || null };
+            } else {
+              throw error;
+            }
+          }
+
+          // Then format
+          const { stdout: formatStdout, stderr: formatStderr } = await execAsync(formatCommand, {
+            cwd: workspaceRoot,
+            maxBuffer: 10 * 1024 * 1024,
+          });
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  withGovernanceMetadata(
+                    {
+                      success: true,
+                      fixed: true,
+                      formatted: true,
+                      fixOutput: fixResult.stdout,
+                      formatOutput: formatStdout,
+                      errors: formatStderr || null,
+                      commands: { fix: fixCommand, format: formatCommand },
+                    },
+                    "dependency-governance",
+                    "info"
+                  ),
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        } catch (error) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  withGovernanceMetadata(
+                    {
+                      success: false,
+                      error: error.message,
+                      stdout: error.stdout || null,
+                      stderr: error.stderr || null,
+                    },
+                    "dependency-governance",
+                    "error"
+                  ),
+                  null,
+                  2
+                ),
+              },
+            ],
+            isError: true,
+          };
+        }
+      }
+
+      case "format_package_json": {
+        try {
+          const checkArg = args.check ? "--check" : "";
+          const command = `pnpm exec syncpack format ${checkArg}`.trim();
+          
+          const { stdout, stderr } = await execAsync(command, {
+            cwd: workspaceRoot,
+            maxBuffer: 10 * 1024 * 1024,
+          });
+
+          // Check if formatting issues were found (when using --check)
+          const hasIssues = args.check && (stdout.includes("✘") || stderr.includes("✘"));
+
+          return {
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify(
+                  withGovernanceMetadata(
+                    {
+                      success: true,
+                      formatted: !args.check,
+                      checked: args.check,
+                      hasIssues,
+                      output: stdout,
+                      errors: stderr || null,
+                      command,
+                    },
+                    "dependency-governance",
+                    hasIssues ? "warning" : "info"
+                  ),
+                  null,
+                  2
+                ),
+              },
+            ],
+          };
+        } catch (error) {
+          // syncpack format --check exits with code 1 when issues are found
+          if (error.code === 1 && error.stdout) {
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify(
+                    withGovernanceMetadata(
+                      {
+                        success: true,
+                        checked: true,
+                        hasIssues: true,
+                        output: error.stdout,
+                        errors: error.stderr || null,
+                      },
+                      "dependency-governance",
+                      "warning"
+                    ),
+                    null,
+                    2
+                  ),
+                },
+              ],
+            };
+          }
+          throw error;
+        }
       }
 
       default:

@@ -1,34 +1,33 @@
 {
   "name": "@aibos/mcp-a11y-validation",
-  "version": "2.0.0",
   "description": "AIBOS Accessibility MCP Server - WCAG 2.1 compliance validation",
-  "type": "module",
-  "main": "server.mjs",
+  "version": "2.0.0",
+  "author": "AIBOS Platform",
   "bin": {
     "aibos-a11y": "./server.mjs"
   },
-  "scripts": {
-    "start": "node server.mjs"
-  },
-  "keywords": [
-    "mcp",
-    "accessibility",
-    "a11y",
-    "wcag",
-    "react",
-    "validation"
-  ],
-  "author": "AIBOS Platform",
-  "license": "MIT",
   "dependencies": {
-    "@babel/parser": "^7.23.0",
-    "@babel/traverse": "^7.23.0",
+    "@babel/parser": "^7.28.5",
+    "@babel/traverse": "^7.28.5",
     "@modelcontextprotocol/sdk": "^1.22.0"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "mcp",
+    "react",
+    "validation",
+    "wcag"
+  ],
+  "license": "MIT",
+  "main": "server.mjs",
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "type": "module"
 }
-
