@@ -54,7 +54,8 @@ Everything else **references upward**.
 
 ### Files
 
-1. **`tokens.yml`** (v2.1.0) - Token governance, immutability, RSC rules, machine-enforceable rule IDs
+1. **`tokens.yml`** (v2.1.0) - Token governance, immutability, RSC rules, machine-enforceable rule
+   IDs
 2. **`rsc.yml`** (v1.1.0) - React Server Component boundary rules
 3. **`components.yml`** (v2.1.0) - Component structure, API, accessibility rules
 
@@ -129,7 +130,7 @@ Everything else **references upward**.
 
 ```javascript
 // Current (TODO)
-const tokenValidation = { valid: true, violations: [] }; // TODO: Implement validation
+const tokenValidation = { valid: true, violations: [] } // TODO: Implement validation
 
 // Should implement:
 // - Check tokens exist in globals.css
@@ -159,7 +160,7 @@ const tokenValidation = { valid: true, violations: [] }; // TODO: Implement vali
 
 ```javascript
 // Current (TODO)
-const rscValidation = { valid: true, violations: [] }; // TODO: Implement validation
+const rscValidation = { valid: true, violations: [] } // TODO: Implement validation
 
 // Should implement:
 // - Check for browser globals in server components
@@ -189,7 +190,7 @@ const reactValidation = {
   violations: [],
   errors: [],
   warnings: [],
-}; // TODO: Implement validation
+} // TODO: Implement validation
 
 // Should implement:
 // - Component structure validation (forwardRef, displayName)
@@ -197,7 +198,8 @@ const reactValidation = {
 // - Component type validation
 ```
 
-**Note:** Some React validation is already implemented in separate functions, but not integrated here.
+**Note:** Some React validation is already implemented in separate functions, but not integrated
+here.
 
 ### **4. Accessibility Validation**
 
@@ -206,7 +208,7 @@ const reactValidation = {
 
 ```javascript
 // Current (TODO)
-const a11yValidation = { valid: true, violations: [] }; // TODO: Implement validation
+const a11yValidation = { valid: true, violations: [] } // TODO: Implement validation
 
 // Should implement:
 // - Icon-only button aria-label check
@@ -219,7 +221,8 @@ const a11yValidation = { valid: true, violations: [] }; // TODO: Implement valid
 // - Typography WCAG validation
 ```
 
-**Note:** Accessibility validation exists in `aibos-a11y-validation` MCP server, but not integrated here.
+**Note:** Accessibility validation exists in `aibos-a11y-validation` MCP server, but not integrated
+here.
 
 ---
 
@@ -318,7 +321,8 @@ packages/ui/constitution/
 
 ### **Priority 1: Implement Core Validations**
 
-1. **Token Validation** - Implement token existence, naming, hierarchy, conflicts, immutability checks
+1. **Token Validation** - Implement token existence, naming, hierarchy, conflicts, immutability
+   checks
 2. **RSC Boundary** - Implement server/client component validation
 3. **Accessibility** - Integrate or implement a11y validation
 4. **React Structure** - Complete component structure validation
@@ -353,7 +357,8 @@ packages/ui/constitution/
 
 ✅ **Updated to v2.1.0** - File is comprehensive with enhanced rules
 
-**Note:** Constitution files are the source of truth. Server implementation needs to be updated to match them.
+**Note:** Constitution files are the source of truth. Server implementation needs to be updated to
+match them.
 
 ---
 

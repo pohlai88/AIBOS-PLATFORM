@@ -1,0 +1,715 @@
+/* packages/ui/src/design/globals.css - MCP Guardian Design System */
+/* 
+ * MCP Architecture - Complete Design System:
+ * - Next.js MCP: Guardian of token validation and architecture compliance
+ * - Figma MCP: Main composer for design token definitions and themes
+ * - Tailwind MCP: Helper for CSS class generation and utility compliance
+ * - React MCP: Helper for component token usage validation
+ * 
+ * Consumption Pattern:
+ * 1. This file is the SOURCE OF TRUTH for all design tokens
+ * 2. Imported by apps/web/app/globals.css for app-level consumption
+ * 3. Used by token-helpers.ts for MCP validation
+ * 4. Provides theme switching, tenant overrides, and WCAG compliance
+ * 
+ * Constitution Compliance:
+ * - 86+ validation rules enforced
+ * - WCAG AA/AAA themes immutable
+ * - Tenant overrides controlled and validated
+ * - Safe Mode enforces cognitive comfort
+ */
+
+@import 'tailwindcss';
+
+/* MCP Guardian: Tailwind v4 Integration */
+/* Note: Semantic tokens auto-mapped to Tailwind utilities */
+/* Constitution: No plugins needed - pure token-based approach */
+
+/* ------------------------------------------------------------------
+   1. Tailwind v4 Theme Mapping
+   ------------------------------------------------------------------ */
+
+/* Tailwind v4 Theme Configuration - CSS Linter Compatible */
+/* Note: Tailwind v4 will automatically map these CSS custom properties */
+/* This approach avoids @theme directive which some linters don't recognize */
+
+/* The tokens defined in :root below will be automatically available as Tailwind utilities:
+   - bg-bg, bg-bg-muted, bg-bg-elevated
+   - text-fg, text-fg-muted, text-fg-subtle  
+   - bg-primary, text-primary-foreground
+   - border-border, border-border-subtle
+   - rounded-xs, rounded-sm, etc.
+   - shadow-xs, shadow-sm, etc.
+*/
+
+/* ------------------------------------------------------------------
+   2. Base Theme Tokens (Light / Dark)
+   ------------------------------------------------------------------ */
+
+/* LIGHT MODE – base design system */
+:root {
+  /* Fonts */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+
+  /* Surface */
+  --color-bg: #f9fafb; /* gray-50 - overall app background */
+  --color-bg-muted: #f3f4f6; /* gray-100 - page background / muted zones */
+  --color-bg-elevated: #ffffff; /* pure white - card / modal surfaces */
+
+  /* Text */
+  --color-fg: #111827; /* gray-900 - primary text */
+  --color-fg-muted: #6b7280; /* gray-500 - secondary text */
+  --color-fg-subtle: #9ca3af; /* gray-400 - subtle text */
+
+  /* Primary accent (default tenant) */
+  --accent-bg: #2563eb; /* blue-600 as default accent */
+  --accent-bg-hover: #1d4ed8; /* blue-700 */
+  --accent-bg-active: #1e40af; /* blue-800 */
+  --accent-subtle: rgba(37, 99, 235, 0.12);
+  --accent-foreground: #f9fafb; /* gray-50 */
+
+  /* Secondary accent */
+  --secondary-bg: #1d4ed8; /* blue-700 */
+  --secondary-subtle: rgba(29, 78, 216, 0.1);
+  --secondary-foreground: #f9fafb;
+
+  /* Bridge accent → color-primary tokens */
+  /* CRITICAL: This is where tenant customization flows through */
+  /* Themes (default.css) set --accent-bg, tenants override --accent-bg */
+  /* Components use --color-primary → automatically get tenant colors */
+  --color-primary: var(--accent-bg);
+  --color-primary-soft: var(--accent-subtle);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary-bg);
+  --color-secondary-soft: var(--secondary-subtle);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Borders & ring */
+  --color-border: #e5e7eb; /* gray-200 */
+  --color-border-muted: #f3f4f6; /* gray-100 */
+  --color-border-subtle: var(--color-border-muted);
+  --color-ring: var(--accent-bg);
+
+  /* Status colors (WCAG-friendly) */
+  --color-success: #16a34a; /* green-600 */
+  --color-success-soft: rgba(22, 163, 74, 0.1);
+  --color-success-foreground: #f9fafb;
+
+  --color-warning: #f59e0b; /* amber-500 */
+  --color-warning-soft: rgba(245, 158, 11, 0.12);
+  --color-warning-foreground: #111827;
+
+  --color-danger: #dc2626; /* red-600 */
+  --color-danger-soft: rgba(220, 38, 38, 0.1);
+  --color-danger-foreground: #f9fafb;
+
+  /* Radii */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows – subtle defaults */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 6px 16px 0 rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 14px 32px 0 rgb(15 23 42 / 0.16);
+
+  /* Layout */
+  --sidebar-width: 16rem;
+  --topbar-height: 3.5rem;
+
+  /* Extended spacing */
+  --spacing-8xl: 90rem;
+  --spacing-9xl: 105rem;
+  --spacing-10xl: 120rem;
+}
+
+/* DARK MODE – attribute / class based */
+.dark,
+:root[data-mode='dark'] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --color-bg: #020617; /* slate-950-like */
+  --color-bg-muted: #020617;
+  --color-bg-elevated: #020617;
+
+  /* Text */
+  --color-fg: #e5e7eb; /* gray-200 */
+  --color-fg-muted: #9ca3af; /* gray-400 */
+  --color-fg-subtle: #6b7280; /* gray-500 */
+
+  /* Accent adjustments for dark mode */
+  --accent-bg: #60a5fa; /* blue-400 - brighter for dark bg */
+  --accent-bg-hover: #3b82f6; /* blue-500 */
+  --accent-bg-active: #2563eb; /* blue-600 */
+  --accent-subtle: rgba(96, 165, 250, 0.18);
+  --accent-foreground: #020617;
+
+  --secondary-bg: #38bdf8; /* sky-400 */
+  --secondary-subtle: rgba(56, 189, 248, 0.18);
+  --secondary-foreground: #020617;
+
+  --color-primary: var(--accent-bg);
+  --color-primary-soft: var(--accent-subtle);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary-bg);
+  --color-secondary-soft: var(--secondary-subtle);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-border: #1f2937; /* gray-800 */
+  --color-border-muted: #020617;
+  --color-border-subtle: var(--color-border-muted);
+  --color-ring: var(--accent-bg);
+
+  /* Status colors for dark mode */
+  --color-success: #22c55e; /* green-500 */
+  --color-success-soft: rgba(34, 197, 94, 0.18);
+  --color-success-foreground: #020617;
+
+  --color-warning: #fbbf24; /* amber-400 */
+  --color-warning-soft: rgba(251, 191, 36, 0.2);
+  --color-warning-foreground: #020617;
+
+  --color-danger: #f87171; /* red-400 */
+  --color-danger-soft: rgba(248, 113, 113, 0.18);
+  --color-danger-foreground: #020617;
+
+  /* Enhanced shadows for dark mode */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.6);
+  --shadow-sm:
+    0 1px 3px 0 rgb(15 23 42 / 0.9), 0 1px 2px -1px rgb(15 23 42 / 0.9);
+  --shadow-md: 0 10px 24px 0 rgb(15 23 42 / 0.9);
+  --shadow-lg: 0 18px 40px 0 rgb(15 23 42 / 1);
+}
+
+/* ------------------------------------------------------------------
+   3. Tenant Overrides (Branding only – NO a11y changes here)
+   ------------------------------------------------------------------ */
+
+/* DLBB tenant – emerald green accent */
+/* Usage: <html data-tenant="dlbb" data-theme="default"> */
+/* Result: All primary buttons, links, focus rings become emerald */
+:root[data-tenant='dlbb'] {
+  --accent-bg: #22c55e; /* emerald-500 - DLBB brand green */
+  --accent-bg-hover: #16a34a; /* emerald-600 */
+  --accent-bg-active: #15803d; /* emerald-700 */
+  --accent-subtle: rgba(34, 197, 94, 0.12);
+  --accent-foreground: #f0fdf4; /* emerald-50 */
+
+  /* Bridge to component tokens - flows through automatically */
+  --color-primary: var(--accent-bg);
+  --color-primary-soft: var(--accent-subtle);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-ring: var(--accent-bg);
+}
+
+/* Example: Enterprise tenant – purple accent */
+:root[data-tenant='enterprise'] {
+  --accent-bg: #8b5cf6; /* violet-500 */
+  --accent-bg-hover: #7c3aed; /* violet-600 */
+  --accent-bg-active: #6d28d9; /* violet-700 */
+  --accent-subtle: rgba(139, 92, 246, 0.12);
+  --accent-foreground: #faf5ff; /* violet-50 */
+
+  --color-primary: var(--accent-bg);
+  --color-primary-soft: var(--accent-subtle);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-ring: var(--accent-bg);
+}
+
+/* MCP Guardian: Tenant validation hook */
+:root[data-tenant]:not([data-tenant='dlbb']):not([data-tenant='enterprise']) {
+  /* Unknown tenant - use safe defaults */
+  --accent-bg: var(--color-fg);
+  --accent-subtle: var(--color-border-subtle);
+  --color-primary: var(--accent-bg);
+  --color-primary-soft: var(--accent-subtle);
+}
+
+/* ------------------------------------------------------------------
+   4. SAFE MODE (Governed, non-customisable)
+   ------------------------------------------------------------------ */
+
+/* Activated with: <html data-safe-mode="true"> or <html class="safe-mode"> */
+:root[data-safe-mode='true'],
+:root.safe-mode {
+  /* Neutralise strong accents → rely on text color */
+  --color-primary: var(--color-fg);
+  --color-primary-soft: var(--color-border-subtle);
+  --color-primary-foreground: var(--color-bg);
+
+  /* Secondary / supportive colors also collapse */
+  --color-secondary: var(--color-fg-muted);
+  --color-secondary-soft: var(--color-border-subtle);
+  --color-secondary-foreground: var(--color-bg);
+
+  /* Critical status tokens - must remain functional in Safe Mode */
+  /* These match WCAG-AAA values for maximum accessibility */
+  --color-success: #14532d; /* green-900 - WCAG AAA compliant */
+  --color-success-soft: rgba(20, 83, 45, 0.1);
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #92400e; /* amber-800 - WCAG AAA compliant */
+  --color-warning-soft: rgba(146, 64, 14, 0.1);
+  --color-warning-foreground: #ffffff;
+
+  --color-danger: #7f1d1d; /* red-900 - WCAG AAA compliant */
+  --color-danger-soft: rgba(127, 29, 29, 0.1);
+  --color-danger-foreground: #ffffff;
+
+  /* Flatten shadows to reduce visual noise */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  /* Ring color becomes neutral */
+  --color-ring: var(--color-fg);
+}
+
+/* ------------------------------------------------------------------
+   5. Base Document Styling (token-consistent)
+   ------------------------------------------------------------------ */
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+/* ------------------------------------------------------------------
+   6. Global Accessibility Rules (WCAG AA/AAA)
+   ------------------------------------------------------------------ */
+
+/* Text selection – consistent with Safe Mode globals */
+::selection {
+  background-color: rgba(37, 99, 235, 0.15); /* Fallback for older browsers */
+  background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  color: var(--color-fg);
+}
+
+/* Global focus outline – even if component authors forget */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Reduced motion – do not let tenants turn this off */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------
+   7. MCP Guardian: Constitution Enforcement
+   ------------------------------------------------------------------ */
+
+/* MCP Guardian: Token validation indicators */
+[data-mcp-validated='false'] {
+  border: 2px dashed var(--color-danger) !important;
+  position: relative;
+  animation: mcp-validation-pulse 2s infinite;
+}
+
+[data-mcp-validated='false']::after {
+  content: '⚠️ UI PKG';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--color-danger);
+  color: var(--color-danger-foreground);
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+  z-index: 9999;
+}
+
+/* MCP Guardian: Validation pulse animation */
+@keyframes mcp-validation-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* MCP Guardian: Constitution rule violations */
+[data-constitution-violation] {
+  border: 3px solid var(--color-danger) !important;
+  background: rgba(
+    220,
+    38,
+    38,
+    0.05
+  ) !important; /* Fallback for older browsers */
+  background: color-mix(
+    in srgb,
+    var(--color-danger) 5%,
+    transparent
+  ) !important;
+}
+
+[data-constitution-violation]::before {
+  content: '🏛️ CONSTITUTION VIOLATION: ' attr(data-constitution-violation);
+  position: absolute;
+  top: -24px;
+  left: 0;
+  right: 0;
+  background: var(--color-danger);
+  color: var(--color-danger-foreground);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  text-align: center;
+  z-index: 10000;
+}
+
+/* MCP Guardian: Constitution compliance helpers */
+.mcp-server-safe {
+  /* Styles safe for Server Components */
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+}
+
+.mcp-client-interactive {
+  /* Styles requiring client-side interactivity */
+  transition: all 120ms ease;
+  cursor: pointer;
+}
+
+.mcp-client-interactive:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* MCP Guardian: RSC boundary indicators (development only) */
+[data-rsc-boundary='server'] {
+  outline: 2px dotted var(--color-success);
+  outline-offset: 2px;
+}
+
+[data-rsc-boundary='server']::before {
+  content: '🔵 SERVER';
+  position: absolute;
+  top: -16px;
+  left: 0;
+  background: var(--color-success);
+  color: var(--color-success-foreground);
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+  z-index: 9998;
+}
+
+[data-rsc-boundary='client'] {
+  outline: 2px dotted var(--color-warning);
+  outline-offset: 2px;
+}
+
+[data-rsc-boundary='client']::before {
+  content: '🟡 CLIENT';
+  position: absolute;
+  top: -16px;
+  left: 0;
+  background: var(--color-warning);
+  color: var(--color-warning-foreground);
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+  z-index: 9998;
+}
+
+[data-rsc-boundary='shared'] {
+  outline: 2px dotted var(--color-fg-muted);
+  outline-offset: 2px;
+}
+
+[data-rsc-boundary='shared']::before {
+  content: '⚪ SHARED';
+  position: absolute;
+  top: -16px;
+  left: 0;
+  background: var(--color-fg-muted);
+  color: var(--color-bg);
+  font-size: 9px;
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+  z-index: 9998;
+}
+
+/* ------------------------------------------------------------------
+   8. Component Foundation Classes
+   ------------------------------------------------------------------ */
+
+/* Base card component */
+.theme-card {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Primary button foundation */
+.theme-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding-inline: 0.875rem;
+  padding-block: 0.375rem;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    opacity 80ms ease;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-button-primary:hover {
+  opacity: 0.96;
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-button-primary:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Secondary button foundation */
+.theme-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding-inline: 0.875rem;
+  padding-block: 0.375rem;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-secondary-soft);
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+}
+
+/* ------------------------------------------------------------------
+   9. MCP Guardian: Enhanced Integration Features
+   ------------------------------------------------------------------ */
+
+/* MCP Guardian: Theme validation states */
+:root[data-theme-validated='true'] {
+  --mcp-theme-status: '✅';
+}
+
+:root[data-theme-validated='false'] {
+  --mcp-theme-status: '❌';
+}
+
+/* MCP Guardian: Token usage tracking */
+:root {
+  counter-reset: mcp-tokens-used;
+}
+
+.mcp-token-usage {
+  position: relative;
+  counter-increment: mcp-tokens-used;
+}
+
+.mcp-token-usage::after {
+  content: '📊 ' counter(mcp-tokens-used);
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* MCP Guardian: Constitution compliance indicator */
+.mcp-constitution-compliant {
+  position: relative;
+}
+
+.mcp-constitution-compliant::before {
+  content: '🏛️ COMPLIANT';
+  position: absolute;
+  top: -20px;
+  right: 0;
+  background: var(--color-success);
+  color: var(--color-success-foreground);
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+  z-index: 9997;
+}
+
+/* MCP Guardian: Performance optimization classes */
+.mcp-server-optimized {
+  /* Styles optimized for server-side rendering */
+  contain: layout style;
+  will-change: auto;
+}
+
+.mcp-client-optimized {
+  /* Styles optimized for client-side interactivity */
+  contain: layout;
+  will-change: transform, opacity;
+}
+
+/* MCP Guardian: Accessibility compliance helpers */
+.mcp-wcag-aa {
+  /* Ensures WCAG AA compliance */
+  min-height: 44px; /* Touch target size */
+  /* Note: WCAG AA requires 4.5:1 contrast ratio - enforced via token validation */
+}
+
+.mcp-wcag-aaa {
+  /* Ensures WCAG AAA compliance */
+  min-height: 48px; /* Enhanced touch target */
+  /* Note: WCAG AAA requires 7:1 contrast ratio - enforced via token validation */
+}
+
+/* MCP Guardian: Development mode indicators */
+:root[data-mcp-dev='true'] .mcp-debug {
+  outline: 1px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+:root[data-mcp-dev='true'] .mcp-debug::after {
+  content: '🔧 DEV';
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 8px;
+  padding: 1px 3px;
+  border-radius: 2px;
+  font-weight: 600;
+  z-index: 9996;
+}
+
+/* MCP Guardian: Token validation success states */
+[data-mcp-validated='true'] {
+  position: relative;
+}
+
+[data-mcp-validated='true']::after {
+  content: '✅';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 12px;
+  z-index: 9995;
+  animation: mcp-success-pulse 3s ease-in-out;
+}
+
+@keyframes mcp-success-pulse {
+  0%,
+  90%,
+  100% {
+    opacity: 0;
+  }
+  10%,
+  80% {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------
+   10. MCP Guardian: Utility Classes for Component Migration
+   ------------------------------------------------------------------ */
+
+/* Server Component utilities */
+.server-component {
+  /* Safe styles for Server Components */
+  background-color: var(--color-bg-elevated);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+/* Client Component utilities */
+.client-component {
+  /* Interactive styles for Client Components */
+  background-color: var(--color-bg-elevated);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.client-component:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* Shared Component utilities */
+.shared-component {
+  /* Versatile styles for Shared Components */
+  background-color: var(--color-bg-elevated);
+  color: var(--color-fg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+/* MCP Guardian: Migration helper classes */
+.migrating-to-server {
+  outline: 2px dashed var(--color-success);
+  outline-offset: 4px;
+}
+
+.migrating-to-client {
+  outline: 2px dashed var(--color-warning);
+  outline-offset: 4px;
+}
+
+.migrating-to-shared {
+  outline: 2px dashed var(--color-fg-muted);
+  outline-offset: 4px;
+}

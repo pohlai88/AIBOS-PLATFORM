@@ -17,17 +17,16 @@ pnpm add @babel/parser @babel/traverse yaml
 ### **2. Use in Your Code**
 
 ```javascript
-import { runValidationPipeline } from 
-  "./packages/ui/constitution/validators/validation-pipeline.mjs";
+import { runValidationPipeline } from './packages/ui/constitution/validators/validation-pipeline.mjs'
 
 // Validate a component
 const results = await runValidationPipeline(null, {
-  filePath: "path/to/component.tsx",
+  filePath: 'path/to/component.tsx',
   code: componentCode,
-});
+})
 
 if (!results.valid) {
-  console.error("Validation failed:", results.results);
+  console.error('Validation failed:', results.results)
 }
 ```
 
@@ -35,22 +34,21 @@ if (!results.valid) {
 
 ```javascript
 // .mcp/component-generator/server.mjs
-import { runValidationPipeline } from 
-  "../../packages/ui/constitution/validators/validation-pipeline.mjs";
+import { runValidationPipeline } from '../../packages/ui/constitution/validators/validation-pipeline.mjs'
 
 async function generateComponent(request) {
-  const code = generateCode(request);
-  
+  const code = generateCode(request)
+
   const validation = await runValidationPipeline(null, {
     filePath: request.filePath,
     code: code,
-  });
+  })
 
   return {
     code,
     validation,
     valid: validation.valid,
-  };
+  }
 }
 ```
 
@@ -84,6 +82,7 @@ packages/ui/constitution/
 ## ✅ What Gets Validated
 
 ### **Token Validator**
+
 - Token exists in globals.css
 - Token naming conventions
 - WCAG contrast compliance
@@ -91,6 +90,7 @@ packages/ui/constitution/
 - Safe Mode rules
 
 ### **RSC Validator**
+
 - Forbidden browser APIs
 - Forbidden React hooks
 - Forbidden imports (Radix UI)
@@ -98,12 +98,14 @@ packages/ui/constitution/
 - Server Actions validation
 
 ### **Component Validator**
+
 - forwardRef and displayName
 - Props validation
 - Token alias mapping
 - State machine requirements
 
 ### **A11y Validator**
+
 - ARIA attributes
 - Keyboard navigation
 - Focus management
@@ -111,12 +113,14 @@ packages/ui/constitution/
 - WCAG compliance
 
 ### **Motion Validator**
+
 - Animation budgets
 - Reduced motion support
 - Motion token usage
 - Performance optimization
 
 ### **Visual Validator**
+
 - Snapshot baselines
 - Visual diff thresholds
 - Auto-rollback rules
@@ -161,10 +165,9 @@ To skip a validator:
 const results = await runAllValidations(filePath, content, {
   skipA11y: true,
   skipMotion: true,
-});
+})
 ```
 
 ---
 
 **See:** `IMPLEMENTATION_GUIDE.md` for complete documentation.
-

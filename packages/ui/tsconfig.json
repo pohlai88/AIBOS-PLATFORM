@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/design/*": ["./src/design/*"],
+      "@/mcp/*": ["./mcp/*"],
+      "@aibos/ui": ["./src/design/index.ts"],
+      "@aibos/ui/design": ["./src/design/index.ts"],
+      "@aibos/ui/design/server": ["./src/design/tokens/server.ts"],
+      "@aibos/ui/design/client": ["./src/design/tokens/client.ts"],
+      "@aibos/ui/design/tokens": ["./src/design/tokens/tokens.ts"],
+      "@aibos/ui/design/utilities": ["./src/design/utilities/index.ts"],
+      "@aibos/ui/components": ["./src/components/index.ts"],
+      "@aibos/ui/components/server": ["./src/components/server/index.ts"],
+      "@aibos/ui/components/server/*": ["./src/components/server/*/index.ts"],
+      "@aibos/ui/components/client": ["./src/components/client/index.ts"],
+      "@aibos/ui/components/client/*": ["./src/components/client/*/index.ts"],
+      "@aibos/ui/components/shared": ["./src/components/shared/index.ts"],
+      "@aibos/ui/components/shared/*": ["./src/components/shared/*/index.ts"],
+      "@aibos/ui/mcp": ["./mcp/index.ts"],
+      "@aibos/ui/mcp/*": ["./mcp/*/index.ts"],
+      "@aibos/ui/mcp/types": ["./mcp/types/mcp.ts"]
+    }
+  },
+  "include": ["src/**/*", "mcp/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+}

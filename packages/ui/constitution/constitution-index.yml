@@ -31,7 +31,7 @@ pipeline:
 metadata:
   version: "2.2.0"
   source_of_truth:
-    - "packages/ui/src/design/globals.css"
+    - "packages/ui/src/design/tokens/globals.css"
     - "packages/ui/src/design/tokens.ts"
     - "docs/01-foundation/ui-system/"
   description: "Master index controlling validation rules, execution order, and version governance."

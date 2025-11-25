@@ -1,0 +1,104 @@
+/**
+ * WCAG AAA Theme - Maximum Accessibility
+ * 
+ * WCAG AAA contrast ratios (7:1 minimum) + Safe Mode
+ * Fixed theme - NO tenant overrides allowed
+ * Equivalent to Safe Mode - neutralizes all customizations
+ */
+
+:root[data-theme='wcag-aaa'],
+:root[data-theme='wcag-aaa'][data-safe-mode='true'] {
+  /* Override accent bridge with maximum contrast */
+  --accent-bg: #000000; /* Pure black for maximum contrast */
+  --accent-bg-hover: #000000;
+  --accent-bg-active: #000000;
+  --accent-subtle: rgba(0, 0, 0, 0.05);
+  --accent-foreground: #ffffff;
+
+  /* Override all primary colors with maximum contrast */
+  --color-primary: #000000;
+  --color-primary-soft: rgba(0, 0, 0, 0.05);
+  --color-primary-foreground: #ffffff;
+  --color-ring: #000000;
+
+  /* Secondary colors - high contrast */
+  --secondary-bg: #1f2937;
+  --secondary-bg-hover: #111827;
+  --secondary-bg-active: #000000;
+  --secondary-foreground: #ffffff;
+
+  /* Surface colors - aligned with globals.css naming */
+  --color-bg: #ffffff;
+  --color-bg-muted: #ffffff; /* Reduced contrast in safe mode */
+  --color-bg-elevated: #f9fafb; /* Minimal elevation */
+
+  /* Text colors with WCAG AAA contrast (7:1) */
+  --color-fg: #000000;
+  --color-fg-muted: #000000; /* High contrast even for muted text */
+  --color-fg-subtle: #1f2937; /* Still readable but slightly softer */
+
+  /* Border colors with maximum contrast */
+  --color-border: #000000;
+  --color-border-muted: #1f2937;
+  --color-border-subtle: #374151;
+
+  /* Status colors with WCAG AAA compliance */
+  --color-success: #14532d;
+  --color-warning: #92400e;
+  --color-danger: #7f1d1d;
+  --color-info: #1e3a8a;
+
+  /* Safe mode overrides - neutralize shadows and effects */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
+
+/* Lock out ALL customizations - AAA theme = Safe Mode */
+:root[data-theme='wcag-aaa'][data-tenant],
+:root[data-theme='wcag-aaa'][data-safe-mode='true'][data-tenant],
+:root[data-theme='wcag-aaa'] {
+  /* Enhanced accessibility features for WCAG AAA */
+  --touch-target-min: 48px;
+  --focus-ring-width: 3px;
+  --focus-ring-color: #000000;
+  --focus-ring-offset: 3px;
+
+  /* Reduced motion preferences */
+  --animation-duration: 0ms;
+  --transition-duration: 0ms;
+
+  /* WCAG AAA: Minimum text size guarantee */
+  /* 16px baseline - users can still zoom via browser/OS for larger sizes */
+  /* This CSS sets the minimum; accessibility tools can scale beyond this */
+  font-size: 16px; /* Minimum body text size */
+
+  /* Force override any tenant customizations with !important */
+  --accent-bg: #000000 !important;
+  --color-primary: #000000 !important;
+  --color-ring: #000000 !important;
+  --color-bg: #ffffff !important;
+  --color-fg: #000000 !important;
+}
+
+/* WCAG AAA: Minimum text sizes for specific elements */
+:root[data-theme='wcag-aaa'] h6,
+:root[data-theme='wcag-aaa'] .caption,
+:root[data-theme='wcag-aaa'] .text-caption {
+  font-size: 14px; /* Minimum caption text size */
+}
+
+:root[data-theme='wcag-aaa'] small,
+:root[data-theme='wcag-aaa'] .text-small {
+  font-size: 14px; /* No text smaller than 14px */
+}
+
+/* Disable animations in WCAG AAA theme */
+:root[data-theme='wcag-aaa'] *,
+:root[data-theme='wcag-aaa'] *::before,
+:root[data-theme='wcag-aaa'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

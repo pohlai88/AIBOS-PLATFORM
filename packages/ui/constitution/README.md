@@ -59,7 +59,8 @@ The entire UI system becomes:
 **Token governance and hierarchy rules**
 
 - **Four-layer token system** (Global → Semantic → Component → Utility)
-- **12 token categories** (color, spacing, typography, radius, shadow, motion, opacity, density, zIndex, focusRing, state, grid)
+- **12 token categories** (color, spacing, typography, radius, shadow, motion, opacity, density,
+  zIndex, focusRing, state, grid)
 - **Canonical naming registry** (machine-enforceable prefixes)
 - **Token immutability matrix** (what can/cannot be overridden)
 - **Cross-category conflict rules** (prevents category mixing)
@@ -67,7 +68,7 @@ The entire UI system becomes:
 - **Tenant override boundaries** (aesthetic theme only)
 - **Safe Mode rules** (WCAG AAA enforcement)
 - **Machine-readable rule IDs** (TOK-NAME-001, COL-001, etc.)
-- **Source of Truth:** `packages/ui/src/design/globals.css`
+- **Source of Truth:** `packages/ui/src/design/tokens/globals.css`
 - **Aligned with:** `docs/01-foundation/ui-system/tokens.md`
 
 ### `components.yml` (v2.1.0)
@@ -130,7 +131,7 @@ These constitution files are used by:
 
 ### Token Implementation
 
-- **Source of Truth:** `packages/ui/src/design/globals.css` - CSS variable definitions
+- **Source of Truth:** `packages/ui/src/design/tokens/globals.css` - CSS variable definitions
 - **TypeScript Tokens:** `src/design/tokens.ts` - Type-safe token access
 - **Documentation:** `docs/01-foundation/ui-system/tokens.md` - Complete token system
 
@@ -151,7 +152,8 @@ These constitution files are used by:
 
 ## 📝 Token Source of Truth
 
-**Important:** All base token values are defined in `packages/ui/src/design/globals.css` as CSS variables.
+**Important:** All base token values are defined in `packages/ui/src/design/tokens/globals.css` as
+CSS variables.
 
 The `tokens.yml` file defines:
 
@@ -169,7 +171,7 @@ The `tokens.yml` file defines:
 
 When `globals.css` tokens change:
 
-1. Update token values in `packages/ui/src/design/globals.css`
+1. Update token values in `packages/ui/src/design/tokens/globals.css`
 2. Update `tokens.yml` if governance rules change
 3. Update `src/design/tokens.ts` if TypeScript types change
 4. Update `docs/01-foundation/ui-system/tokens.md` if documentation changes
@@ -277,7 +279,8 @@ Motion Validator (Priority E)       │
 Visual Validator (Priority F) ──────┘
 ```
 
-**⚠️ Important:** Validators are located in `.mcp/component-generator/tools/validators/` (NOT in this directory).
+**⚠️ Important:** Validators are located in `.mcp/component-generator/tools/validators/` (NOT in
+this directory).
 
 They are **utility modules** used by MCP servers, not MCP servers themselves.
 
@@ -296,7 +299,8 @@ The `constitution-index.yml` file serves as the **master brain** for all validat
 
 **Location:** `.mcp/component-generator/tools/validators/constitution-index.yml`
 
-**Note:** Constitution YAML files (`tokens.yml`, `components.yml`, `rsc.yml`) remain in `packages/ui/constitution/` as the source of truth.
+**Note:** Constitution YAML files (`tokens.yml`, `components.yml`, `rsc.yml`) remain in
+`packages/ui/constitution/` as the source of truth.
 
 ---
 

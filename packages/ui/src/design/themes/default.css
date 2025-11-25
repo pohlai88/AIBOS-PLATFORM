@@ -1,0 +1,63 @@
+/**
+ * Default Theme - Professional Aesthetic
+ * 
+ * Tenant-customizable theme that works through the accent bridge
+ * Uses same token names as globals.css for perfect alignment
+ * DLBB tenant will override accent-* to show emerald green
+ */
+
+:root[data-theme='default'] {
+  /* Accent bridge - tenant customizable (DLBB overrides these to emerald) */
+  --accent-bg: #2563eb; /* Blue default, DLBB → emerald */
+  --accent-bg-hover: #1d4ed8;
+  --accent-bg-active: #1e40af;
+  --accent-subtle: rgba(37, 99, 235, 0.12);
+  --accent-foreground: #f0f9ff;
+
+  /* Secondary accent */
+  --secondary-bg: #6b7280;
+  --secondary-bg-hover: #4b5563;
+  --secondary-bg-active: #374151;
+  --secondary-subtle: rgba(107, 114, 128, 0.12);
+  --secondary-foreground: #f9fafb;
+
+  /* Surface colors - aligned with globals.css naming */
+  --color-bg: #ffffff;
+  --color-bg-muted: #f9fafb;
+  --color-bg-elevated: #ffffff;
+
+  /* Text colors - aligned with globals.css naming */
+  --color-fg: #111827;
+  --color-fg-muted: #6b7280;
+  --color-fg-subtle: #9ca3af;
+
+  /* Border colors - aligned with globals.css naming */
+  --color-border: #e5e7eb;
+  --color-border-muted: #f3f4f6;
+  --color-border-subtle: #f9fafb;
+
+  /* Note: --color-primary is derived from --accent-bg in globals.css */
+  /* This allows tenant overrides to work through the accent bridge */
+}
+
+/* Dark mode variant for default theme - aligned token names */
+:root[data-theme='default'][data-mode='dark'],
+:root[data-theme='default'].dark {
+  /* Surface colors - dark mode */
+  --color-bg: #111827;
+  --color-bg-muted: #1f2937;
+  --color-bg-elevated: #374151;
+
+  /* Text colors - dark mode */
+  --color-fg: #f9fafb;
+  --color-fg-muted: #d1d5db;
+  --color-fg-subtle: #9ca3af;
+
+  /* Border colors - dark mode */
+  --color-border: #374151;
+  --color-border-muted: #4b5563;
+  --color-border-subtle: #6b7280;
+
+  /* Accent colors remain the same - tenant overrides still work */
+  /* DLBB will still show emerald in dark mode */
+}
