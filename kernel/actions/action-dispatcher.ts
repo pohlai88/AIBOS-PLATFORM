@@ -29,6 +29,10 @@ import {
   actionsExecutedTotal,
   actionDurationSeconds,
 } from "../observability/metrics";
+import { checkGlobalLimit } from "../hardening/rate-limit/global.limiter";
+import { checkTenantLimit } from "../hardening/rate-limit/tenant.limiter";
+import { checkEngineLimit } from "../hardening/rate-limit/engine.limiter";
+import { recordEngineError } from "../hardening/rate-limit/circuit-breaker";
 
 export type ActionExecutionResult = {
   contract: ActionContract;
@@ -61,7 +65,19 @@ export class ActionDispatcher {
       "[ActionDispatcher] Executing action"
     );
 
+    // Extract engineId from actionId (format: engineId.actionName)
+    const [engineId] = actionId.split(".");
+
     try {
+      // 0️⃣ Rate limiting (3 layers)
+      await checkGlobalLimit();
+      if (tenantId) {
+        await checkTenantLimit(tenantId);
+      }
+      if (engineId) {
+        await checkEngineLimit(engineId);
+      }
+
       // 1. Load the ActionContract
       const contract = await contractEngine.getActionContract(tenantId ?? null, actionId);
       if (!contract) {
@@ -246,6 +262,11 @@ export class ActionDispatcher {
       // Record failure metrics
       const finishedAt = process.hrtime.bigint();
       const durationSec = Number(finishedAt - startedAt) / 1e9;
+
+      // Circuit breaker: record error for engine
+      if (engineId) {
+        recordEngineError(engineId);
+      }
 
       const isDenied = err instanceof ActionDeniedError;
       actionsExecutedTotal.inc({
