@@ -12,9 +12,9 @@ import { healthRoute } from "./routes/health";
 import { readyRoute } from "./routes/ready";
 import { diagRoute } from "./routes/diag";
 import { auditRoute } from "./routes/audit";
-import actionsRoutes from "../http/routes/actions";
-import enginesRoutes from "../http/routes/engines";
-import metricsRoutes from "../http/routes/metrics";
+import { registerActionRoutes as registerNewActionRoutes } from "../http/routes/actions";
+import { registerEngineRoutes as registerNewEngineRoutes } from "../http/routes/engines";
+import { registerMetricsRoutes } from "../http/routes/metrics";
 
 export const createApiRouter = () => {
   const app = new Hono();
@@ -24,7 +24,7 @@ export const createApiRouter = () => {
   app.use("*", httpMetricsMiddleware);
 
   // Prometheus metrics (no auth required)
-  app.route("/", metricsRoutes);
+  registerMetricsRoutes(app);
 
   // Health & diagnostics (no auth required)
   app.route("/healthz", healthRoute);
@@ -34,8 +34,8 @@ export const createApiRouter = () => {
 
   // API routes with auth
   app.use("/api/*", authMiddleware);
-  app.route("/api/actions", actionsRoutes);
-  app.route("/api/engines", enginesRoutes);
+  registerNewActionRoutes(app);
+  registerNewEngineRoutes(app);
 
   // Legacy routes (with optional auth for backward compat)
   app.use("/metadata/*", optionalAuthMiddleware);
