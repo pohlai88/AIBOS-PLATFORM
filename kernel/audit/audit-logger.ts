@@ -102,3 +102,28 @@ export class AuditLogger {
 
 // Singleton instance
 export const auditLogger = new AuditLogger();
+
+// ─────────────────────────────────────────────────────────────
+// Legacy logAudit function (backward compatibility)
+// ─────────────────────────────────────────────────────────────
+
+export type LogAuditInput = {
+  category: "kernel" | "engine" | "tenant" | "security";
+  actor: string;
+  severity: "info" | "warn" | "error" | "critical";
+  action: string;
+  details?: unknown;
+};
+
+export function logAudit(input: LogAuditInput): void {
+  // Push to in-memory store synchronously
+  auditStore.pushSync({
+    id: randomUUID(),
+    timestamp: Date.now(),
+    category: input.category,
+    actor: input.actor,
+    action: input.action,
+    severity: input.severity,
+    details: input.details,
+  });
+}

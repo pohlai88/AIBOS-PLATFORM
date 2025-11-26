@@ -10,7 +10,7 @@ import { contractEngine } from "../contracts/contract-engine";
 import { ActionContract, ZActionContractSchema } from "../contracts/schemas";
 import { zodFromSerializedSchema } from "../contracts/action-schema-runtime";
 import { getActionHandler, ActionContext } from "./action-registry";
-import { eventBus } from "../events/bus";
+import { eventBus } from "../events/event-bus";
 import { auditLogger } from "../audit/audit-logger";
 import { createTraceLogger } from "../observability/logger";
 import { policyEngine } from "../policy/policy-engine";

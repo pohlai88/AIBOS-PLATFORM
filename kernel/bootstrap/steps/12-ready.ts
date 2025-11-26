@@ -1,4 +1,4 @@
-import { eventBus } from "../../events/bus";
+import { eventBus } from "../../events/event-bus";
 import { metadataRegistry } from "../../registry/metadata.registry";
 import { uiRegistry } from "../../ui/ui.registry";
 import { engineRegistry } from "../../registry/engine.registry";

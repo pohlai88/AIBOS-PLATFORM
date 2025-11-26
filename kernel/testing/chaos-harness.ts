@@ -4,7 +4,7 @@
  * Hardening v2: Inject failures to test recovery (internal testing only)
  */
 
-import { eventBus } from "../events/bus";
+import { eventBus } from "../events/event-bus";
 import { engineRegistry } from "../registry/engine.registry";
 
 export type ChaosType = "latency" | "error" | "timeout" | "corruption" | "restart";

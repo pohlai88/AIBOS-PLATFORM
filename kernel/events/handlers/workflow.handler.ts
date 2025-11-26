@@ -1,4 +1,4 @@
-import { eventBus } from "../bus";
+import { eventBus } from "../event-bus";
 import { log } from "../../utils/logger";
 
 // Workflow trigger handler

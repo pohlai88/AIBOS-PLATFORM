@@ -1,4 +1,4 @@
-import { logAudit } from "./audit.logger";
+import { logAudit } from "./audit-logger";
 
 // Sandbox violation
 export function logSandboxViolation(actor: string, reason: string) {

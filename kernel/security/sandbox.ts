@@ -1,7 +1,7 @@
 import { metadataRegistry } from "../registry/metadata.registry";
 import { engineRegistry } from "../registry/engine.registry";
 import { log } from "../utils/logger";
-import { publishEvent } from "../events/bus";
+import { publishEvent } from "../events/event-bus";
 import { createDbProxy } from "./db.proxy";
 import { createCacheProxy } from "./cache.proxy";
 import { executeInSandbox } from "./sandbox.v2";
@@ -49,7 +49,7 @@ export async function runAction({
     db: createDbProxy(tenant),
     cache: createCacheProxy(tenant),
     emit: (event: string, data: any) =>
-      publishEvent(`${tenant}.${engine}.${event}`, data),
+      publishEvent({ type: `${tenant}.${engine}.${event}`, payload: data, tenantId: tenant }),
     log: (...a: any[]) => log.info(`[${engine}]`, ...a),
     engineConfig: engineDef.manifest,
     schema: engineDef.manifest?.actions?.[action]?.schema
