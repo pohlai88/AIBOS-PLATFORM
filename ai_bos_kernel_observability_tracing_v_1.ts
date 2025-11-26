@@ -1,9 +1,14 @@
-/**
- * Observability Tracing v1
- *
- * OpenTelemetry-based distributed tracing for the kernel.
- * Provides span wrappers for HTTP, actions, DB, and cache operations.
- */
+// AI-BOS Kernel – Observability Tracing v1
+// This document contains reference implementations for:
+// 1) observability/tracing.ts
+// 2) observability/index.ts (export wiring)
+//
+// Copy each section into its respective file in the `kernel/observability` directory.
+// Adjust import paths if your folder structure differs slightly.
+
+// ────────────────────────────────────────────────────────────────────────────────
+// 1) observability/tracing.ts
+// ────────────────────────────────────────────────────────────────────────────────
 
 import {
   context as otelContext,
@@ -16,11 +21,7 @@ import {
 
 import { createTraceLogger } from './logger';
 
-const logger = createTraceLogger();
-
-// ─────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────
+const logger = createTraceLogger('observability:tracing');
 
 export type SpanCategory = 'http' | 'action' | 'db' | 'cache' | 'policy' | 'kernel';
 
@@ -39,10 +40,6 @@ export interface SpanOptions {
   parentContext?: OtelContext;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Tracer
-// ─────────────────────────────────────────────────────────────
-
 /**
  * Returns the shared tracer instance for the kernel. The actual OTEL SDK /
  * exporter configuration must be done at process bootstrap (e.g. in a
@@ -51,10 +48,6 @@ export interface SpanOptions {
 export function getKernelTracer() {
   return trace.getTracer('aibos-kernel');
 }
-
-// ─────────────────────────────────────────────────────────────
-// Core Span Wrapper
-// ─────────────────────────────────────────────────────────────
 
 /**
  * Generic helper to execute a function within a span and automatically
@@ -101,7 +94,7 @@ export async function withSpan<T>(
         spanName: name,
         category: options.category ?? 'kernel',
       },
-      '[Tracing] span.execution_failed',
+      'span.execution_failed',
     );
 
     throw err;
@@ -109,10 +102,6 @@ export async function withSpan<T>(
     span.end();
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-// Specialized Span Wrappers
-// ─────────────────────────────────────────────────────────────
 
 /**
  * Convenience wrapper for HTTP server spans (e.g. Hono handlers). Use this in
@@ -187,29 +176,6 @@ export async function withCacheSpan<T>(
 }
 
 /**
- * Wraps a policy evaluation in a span.
- */
-export async function withPolicySpan<T>(
-  policyName: string,
-  attributes: SpanAttributes,
-  fn: (span: Span) => Promise<T> | T,
-): Promise<T> {
-  return withSpan(
-    `policy:${policyName}`,
-    {
-      category: 'policy',
-      kind: SpanKind.INTERNAL,
-      attributes,
-    },
-    fn,
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────
-
-/**
  * Expose a simple helper to attach a trace id (if present) to structured
  * logs and downstream systems. This reads the currently active span and
  * pulls its trace id.
@@ -219,16 +185,6 @@ export function getCurrentTraceId(): string | null {
   if (!span) return null;
   const spanContext = span.spanContext();
   return spanContext?.traceId ?? null;
-}
-
-/**
- * Get the current span ID (if present).
- */
-export function getCurrentSpanId(): string | null {
-  const span = trace.getSpan(otelContext.active());
-  if (!span) return null;
-  const spanContext = span.spanContext();
-  return spanContext?.spanId ?? null;
 }
 
 /**
@@ -254,23 +210,10 @@ export function buildHttpSpanAttributes(input: {
   return attrs;
 }
 
-/**
- * Helper to create attributes for action spans.
- */
-export function buildActionSpanAttributes(input: {
-  actionId: string;
-  tenantId?: string | null;
-  principalId?: string;
-}): SpanAttributes {
-  const attrs: SpanAttributes = {
-    'aibos.action.id': input.actionId,
-  };
+// ────────────────────────────────────────────────────────────────────────────────
+// 2) observability/index.ts
+// ────────────────────────────────────────────────────────────────────────────────
 
-  if (input.tenantId) attrs['aibos.tenant.id'] = input.tenantId;
-  if (input.principalId) attrs['aibos.principal.id'] = input.principalId;
-
-  return attrs;
-}
-
-// Re-export SpanKind for convenience
-export { SpanKind, Span, SpanStatusCode } from '@opentelemetry/api';
+export * from './logger';
+export * from './metrics';
+export * from './tracing';
