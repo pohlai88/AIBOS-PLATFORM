@@ -23,11 +23,11 @@ import { registerAuditRoutes } from './routes/audit';
 
 // Extend Hono context variables for kernel-specific data.
 declare module 'hono' {
-  interface ContextVariableMap {
-    principal: import('../auth/types').Principal | null;
-    tenantId: string | null;
-    traceId: string | null;
-  }
+    interface ContextVariableMap {
+        principal: import('../auth/types').Principal | null;
+        tenantId: string | null;
+        traceId: string | null;
+    }
 }
 
 export type KernelApp = Hono;
@@ -40,27 +40,27 @@ export type KernelApp = Hono;
  * routes. This consolidates the previous split between `api/` and `http/`.
  */
 export function createKernelApp(): KernelApp {
-  const app = new Hono();
+    const app = new Hono();
 
-  // Global middlewares
-  app.use('*', traceIdMiddleware);
-  app.use('*', httpMetricsMiddleware);
-  app.use('*', authMiddleware);
+    // Global middlewares
+    app.use('*', traceIdMiddleware);
+    app.use('*', httpMetricsMiddleware);
+    app.use('*', authMiddleware);
 
-  // Health / diagnostics (no auth required for these)
-  registerHealthRoutes(app);
-  registerDiagRoutes(app);
-  registerMetricsRoutes(app);
+    // Health / diagnostics (no auth required for these)
+    registerHealthRoutes(app);
+    registerDiagRoutes(app);
+    registerMetricsRoutes(app);
 
-  // Core kernel domains
-  registerActionRoutes(app);
-  registerEngineRoutes(app);
-  registerUiRoutes(app);
-  registerMetadataRoutes(app);
-  registerTenantRoutes(app);
-  registerAuditRoutes(app);
+    // Core kernel domains
+    registerActionRoutes(app);
+    registerEngineRoutes(app);
+    registerUiRoutes(app);
+    registerMetadataRoutes(app);
+    registerTenantRoutes(app);
+    registerAuditRoutes(app);
 
-  return app;
+    return app;
 }
 
 // For simple deployments, you can expose a default app instance:

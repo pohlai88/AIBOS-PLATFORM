@@ -1,98 +1,65 @@
-import { metadataRegistry } from "../registry/metadata.registry";
-import { engineRegistry } from "../registry/engine.registry";
-import { log } from "../utils/logger";
-import { publishEvent } from "../events/event-bus";
-import { createDbProxy } from "./db.proxy";
-import { createCacheProxy } from "./cache.proxy";
-import { executeInSandbox } from "./sandbox.v2";
-import { checkGlobalLimit } from "../hardening/rate-limit/global.limiter";
-import { checkTenantLimit } from "../hardening/rate-limit/tenant.limiter";
-import { checkEngineLimit } from "../hardening/rate-limit/engine.limiter";
-import { recordEngineError } from "../hardening/rate-limit/circuit-breaker";
-import { emitEngineEvent } from "../audit/emit";
-import { logRateLimit, logSandboxViolation } from "../audit/security.events";
+/**
+ * Sandbox v2 (Slim)
+ *
+ * Minimal, focused sandbox for executing action code safely.
+ * Responsibilities:
+ * - Enforce hard blocks (dangerous constructs)
+ * - Freeze context (prevent mutation)
+ * - Safe execution with error capture
+ * - Freeze output (prevent prototype leaks)
+ *
+ * NOTE: Validation is NOT done here. Use validation/contract.validator.ts
+ * for input/output validation against Zod schemas.
+ */
 
-export async function runAction({
-  engine,
-  action,
-  payload,
-  tenant,
-  user
-}: {
-  engine: string;
-  action: string;
-  payload: any;
-  tenant: string;
-  user: any;
-}) {
-  // Rate limiting (3 layers)
-  checkGlobalLimit();
-  checkTenantLimit(tenant);
-  checkEngineLimit(engine);
+import { enforceHardBlocks } from './guards/hard-blocks';
+import { safeAwait } from '../hardening/guards/safe-await';
 
-  const engineDef = engineRegistry.get(engine);
-  if (!engineDef) {
-    throw new Error(`Engine '${engine}' not found.`);
-  }
-
-  const actionFn = engineDef.actions[action];
-  if (!actionFn) {
-    throw new Error(`Action '${engine}.${action}' not found.`);
-  }
-
-  // Prepare sandbox context (very important)
-  const ctx = {
-    input: payload,
-    tenant,
-    user,
-    metadata: metadataRegistry.models,
-    db: createDbProxy(tenant),
-    cache: createCacheProxy(tenant),
-    emit: (event: string, data: any) =>
-      publishEvent({ type: `${tenant}.${engine}.${event}`, payload: data, tenantId: tenant }),
-    log: (...a: any[]) => log.info(`[${engine}]`, ...a),
-    engineConfig: engineDef.manifest,
-    schema: engineDef.manifest?.actions?.[action]?.schema
-  };
-
-  // Audit: action start
-  emitEngineEvent(engine, "engine.action.start", { action, tenant });
-
-  try {
-    log.info(`▶️ Running action: ${engine}.${action}`);
-
-    // Execute in sandbox v2 (frozen ctx, hard blocks, validation)
-    const result = await executeInSandbox(actionFn, ctx);
-
-    log.info(`✅ Action completed: ${engine}.${action}`);
-
-    // Audit: action success
-    emitEngineEvent(engine, "engine.action.success", { action, tenant });
-
-    return {
-      ok: true,
-      data: result
-    };
-  } catch (err: any) {
-    log.error(`❌ Action failed: ${engine}.${action}`, err);
-
-    // Security audit logging
-    if (err.message.includes("forbidden")) {
-      logSandboxViolation(engine, err.message);
-    }
-    if (err.message.includes("Rate limit")) {
-      logRateLimit(engine, err.message);
-    }
-
-    // Track errors for circuit breaker
-    recordEngineError(engine);
-
-    // Audit: action error
-    emitEngineEvent(engine, "engine.action.error", { action, tenant, error: err.message });
-
-    return {
-      ok: false,
-      error: err.message
-    };
-  }
+export interface SandboxContext {
+  input: unknown;
+  tenantId: string | null;
+  principalId: string | null;
+  metadata?: Record<string, unknown>;
+  db?: unknown;
+  cache?: unknown;
+  emit?: (event: string, data: unknown) => void;
+  log?: (...args: unknown[]) => void;
+  engineConfig?: unknown;
 }
+
+/**
+ * Execute an action function in a sandboxed environment.
+ *
+ * @param actionFn - The action function to execute
+ * @param ctx - The execution context (will be frozen)
+ * @returns The frozen output from the action
+ */
+export async function executeInSandbox<T = unknown>(
+  actionFn: (ctx: SandboxContext) => Promise<T> | T,
+  ctx: SandboxContext,
+): Promise<T> {
+  // 1. Block dangerous constructs in the action function
+  enforceHardBlocks(actionFn);
+
+  // 2. Freeze ctx so actions cannot mutate it
+  const frozenCtx = Object.freeze({ ...ctx });
+
+  // 3. Execute action inside controlled environment
+  const [err, output] = await safeAwait(Promise.resolve(actionFn(frozenCtx)));
+
+  if (err) {
+    throw err;
+  }
+
+  // 4. Freeze output so actions cannot leak prototypes
+  if (output !== null && typeof output === 'object') {
+    return Object.freeze(output) as T;
+  }
+
+  return output as T;
+}
+
+/**
+ * @deprecated Use executeInSandbox instead. This is kept for backward compatibility.
+ */
+export const runInSandbox = executeInSandbox;

@@ -1,8 +1,17 @@
 /**
- * Action Dispatcher
- * 
- * Ties contracts + validation + handler + audit + events together
- * Policy-gated execution with trace-aware logging for full observability
+ * Action Dispatcher v2
+ *
+ * Ties contracts + validation + sandbox + handler + audit + events together.
+ * Policy-gated execution with trace-aware logging for full observability.
+ *
+ * Responsibilities:
+ * - Load ActionContract
+ * - Policy check (before execution)
+ * - Validate input (Zod)
+ * - Execute handler in sandbox
+ * - Validate output (Zod)
+ * - Emit audit + events
+ * - Record metrics
  */
 
 import { ZodTypeAny } from "zod";
@@ -10,6 +19,7 @@ import { contractEngine } from "../contracts/contract-engine";
 import { ActionContract, ZActionContractSchema } from "../contracts/schemas";
 import { zodFromSerializedSchema } from "../contracts/action-schema-runtime";
 import { getActionHandler, ActionContext } from "./action-registry";
+import { executeInSandbox, SandboxContext } from "../security/sandbox";
 import { eventBus } from "../events/event-bus";
 import { auditLogger } from "../audit/audit-logger";
 import { createTraceLogger } from "../observability/logger";
@@ -107,10 +117,18 @@ export class ActionDispatcher {
         throw new ActionHandlerNotFoundError(actionId);
       }
 
-      // 5️⃣ Execute handler
+      // 5️⃣ Execute handler in sandbox
       let rawOutput: unknown;
       try {
-        rawOutput = await handler(ctx, input);
+        const sandboxCtx: SandboxContext = {
+          input,
+          tenantId: tenantId ?? null,
+          principalId: subject ?? null,
+        };
+        rawOutput = await executeInSandbox(
+          async (sCtx) => handler(ctx, sCtx.input),
+          sandboxCtx,
+        );
       } catch (err) {
         const finishedAt = process.hrtime.bigint();
         const durationSec = Number(finishedAt - startedAt) / 1e9;
