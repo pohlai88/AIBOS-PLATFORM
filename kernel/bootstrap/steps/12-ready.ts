@@ -20,7 +20,7 @@ export async function bootReady() {
     tenant: "system",
     timestamp: Date.now()
   });
-  
+
   console.log("🚀 Kernel Ready Event emitted.");
 }
 
