@@ -158,8 +158,8 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
           />
           <span
             className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
+              typographyTokens.sm,
+              colorTokens.fgMuted,
               'px-4 whitespace-nowrap'
             )}
           >

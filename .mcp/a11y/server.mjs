@@ -11,7 +11,8 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { parse } from "@babel/parser";
-import traverse from "@babel/traverse";
+import traverseModule from "@babel/traverse";
+const traverse = traverseModule.default || traverseModule;
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -192,6 +193,8 @@ function hasOnlyIconChildren(path) {
     return true;
   }
 
+  // Refined icon detection: only svg or *Icon components (e.g., ChevronIcon, ArrowIcon)
+  // Removed length <= 3 check which caused false positives
   return children.every((child) => {
     if (
       child.type === "JSXElement" &&
@@ -201,9 +204,8 @@ function hasOnlyIconChildren(path) {
     }
     if (
       child.type === "JSXElement" &&
-      /^[A-Z]/.test(child.openingElement.name.name) &&
-      (child.openingElement.name.name.includes("Icon") ||
-        child.openingElement.name.name.length <= 3)
+      child.openingElement.name?.name &&
+      /^[A-Z].*Icon$/.test(child.openingElement.name.name)
     ) {
       return true;
     }
@@ -353,6 +355,8 @@ async function validateComponent(filePath, componentName) {
         }
 
         // Rule 4: Interactive elements without proper roles
+        // IMPORTANT: Skip table semantic elements (th, td, tr) - they are valid
+        // containers for interactive elements per ARIA APG (e.g., sortable headers)
         const interactiveAttributes = [
           "onClick",
           "onChange",
@@ -366,9 +370,30 @@ async function validateComponent(filePath, componentName) {
             interactiveAttributes.includes(attr.name.name)
         );
 
+        // Table elements (th, td, tr, thead, tbody, tfoot) are valid containers
+        // for interactive children (buttons, inputs) per W3C WAI-ARIA APG
+        const tableSemanticElements = [
+          "th",
+          "td",
+          "tr",
+          "thead",
+          "tbody",
+          "tfoot",
+          "table",
+        ];
+        const nativeInteractiveElements = [
+          "button",
+          "input",
+          "select",
+          "textarea",
+          "a",
+          "summary",
+        ];
+
         if (
           hasInteractive &&
-          !["button", "input", "select", "textarea", "a"].includes(tagName)
+          !nativeInteractiveElements.includes(tagName) &&
+          !tableSemanticElements.includes(tagName)
         ) {
           const hasRole = attributes.some(
             (attr) => attr.type === "JSXAttribute" && attr.name.name === "role"
@@ -498,39 +523,52 @@ async function validateComponent(filePath, componentName) {
         }
 
         // Rule 8: Modals/dialogs must have role="dialog"
-        const hasModalAttributes = attributes.some(
-          (attr) =>
-            attr.type === "JSXAttribute" &&
-            (attr.name.name === "aria-modal" ||
-              attr.name.name === "aria-labelledby" ||
-              (attr.name.name === "className" &&
-                attr.value?.type === "StringLiteral" &&
-                (attr.value.value.includes("modal") ||
-                  attr.value.value.includes("dialog"))))
-        );
+        // Only applies to container elements (div, section, aside, dialog)
+        // NOT to table elements or other semantic elements
+        const modalContainerElements = [
+          "div",
+          "section",
+          "aside",
+          "dialog",
+          "article",
+        ];
 
-        if (hasModalAttributes) {
-          const hasDialogRole = attributes.some(
+        if (modalContainerElements.includes(tagName)) {
+          const hasModalAttributes = attributes.some(
             (attr) =>
               attr.type === "JSXAttribute" &&
-              attr.name.name === "role" &&
-              attr.value?.type === "StringLiteral" &&
-              attr.value.value === "dialog"
+              (attr.name.name === "aria-modal" ||
+                (attr.name.name === "className" &&
+                  attr.value?.type === "StringLiteral" &&
+                  (attr.value.value.includes("modal") ||
+                    attr.value.value.includes("dialog"))))
           );
 
-          if (!hasDialogRole) {
-            violations.push(
-              withGovernanceMetadata(
-                {
-                  type: "missing-dialog-role",
-                  message: "Modal-like element must have role='dialog'",
-                  line,
-                  element: tagName,
-                },
-                "accessibility",
-                "error"
-              )
+          if (hasModalAttributes) {
+            const hasDialogRole = attributes.some(
+              (attr) =>
+                attr.type === "JSXAttribute" &&
+                attr.name.name === "role" &&
+                attr.value?.type === "StringLiteral" &&
+                (attr.value.value === "dialog" ||
+                  attr.value.value === "alertdialog")
             );
+
+            if (!hasDialogRole) {
+              violations.push(
+                withGovernanceMetadata(
+                  {
+                    type: "missing-dialog-role",
+                    message:
+                      "Modal-like element must have role='dialog' or role='alertdialog'",
+                    line,
+                    element: tagName,
+                  },
+                  "accessibility",
+                  "error"
+                )
+              );
+            }
           }
         }
 

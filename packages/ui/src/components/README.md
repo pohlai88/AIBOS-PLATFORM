@@ -1,55 +1,50 @@
-# AI-BOS UI Components
+# Components
 
-This folder contains the **design-system compliant UI primitives** for AI-BOS.
+**React 19 RSC + Next.js 16 App Router Architecture**
 
-All components must follow:
+## Directory Structure
 
-- **Tailwind v4**
-- **globals.css** (runtime design tokens via CSS variables)
-- **src/design/tokens.ts** (TypeScript token mapping)
-- **Radix UI primitives** for behavior and accessibility (when needed)
+```
+components/
+├── server/          # Server Components (RSC)
+│   ├── layout/      # Header, Navigation, Sidebar, ContentArea, Footer
+│   ├── data/        # AsyncBoundary, ServerTable, DataList, DataGrid
+│   └── display/     # StaticCard, InfoPanel, StatBanner, etc.
+│
+├── client/          # Client Components ('use client')
+│   ├── compositions/  # Layer 2: Radix UI based
+│   └── functional/    # Layer 3: Data-driven components
+│
+└── shared/          # Universal Components
+    ├── primitives/  # Button, Input, Card, Badge, etc.
+    └── typography/  # Text, Heading, Link, Code
+```
 
-No app code should import `@radix-ui/react-*` directly.  
-App code imports **only from `components/ui`**.
+## Import Patterns
 
----
+```tsx
+// Server (zero client JS)
+import { Header, Footer } from "@aibos/ui/server";
 
-## 1. Design Tokens
+// Client (interactive)
+import { Dialog, Tabs } from "@aibos/ui/client";
 
-There are two layers of tokens:
+// Shared (universal)
+import { Button, Input } from "@aibos/ui/shared";
+```
 
-1. **CSS tokens** in `app/globals.css`
-   - Colors: `--color-bg`, `--color-primary`, `--color-success`, etc.
-   - Radii: `--radius-sm`, `--radius-lg`, etc.
-   - Shadows: `--shadow-sm`, `--shadow-md`, etc.
-   - Light/dark modes via `:root` and `:root[data-mode="dark"], :root.dark`.
+## Component Categories
 
-2. **TypeScript tokens** in `src/design/tokens.ts`
-   - `colorTokens` – surface + brand utilities (`bg-bg`, `bg-primary`, etc.)
-   - `accessibilityTokens` – text-on-surface pairs (`text-primary-foreground`, etc.)
-   - `radiusTokens`, `shadowTokens`, `spacingTokens`, `typographyTokens`
-   - `componentTokens` – ready presets:
-     - `buttonPrimary`, `buttonSecondary`, `buttonGhost`
-     - `card`, `badgePrimary`, `badgeMuted`
+| Category | Location         | Use Case                    |
+| -------- | ---------------- | --------------------------- |
+| Server   | `./server/`      | Static content, data fetch  |
+| Client   | `./client/`      | Interactive, state, hooks   |
+| Shared   | `./shared/`      | Works in both environments  |
 
-All visual styling must be expressed via these tokens.
+## MCP Validation
 
----
-
-## 2. Styling Rules
-
-**✅ Allowed:**
-
-- Import tokens:
-
-  ```ts
-  import {
-    colorTokens,
-    accessibilityTokens,
-    radiusTokens,
-    shadowTokens,
-    spacingTokens,
-    typographyTokens,
-    componentTokens,
-  } from '@/design/tokens'
-  ```
+All components pass:
+- RSC boundary validation
+- Token compliance
+- WCAG accessibility
+- Naming conventions

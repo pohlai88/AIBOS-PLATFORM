@@ -33,3 +33,23 @@ export type {
   HeadingSize,
   HeadingWeight,
 } from './heading'
+
+export { MutedText, mutedTextVariants } from './muted-text'
+export type {
+  MutedTextAlign,
+  MutedTextProps,
+  MutedTextSize,
+  MutedTextWeight,
+} from './muted-text'
+
+export { Code, codeVariants } from './code'
+export type { CodeProps, CodeSize, CodeVariant } from './code'
+
+export { Link, linkVariants } from './link'
+export type {
+  LinkProps,
+  LinkSize,
+  LinkUnderline,
+  LinkVariant,
+  LinkWeight,
+} from './link'

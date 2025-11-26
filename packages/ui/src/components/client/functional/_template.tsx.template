@@ -1,0 +1,181 @@
+/**
+ * [COMPONENT_NAME] Component - Layer 3 Functional Component
+ *
+ * Enterprise functional component using [LIBRARY_NAME].
+ * NO Radix UI - uses React-first headless library.
+ *
+ * @module [COMPONENT_NAME]
+ * @layer 3
+ * @category [CATEGORY]
+ * @library [LIBRARY_NAME]
+ * @mcp-validated true
+ * @wcag-compliant AA/AAA
+ */
+
+'use client'
+
+import * as React from 'react'
+
+// ============================================================================
+// 🎯 STEP 1: Import headless library (NOT Radix)
+// ============================================================================
+// For Data Tables: import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
+// For Charts: import { LineChart, Line, XAxis, YAxis } from 'recharts'
+// For Graphs: import { ReactFlow, useNodesState, useEdgesState } from 'reactflow'
+// For Editors: import { useEditor, EditorContent } from '@tiptap/react'
+
+// ============================================================================
+// 🎯 STEP 2: Import design tokens (MANDATORY - no raw colors)
+// ============================================================================
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  spacingTokens,
+  typographyTokens,
+} from '../../../../design/tokens/tokens'
+import { cn } from '../../../../design/utilities/cn'
+
+// ============================================================================
+// 🎯 STEP 3: Import types
+// ============================================================================
+import type { [COMPONENT_NAME]Props } from './[COMPONENT_NAME_LOWER].types'
+
+// ============================================================================
+// 🎯 STEP 4: Define variant system (token-based only)
+// ============================================================================
+const [COMPONENT_NAME_LOWER]Variants = {
+  base: [
+    'relative',
+    'w-full',
+    colorTokens.bgElevated,
+    colorTokens.fg,
+    radiusTokens.lg,
+    'mcp-functional-component',
+  ].join(' '),
+  
+  variants: {
+    size: {
+      sm: [spacingTokens.sm, typographyTokens.sm].join(' '),
+      md: [spacingTokens.md, typographyTokens.base].join(' '),
+      lg: [spacingTokens.lg, typographyTokens.lg].join(' '),
+    },
+    variant: {
+      default: [colorTokens.bgElevated, colorTokens.border].join(' '),
+      bordered: [`border ${colorTokens.border}`, shadowTokens.sm].join(' '),
+      elevated: [colorTokens.bgElevated, shadowTokens.md].join(' '),
+    },
+  },
+}
+
+// ============================================================================
+// 🎯 STEP 5: Main Component Implementation
+// ============================================================================
+export const [COMPONENT_NAME] = React.forwardRef<
+  HTMLDivElement,
+  [COMPONENT_NAME]Props
+>(
+  (
+    {
+      className,
+      size = 'md',
+      variant = 'default',
+      testId,
+      // Library-specific props
+      data,
+      columns,
+      ...props
+    },
+    ref
+  ) => {
+    // ========================================================================
+    // 🎯 STEP 6: Initialize headless library hook
+    // ========================================================================
+    // Example for TanStack Table:
+    // const table = useReactTable({
+    //   data,
+    //   columns,
+    //   getCoreRowModel: getCoreRowModel(),
+    // })
+
+    // ========================================================================
+    // 🎯 STEP 7: Build accessibility props (MANDATORY)
+    // ========================================================================
+    const accessibilityProps = {
+      'data-testid': testId,
+      'data-mcp-validated': 'true',
+      'data-constitution-compliant': 'layer3-functional',
+      'data-layer': '3',
+      'data-library': '[LIBRARY_NAME]',
+      // ARIA roles for data components
+      role: 'region',
+      'aria-label': '[COMPONENT_NAME] component',
+    }
+
+    // ========================================================================
+    // 🎯 STEP 8: Render with token-based styling
+    // ========================================================================
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          [COMPONENT_NAME_LOWER]Variants.base,
+          [COMPONENT_NAME_LOWER]Variants.variants.size[size],
+          [COMPONENT_NAME_LOWER]Variants.variants.variant[variant],
+          className
+        )}
+        {...accessibilityProps}
+        {...props}
+      >
+        {/* 
+          🎯 STEP 9: Implement library-specific rendering
+          
+          For Tables:
+          <table className={cn(colorTokens.bgElevated, 'w-full')}>
+            <thead>...</thead>
+            <tbody>...</tbody>
+          </table>
+          
+          For Charts:
+          <LineChart data={data} style={{ color: 'var(--color-primary)' }}>
+            <Line stroke="var(--color-primary)" />
+          </LineChart>
+          
+          For Graphs:
+          <ReactFlow nodes={nodes} edges={edges} />
+        */}
+        
+        {/* Placeholder - replace with actual implementation */}
+        <div className="p-4 text-center text-muted-foreground">
+          [COMPONENT_NAME] - Layer 3 Functional Component
+        </div>
+      </div>
+    )
+  }
+)
+
+[COMPONENT_NAME].displayName = '[COMPONENT_NAME]'
+
+// ============================================================================
+// 🎯 STEP 10: Export types and variants
+// ============================================================================
+export type { [COMPONENT_NAME]Props }
+export { [COMPONENT_NAME_LOWER]Variants }
+export default [COMPONENT_NAME]
+
+// ============================================================================
+// 🎯 LAYER 3 COMPLIANCE CHECKLIST
+// ============================================================================
+// ✅ 'use client' directive at top
+// ✅ NO Radix UI imports (uses headless library)
+// ✅ Design tokens used exclusively (no raw colors)
+// ✅ forwardRef + displayName required
+// ✅ TypeScript interfaces for type safety
+// ✅ ARIA roles and accessibility attributes
+// ✅ MCP validation markers included
+// ✅ Token-based variant system
+// ✅ Keyboard navigation support
+// ✅ Screen reader compatibility
+// ✅ WCAG AA/AAA compliance
+// ✅ Performance optimized (virtualization if needed)
+

@@ -41,22 +41,22 @@ const toggleVariants = {
     variant: {
       default: [
         `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.primarySoftSurface}]`,
+        `checked:bg-[${colorTokens.primarySoft}]`,
       ].join(' '),
 
       primary: [
         `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.primarySoftSurface}]`,
+        `checked:bg-[${colorTokens.primarySoft}]`,
       ].join(' '),
 
       success: [
         `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.successSoftSurface}]`,
+        `checked:bg-[${colorTokens.successSoft}]`,
       ].join(' '),
 
       danger: [
         `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.dangerSoftSurface}]`,
+        `checked:bg-[${colorTokens.dangerSoft}]`,
       ].join(' '),
     },
     size: {
@@ -90,12 +90,12 @@ const labelVariants = {
     'inline-flex items-center gap-2',
     'cursor-pointer',
     'select-none',
-    colorTokens.text,
+    colorTokens.fg,
   ].join(' '),
   size: {
-    sm: typographyTokens.bodySm,
-    md: typographyTokens.bodyMd,
-    lg: typographyTokens.headingMd,
+    sm: typographyTokens.sm,
+    md: typographyTokens.base,
+    lg: typographyTokens.h5,
   },
 }
 
@@ -274,8 +274,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             // Error state styling
             error &&
               [
-                `border-2 border-[${colorTokens.dangerSoftSurface}]`,
-                `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
+                `border-2 border-[${colorTokens.dangerSoft}]`,
+                `focus-visible:ring-[${colorTokens.dangerSoft}]`,
               ].join(' '),
             // Focus styling (WCAG 2.1 required)
             'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
@@ -309,8 +309,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             <span
               id={`${toggleId}-helper`}
               className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
+                typographyTokens.sm,
+                colorTokens.fgMuted,
                 'mt-1'
               )}
             >
@@ -323,8 +323,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             <span
               id={`${toggleId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`,
+                typographyTokens.sm,
+                `text-[${colorTokens.dangerSoft}]`,
                 'mt-1'
               )}
               role="alert"
@@ -356,8 +356,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
           <span
             id={`${toggleId}-helper`}
             className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
+              typographyTokens.sm,
+              colorTokens.fgMuted,
               'ml-14'
             )}
           >
@@ -370,8 +370,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
           <span
             id={`${toggleId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`,
+              typographyTokens.sm,
+              `text-[${colorTokens.dangerSoft}]`,
               'ml-14'
             )}
             role="alert"

@@ -1,10 +1,9 @@
 {
   "name": "@aibos/ui",
-  "description": "AI-BOS UI Component Library with MCP Integration",
-  "version": "0.1.0",
+  "description": "AI-BOS UI Component Library - React 19 RSC + Next.js 16 App Router",
+  "version": "2.0.0",
   "author": "AI-BOS Team",
   "dependencies": {
-    "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@radix-ui/react-accessible-icon": "^1.1.8",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -20,8 +19,6 @@
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-menubar": "^1.1.16",
     "@radix-ui/react-navigation-menu": "^1.2.14",
-    "@radix-ui/react-one-time-password-field": "^0.1.8",
-    "@radix-ui/react-password-toggle-field": "^0.1.3",
     "@radix-ui/react-popover": "^1.1.15",
     "@radix-ui/react-progress": "^1.1.8",
     "@radix-ui/react-radio-group": "^1.3.8",
@@ -34,11 +31,10 @@
     "@radix-ui/react-toast": "^1.2.15",
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
-    "@radix-ui/react-toolbar": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@radix-ui/react-visually-hidden": "^1.2.4",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "@tanstack/react-table": "^8.21.3",
+    "recharts": "^3.5.0"
   },
   "devDependencies": {
     "@aibos/config-eslint": "0.1.0",
@@ -53,106 +49,65 @@
   },
   "exports": {
     ".": {
-      "types": "./src/design/index.ts",
-      "default": "./src/design/index.ts"
+      "types": "./src/components/index.ts",
+      "default": "./src/components/index.ts"
+    },
+    "./server": {
+      "types": "./src/components/server/index.ts",
+      "default": "./src/components/server/index.ts"
+    },
+    "./server/layout": {
+      "types": "./src/components/server/layout/index.ts",
+      "default": "./src/components/server/layout/index.ts"
+    },
+    "./server/data": {
+      "types": "./src/components/server/data/index.ts",
+      "default": "./src/components/server/data/index.ts"
+    },
+    "./server/display": {
+      "types": "./src/components/server/display/index.ts",
+      "default": "./src/components/server/display/index.ts"
+    },
+    "./client": {
+      "types": "./src/components/client/index.ts",
+      "default": "./src/components/client/index.ts"
+    },
+    "./client/compositions": {
+      "types": "./src/components/client/compositions/index.ts",
+      "default": "./src/components/client/compositions/index.ts"
+    },
+    "./client/functional": {
+      "types": "./src/components/client/functional/index.ts",
+      "default": "./src/components/client/functional/index.ts"
+    },
+    "./shared": {
+      "types": "./src/components/shared/index.ts",
+      "default": "./src/components/shared/index.ts"
+    },
+    "./shared/primitives": {
+      "types": "./src/components/shared/primitives/index.ts",
+      "default": "./src/components/shared/primitives/index.ts"
+    },
+    "./shared/typography": {
+      "types": "./src/components/shared/typography/index.ts",
+      "default": "./src/components/shared/typography/index.ts"
     },
     "./design": {
       "types": "./src/design/index.ts",
       "default": "./src/design/index.ts"
     },
-    "./design/server": {
-      "types": "./src/design/tokens/server.ts",
-      "default": "./src/design/tokens/server.ts"
-    },
-    "./design/client": {
-      "types": "./src/design/tokens/client.ts",
-      "default": "./src/design/tokens/client.ts"
-    },
-    "./design/globals.css": "./src/design/tokens/globals.css",
     "./design/tokens": {
       "types": "./src/design/tokens/tokens.ts",
       "default": "./src/design/tokens/tokens.ts"
     },
+    "./design/globals.css": "./src/design/tokens/globals.css",
     "./design/utilities": {
       "types": "./src/design/utilities/index.ts",
       "default": "./src/design/utilities/index.ts"
-    },
-    "./components": {
-      "types": "./src/components/index.ts",
-      "default": "./src/components/index.ts"
-    },
-    "./components/server": {
-      "types": "./src/components/server/index.ts",
-      "default": "./src/components/server/index.ts"
-    },
-    "./components/server/data": {
-      "types": "./src/components/server/data/index.ts",
-      "default": "./src/components/server/data/index.ts"
-    },
-    "./components/server/display": {
-      "types": "./src/components/server/display/index.ts",
-      "default": "./src/components/server/display/index.ts"
-    },
-    "./components/server/layout": {
-      "types": "./src/components/server/layout/index.ts",
-      "default": "./src/components/server/layout/index.ts"
-    },
-    "./components/client": {
-      "types": "./src/components/client/index.ts",
-      "default": "./src/components/client/index.ts"
-    },
-    "./components/client/interactive": {
-      "types": "./src/components/client/interactive/index.ts",
-      "default": "./src/components/client/interactive/index.ts"
-    },
-    "./components/client/forms": {
-      "types": "./src/components/client/forms/index.ts",
-      "default": "./src/components/client/forms/index.ts"
-    },
-    "./components/client/providers": {
-      "types": "./src/components/client/providers/index.ts",
-      "default": "./src/components/client/providers/index.ts"
-    },
-    "./components/shared": {
-      "types": "./src/components/shared/index.ts",
-      "default": "./src/components/shared/index.ts"
-    },
-    "./components/shared/primitives": {
-      "types": "./src/components/shared/primitives/index.ts",
-      "default": "./src/components/shared/primitives/index.ts"
-    },
-    "./components/shared/typography": {
-      "types": "./src/components/shared/typography/index.ts",
-      "default": "./src/components/shared/typography/index.ts"
-    },
-    "./mcp": {
-      "types": "./mcp/index.ts",
-      "default": "./mcp/index.ts"
-    },
-    "./mcp/hooks": {
-      "types": "./mcp/hooks/index.ts",
-      "default": "./mcp/hooks/index.ts"
-    },
-    "./mcp/providers": {
-      "types": "./mcp/providers/index.ts",
-      "default": "./mcp/providers/index.ts"
-    },
-    "./mcp/components": {
-      "types": "./mcp/components/index.ts",
-      "default": "./mcp/components/index.ts"
-    },
-    "./mcp/tools": {
-      "types": "./mcp/tools/index.ts",
-      "default": "./mcp/tools/index.ts"
-    },
-    "./mcp/types": {
-      "types": "./mcp/types/mcp.ts",
-      "default": "./mcp/types/mcp.ts"
     }
   },
   "files": [
     "src",
-    "mcp",
     "README.md",
     "package.json"
   ],
@@ -162,11 +117,12 @@
     "mcp",
     "nextjs",
     "react",
+    "rsc",
     "ui"
   ],
   "license": "MIT",
-  "main": "./src/design/index.ts",
-  "module": "./src/design/index.ts",
+  "main": "./src/components/index.ts",
+  "module": "./src/components/index.ts",
   "packageManager": "pnpm@8.15.0",
   "peerDependencies": {
     "react": "19.2.0",
@@ -186,16 +142,13 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --config ../../eslint.config.mjs",
     "lint:fix": "eslint . --config ../../eslint.config.mjs --fix",
-    "test:exports": "node test-exports.mjs",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch",
-    "validate": "npm run type-check && npm run test:exports",
-    "validate:full": "npm run type-check && npm run test:exports && npm run lint && npm run format:check"
+    "type-check:watch": "tsc --noEmit --watch"
   },
   "sideEffects": [
     "*.css",
     "./src/design/tokens/globals.css",
     "./src/design/themes/*.css"
   ],
-  "types": "./src/design/index.ts"
+  "types": "./src/components/index.ts"
 }

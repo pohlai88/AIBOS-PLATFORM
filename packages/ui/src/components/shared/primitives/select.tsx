@@ -41,29 +41,29 @@ const selectVariants = {
     variant: {
       default: [
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.border}`,
         radiusTokens.md,
       ].join(' '),
 
       filled: [
         colorTokens.bgMuted,
-        colorTokens.text,
+        colorTokens.fg,
         'border-0',
         radiusTokens.md,
       ].join(' '),
 
       outlined: [
         'bg-transparent',
-        colorTokens.text,
+        colorTokens.fg,
         `border-2 ${colorTokens.border}`,
         radiusTokens.md,
       ].join(' '),
     },
     size: {
-      sm: [spacingTokens.sm, typographyTokens.bodySm, 'h-9'].join(' '),
-      md: [spacingTokens.md, typographyTokens.bodyMd, 'h-11'].join(' '),
-      lg: [spacingTokens.lg, typographyTokens.headingMd, 'h-13'].join(' '),
+      sm: [spacingTokens.sm, typographyTokens.sm, 'h-9'].join(' '),
+      md: [spacingTokens.md, typographyTokens.base, 'h-11'].join(' '),
+      lg: [spacingTokens.lg, typographyTokens.h5, 'h-13'].join(' '),
     },
   },
 }
@@ -240,15 +240,15 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <label
             htmlFor={selectId}
             className={cn(
-              typographyTokens.bodySm,
+              typographyTokens.sm,
               'font-medium',
-              colorTokens.text,
+              colorTokens.fg,
               disabled && 'opacity-50'
             )}
           >
             {label}
             {required && (
-              <span className={`text-[${colorTokens.dangerSoftSurface}] ml-1`}>
+              <span className={`text-[${colorTokens.dangerSoft}] ml-1`}>
                 *
               </span>
             )}
@@ -271,9 +271,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               // Error state styling
               error &&
                 [
-                  `border-[${colorTokens.dangerSoftSurface}]`,
-                  `focus:border-[${colorTokens.dangerSoftSurface}]`,
-                  `focus:ring-[${colorTokens.dangerSoftSurface}]`,
+                  `border-[${colorTokens.dangerSoft}]`,
+                  `focus:border-[${colorTokens.dangerSoft}]`,
+                  `focus:ring-[${colorTokens.dangerSoft}]`,
                 ].join(' '),
               // Focus styling (WCAG 2.1 required)
               'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
@@ -298,7 +298,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             className={cn(
               'absolute top-1/2 right-3 -translate-y-1/2',
               'pointer-events-none',
-              colorTokens.textMuted
+              colorTokens.fgMuted
             )}
             aria-hidden="true"
           >
@@ -324,7 +324,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {!error && helperText && (
           <span
             id={`${selectId}-helper`}
-            className={cn(typographyTokens.bodySm, colorTokens.textMuted)}
+            className={cn(typographyTokens.sm, colorTokens.fgMuted)}
           >
             {helperText}
           </span>
@@ -334,8 +334,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <span
             id={`${selectId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`
+              typographyTokens.sm,
+              `text-[${colorTokens.dangerSoft}]`
             )}
             role="alert"
           >

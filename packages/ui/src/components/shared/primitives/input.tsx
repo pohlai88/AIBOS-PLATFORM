@@ -121,11 +121,11 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
      */
     const baseStyles = cn(
       // Typography - semantic font sizing
-      typographyTokens.bodySm,
+      typographyTokens.sm,
 
       // Colors - elevated background with border
       `bg-[${colorTokens.bgElevated}]`,
-      `text-[${colorTokens.text}]`,
+      `text-[${colorTokens.fg}]`,
       `border border-[${colorTokens.border}]`,
 
       // Spacing - comfortable input padding
@@ -138,14 +138,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       'transition-colors duration-200',
 
       // Placeholder - muted color
-      `placeholder:text-[${colorTokens.textMuted}]`,
+      `placeholder:text-[${colorTokens.fgMuted}]`,
 
       // Focus - WCAG 2.1 compliant focus indicator
       'focus:outline-none',
       'focus-visible:ring-2',
       'focus-visible:ring-ring',
       'focus-visible:ring-offset-2',
-      `focus-visible:border-[${colorTokens.primarySoftSurface}]`,
+      `focus-visible:border-[${colorTokens.primarySoft}]`,
 
       // Disabled - reduced opacity and no pointer events
       disabled && ['opacity-50', 'cursor-not-allowed']
@@ -169,9 +169,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       default: '',
       error: cn(
         // Error colors
-        `border-[${colorTokens.dangerSoftSurface}]`,
-        `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
-        `focus-visible:border-[${colorTokens.dangerSoftSurface}]`
+        `border-[${colorTokens.dangerSoft}]`,
+        `focus-visible:ring-[${colorTokens.dangerSoft}]`,
+        `focus-visible:border-[${colorTokens.dangerSoft}]`
       ),
     }
 
@@ -184,6 +184,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={id}
           disabled={disabled}
+          aria-label={props['aria-label'] || props.placeholder || 'Input field'}
           aria-invalid={error || ariaInvalid}
           aria-describedby={describedBy}
           className={cn(
@@ -203,8 +204,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               'text-xs',
               `mt-[${spacingTokens.xs}]`,
               error
-                ? `text-[${colorTokens.dangerSoftSurface}]`
-                : `text-[${colorTokens.textMuted}]`
+                ? `text-[${colorTokens.dangerSoft}]`
+                : `text-[${colorTokens.fgMuted}]`
             )}
             role={error ? 'alert' : undefined}
           >

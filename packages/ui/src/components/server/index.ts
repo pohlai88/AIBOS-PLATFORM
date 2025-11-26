@@ -1,27 +1,18 @@
 /**
- * Server Components - RSC Optimized
+ * Server Components - React 19 RSC Compliant
  *
- * Components that run exclusively on the server
- * - No 'use client' directive
- * - No browser APIs
- * - No event handlers
- * - No React hooks
- * - Async components allowed
- * - Direct data fetching allowed
+ * All components in this module are Server Components by default.
+ * NO 'use client' directive - runs exclusively on the server.
+ *
+ * @version 1.0.0
+ * @architecture Next.js 16 App Router RSC
  */
 
-// Data-fetching components
-export * from './data'
-
-// Static display components
-export * from './display'
-
-// Layout components
+// Layout Components
 export * from './layout'
 
-// Note: Components will be built incrementally
-// Each component will be:
-// - RSC-safe by default
-// - MCP-validated
-// - Token-compliant
-// - Type-safe
+// Data Components
+export * from './data'
+
+// Display Components
+export * from './display'

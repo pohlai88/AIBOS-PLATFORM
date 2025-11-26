@@ -43,43 +43,43 @@ const surfaceVariants = {
       default: [
         // Neutral surface primitive
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.borderSubtle}`,
       ].join(' '),
 
       elevated: [
         // Elevated surface with shadow
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         shadowTokens.md,
       ].join(' '),
 
       outlined: [
         // Outlined surface
         colorTokens.bg,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.border}`,
       ].join(' '),
 
       ghost: [
         // Minimal ghost surface
         'bg-transparent',
-        colorTokens.text,
+        colorTokens.fg,
         'border border-transparent',
       ].join(' '),
     },
     size: {
       // Uses documented spacing + typography + radius tokens
-      sm: [spacingTokens.sm, typographyTokens.bodySm, radiusTokens.sm].join(
+      sm: [spacingTokens.sm, typographyTokens.sm, radiusTokens.sm].join(
         ' '
       ),
-      md: [spacingTokens.md, typographyTokens.bodyMd, radiusTokens.md].join(
+      md: [spacingTokens.md, typographyTokens.base, radiusTokens.md].join(
         ' '
       ),
-      lg: [spacingTokens.lg, typographyTokens.bodyMd, radiusTokens.lg].join(
+      lg: [spacingTokens.lg, typographyTokens.base, radiusTokens.lg].join(
         ' '
       ),
-      xl: [spacingTokens.lg, typographyTokens.headingSm, radiusTokens.xl].join(
+      xl: [spacingTokens.lg, typographyTokens.h6, radiusTokens.xl].join(
         ' '
       ),
     },

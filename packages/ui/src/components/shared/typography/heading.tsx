@@ -50,14 +50,14 @@ const headingVariants = {
     },
     // Visual size override (independent of semantic level)
     size: {
-      xs: typographyTokens.headingSm, // 14px font-semibold
-      sm: typographyTokens.headingMd, // 16px font-semibold
-      md: typographyTokens.headingLg, // 18px font-semibold
+      xs: typographyTokens.h6, // 14px font-semibold
+      sm: typographyTokens.h5, // 16px font-semibold
+      md: typographyTokens.h4, // 18px font-semibold
       lg: 'text-xl font-semibold leading-normal', // 20px
       xl: 'text-2xl font-semibold leading-normal', // 24px
       '2xl': 'text-3xl font-semibold leading-tight', // 30px
       '3xl': 'text-4xl font-semibold leading-tight', // 36px
-      '4xl': typographyTokens.display, // 48px font-bold (display/hero)
+      '4xl': typographyTokens.displayLg, // 48px font-bold (display/hero)
     },
     weight: {
       normal: 'font-normal',
@@ -66,9 +66,9 @@ const headingVariants = {
       bold: 'font-bold',
     },
     color: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      subtle: colorTokens.textSubtle,
+      default: colorTokens.fg,
+      muted: colorTokens.fgMuted,
+      subtle: colorTokens.fgSubtle,
       primary: 'text-primary',
       success: 'text-success',
       warning: 'text-warning',

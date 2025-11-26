@@ -181,7 +181,7 @@ export type {
  * @rsc-boundary server-safe
  * @constitution-governed true
  */
-export { tokenHelpers } from '../src/design/utilities/token-helpers'
+export * as tokenHelpers from '../src/design/utilities/token-helpers'
 
 /**
  * Class Name Utility - Enhanced with array support and validation

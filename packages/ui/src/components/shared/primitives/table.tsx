@@ -24,7 +24,7 @@ type TableSize = 'sm' | 'md' | 'lg'
 const tableVariants = {
   base: [
     'w-full caption-bottom',
-    typographyTokens.bodySm,
+    typographyTokens.sm,
     'mcp-shared-component',
   ].join(' '),
   variants: {
@@ -219,7 +219,7 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
       ref={ref}
       className={cn(
         'h-12 px-4 text-left align-middle font-medium',
-        colorTokens.textMuted,
+        colorTokens.fgMuted,
         '[&:has([role=checkbox])]:pr-0',
         className
       )}
@@ -258,7 +258,7 @@ export const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn('mt-4 text-sm', colorTokens.textMuted, className)}
+    className={cn('mt-4 text-sm', colorTokens.fgMuted, className)}
     {...props}
   />
 ))

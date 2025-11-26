@@ -1,0 +1,9 @@
+{
+  "minFontSize": 12,
+  "recommendedFontSize": 14,
+  "modularScale": 1.25,
+  "allowedWeights": [400, 500, 600],
+  "lineHeightRange": { "min": 1.2, "max": 1.6 },
+  "maxHeadingJump": 1
+}
+

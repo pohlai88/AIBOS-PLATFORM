@@ -1,0 +1,7 @@
+{
+  "minButtonPaddingY": 8,
+  "minButtonPaddingX": 12,
+  "allowedIconSizes": [14, 16, 20, 24, 32],
+  "allowedRadius": [2, 4, 6, 8, 12]
+}
+

@@ -1,0 +1,379 @@
+# =============================================================================
+# AI-BOS Accessibility Constitution
+# =============================================================================
+# Version: 1.0.0
+# Last Updated: 2025-01-27
+# Status: ✅ SSOT - Single Source of Truth
+# Domain: Accessibility (WCAG 2.1 AA/AAA)
+# =============================================================================
+
+version: "1.0.0"
+name: "AIBOS Accessibility Constitution"
+description: |
+  Machine-enforceable accessibility rules for React components.
+  Aligned with WCAG 2.1 AA/AAA, WAI-ARIA APG 1.2, and W3C standards.
+
+# =============================================================================
+# RULE CATEGORIES
+# =============================================================================
+
+rules:
+  # ---------------------------------------------------------------------------
+  # TABLE ACCESSIBILITY (A11Y-TABLE-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-TABLE-001
+    name: "Table Semantic Elements"
+    description: |
+      Table semantic elements (th, td, tr, thead, tbody, tfoot) may contain
+      interactive descendants (buttons, inputs) without requiring roles or
+      tabIndex on the parent element. This is the correct W3C WAI-ARIA APG
+      pattern for sortable table headers.
+    applies_to:
+      - th
+      - td
+      - tr
+      - thead
+      - tbody
+      - tfoot
+      - table
+    action: ignore_interactive_children
+    severity: info
+    wcag_reference: "1.3.1 Info and Relationships (Level A)"
+    aria_apg_reference: "Table Pattern"
+    example_correct: |
+      <th scope="col">
+        <button aria-sort="ascending" aria-label="Sort by Name">
+          Name ↑
+        </button>
+      </th>
+    example_incorrect: |
+      <!-- WRONG: tabIndex on th -->
+      <th scope="col" tabIndex={0} onClick={handleSort}>
+        Name
+      </th>
+
+  - id: A11Y-TABLE-002
+    name: "Table Region Landmark"
+    description: |
+      Complex data tables should be wrapped in a region landmark with
+      an accessible label for screen reader navigation.
+    applies_to:
+      - div[role="region"]
+    action: recommend_region_wrapper
+    severity: warning
+    wcag_reference: "1.3.1 Info and Relationships (Level A)"
+    example_correct: |
+      <div role="region" aria-label="User data table">
+        <table>...</table>
+      </div>
+
+  - id: A11Y-TABLE-003
+    name: "Sortable Column Indicators"
+    description: |
+      Sortable columns must use aria-sort attribute and provide both
+      visual and screen reader indicators for sort state.
+    applies_to:
+      - th[aria-sort]
+      - button[aria-sort]
+    action: require_sort_announcement
+    severity: error
+    wcag_reference: "4.1.2 Name, Role, Value (Level A)"
+    example_correct: |
+      <button aria-sort="ascending" aria-label="Sort by Name">
+        Name
+        <span aria-hidden="true">↑</span>
+        <span className="sr-only">Sorted ascending</span>
+      </button>
+
+  # ---------------------------------------------------------------------------
+  # BUTTON ACCESSIBILITY (A11Y-BUTTON-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-BUTTON-001
+    name: "Icon-Only Button Labels"
+    description: |
+      Buttons containing only icons (no visible text) MUST have aria-label
+      or aria-labelledby for screen reader accessibility.
+    applies_to:
+      - button
+      - a[role="button"]
+    action: require_label_for_icon_only
+    severity: error
+    wcag_reference: "4.1.2 Name, Role, Value (Level A)"
+    example_correct: |
+      <button aria-label="Close dialog">
+        <CloseIcon />
+      </button>
+    example_incorrect: |
+      <!-- WRONG: No accessible name -->
+      <button>
+        <CloseIcon />
+      </button>
+
+  - id: A11Y-BUTTON-002
+    name: "Button Type Attribute"
+    description: |
+      All button elements should have explicit type attribute to prevent
+      unexpected form submission behavior.
+    applies_to:
+      - button
+    action: require_type_attribute
+    severity: warning
+    example_correct: |
+      <button type="button" onClick={handleClick}>Click</button>
+      <button type="submit">Submit</button>
+
+  # ---------------------------------------------------------------------------
+  # MODAL/DIALOG ACCESSIBILITY (A11Y-MODAL-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-MODAL-001
+    name: "Modal Container Elements"
+    description: |
+      Modal/dialog rules apply ONLY to modal container elements.
+      Table elements, list items, and other semantic elements are excluded.
+    applies_to:
+      - div
+      - section
+      - aside
+      - dialog
+      - article
+    excludes:
+      - th
+      - td
+      - tr
+      - li
+      - ul
+      - ol
+    action: require_dialog_role_if_modal
+    severity: error
+    wcag_reference: "4.1.2 Name, Role, Value (Level A)"
+
+  - id: A11Y-MODAL-002
+    name: "Dialog Role and Modal State"
+    description: |
+      Modal dialogs must have role="dialog" or role="alertdialog" and
+      aria-modal="true" for proper screen reader behavior.
+    applies_to:
+      - "[aria-modal='true']"
+      - ".modal"
+      - ".dialog"
+    action: require_dialog_role
+    severity: error
+    wcag_reference: "4.1.2 Name, Role, Value (Level A)"
+    aria_apg_reference: "Dialog (Modal) Pattern"
+    example_correct: |
+      <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+        <h2 id="dialog-title">Confirm Action</h2>
+        ...
+      </div>
+
+  # ---------------------------------------------------------------------------
+  # INTERACTIVE ELEMENT ACCESSIBILITY (A11Y-INTERACTIVE-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-INTERACTIVE-001
+    name: "Non-Semantic Interactive Elements"
+    description: |
+      Non-semantic elements (div, span) with interactive handlers MUST
+      include role and tabIndex for keyboard accessibility.
+      Native interactive elements (button, input, a) are exempt.
+    applies_to:
+      - div
+      - span
+      - li
+    excludes:
+      - button
+      - input
+      - select
+      - textarea
+      - a
+      - summary
+      - th
+      - td
+      - tr
+    action: enforce_role_and_tabindex
+    severity: error
+    wcag_reference: "2.1.1 Keyboard (Level A)"
+    example_correct: |
+      <div role="button" tabIndex={0} onClick={handleClick} onKeyDown={handleKeyDown}>
+        Custom Button
+      </div>
+    example_incorrect: |
+      <!-- WRONG: Not keyboard accessible -->
+      <div onClick={handleClick}>
+        Custom Button
+      </div>
+
+  # ---------------------------------------------------------------------------
+  # FORM ACCESSIBILITY (A11Y-FORM-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-FORM-001
+    name: "Required Field Indication"
+    description: |
+      Required form inputs should have aria-required="true" in addition
+      to the HTML required attribute for screen reader compatibility.
+    applies_to:
+      - input[required]
+      - textarea[required]
+      - select[required]
+    action: recommend_aria_required
+    severity: warning
+    wcag_reference: "3.3.2 Labels or Instructions (Level A)"
+
+  - id: A11Y-FORM-002
+    name: "Error State Indication"
+    description: |
+      Form inputs in error state should have aria-invalid="true" and
+      be associated with error messages via aria-describedby.
+    applies_to:
+      - input
+      - textarea
+      - select
+    action: require_aria_invalid_on_error
+    severity: warning
+    wcag_reference: "3.3.1 Error Identification (Level A)"
+    example_correct: |
+      <input
+        aria-invalid="true"
+        aria-describedby="email-error"
+      />
+      <span id="email-error">Please enter a valid email</span>
+
+  - id: A11Y-FORM-003
+    name: "Input Label Association"
+    description: |
+      All form inputs must have associated labels via label element,
+      aria-label, or aria-labelledby.
+    applies_to:
+      - input
+      - textarea
+      - select
+    action: require_label_association
+    severity: error
+    wcag_reference: "1.3.1 Info and Relationships (Level A)"
+
+  # ---------------------------------------------------------------------------
+  # IMAGE ACCESSIBILITY (A11Y-IMAGE-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-IMAGE-001
+    name: "Image Alt Text"
+    description: |
+      All img elements must have alt attribute. Decorative images should
+      have alt="" and role="presentation".
+    applies_to:
+      - img
+    action: require_alt_attribute
+    severity: error
+    wcag_reference: "1.1.1 Non-text Content (Level A)"
+    example_correct: |
+      <!-- Informative image -->
+      <img src="chart.png" alt="Sales increased 25% in Q4" />
+
+      <!-- Decorative image -->
+      <img src="decoration.png" alt="" role="presentation" />
+
+  # ---------------------------------------------------------------------------
+  # FOCUS ACCESSIBILITY (A11Y-FOCUS-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-FOCUS-001
+    name: "Visible Focus Indicator"
+    description: |
+      All interactive elements must have visible focus indicators.
+      Use focus-visible utilities from design tokens.
+    applies_to:
+      - button
+      - a
+      - input
+      - select
+      - textarea
+      - "[tabIndex]"
+    action: require_focus_visible
+    severity: error
+    wcag_reference: "2.4.7 Focus Visible (Level AA)"
+    wcag_aaa_reference: "2.4.11 Focus Appearance (Level AAA)"
+    token_reference: "focus-visible:outline-2 focus-visible:outline-primary"
+
+  # ---------------------------------------------------------------------------
+  # LIVE REGION ACCESSIBILITY (A11Y-LIVE-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-LIVE-001
+    name: "Loading State Announcements"
+    description: |
+      Loading states should use live regions to announce status changes
+      to screen reader users.
+    applies_to:
+      - "[aria-busy='true']"
+      - ".loading"
+    action: require_live_region
+    severity: warning
+    wcag_reference: "4.1.3 Status Messages (Level AA)"
+    example_correct: |
+      <div role="status" aria-live="polite">
+        <Spinner />
+        <span>Loading...</span>
+      </div>
+
+  # ---------------------------------------------------------------------------
+  # ICON DETECTION (A11Y-ICON-*)
+  # ---------------------------------------------------------------------------
+  - id: A11Y-ICON-001
+    name: "Icon Component Detection"
+    description: |
+      Icon detection follows strict patterns: svg elements or components
+      ending with "Icon" (e.g., ChevronIcon, ArrowIcon).
+      Short component names (length <= 3) are NOT automatically treated as icons.
+    applies_to:
+      - button
+      - a
+    action: refined_icon_detection
+    severity: info
+    pattern: "/^[A-Z].*Icon$/"
+    example_icons:
+      - ChevronIcon
+      - ArrowDownIcon
+      - CloseIcon
+      - svg
+
+# =============================================================================
+# METADATA
+# =============================================================================
+
+metadata:
+  domain: accessibility
+  owner: ui-governance
+  mcp_server: aibos-a11y-validation
+  related_constitutions:
+    - components.yml
+    - tokens.yml
+    - rsc.yml
+  wcag_target: "AA (AAA for enterprise features)"
+  aria_apg_version: "1.2"
+
+severity_levels:
+  error: "Must fix - blocks compliance"
+  warning: "Should fix - recommended for best practices"
+  info: "Informational - documentation only"
+
+# =============================================================================
+# VALIDATION INTEGRATION
+# =============================================================================
+
+validation:
+  mcp_tool: "aibos-a11y-validation"
+  validator_file: "validators/a11y-validator.mjs"
+  run_on:
+    - pre-commit
+    - ci-pipeline
+    - mcp-validate
+
+# =============================================================================
+# CHANGELOG
+# =============================================================================
+
+changelog:
+  - version: "1.0.0"
+    date: "2025-01-27"
+    changes:
+      - "Initial constitution based on W3C WAI-ARIA APG"
+      - "Added table semantic element rules (A11Y-TABLE-*)"
+      - "Added modal container restrictions (A11Y-MODAL-*)"
+      - "Added refined icon detection (A11Y-ICON-001)"
+      - "Fixed false-positive for <th><button> pattern"

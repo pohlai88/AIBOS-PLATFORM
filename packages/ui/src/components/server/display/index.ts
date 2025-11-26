@@ -1,15 +1,15 @@
-/**
- * Server Display Components
- *
- * Static display components without interactivity
- * - Pure rendering components
- * - No user interaction
- * - Server-optimized
- * - SEO-friendly
- */
+// Display Server Components - React 19 RSC Compliant
+export { StaticCard } from './static-card'
+export type { StaticCardProps } from './static-card'
 
-// Display components will be built here incrementally
-// Examples: StaticCard, InfoPanel, StatusBadge, etc.
+export { InfoPanel } from './info-panel'
+export type { InfoPanelProps } from './info-panel'
 
-// Placeholder - ready for static display components
-export {}
+export { StatBanner } from './stat-banner'
+export type { StatBannerProps, StatItem } from './stat-banner'
+
+export { FeatureHighlight } from './feature-highlight'
+export type { FeatureHighlightProps } from './feature-highlight'
+
+export { ContentSection } from './content-section'
+export type { ContentSectionProps } from './content-section'

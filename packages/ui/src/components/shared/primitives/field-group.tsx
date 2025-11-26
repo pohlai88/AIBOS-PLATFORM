@@ -179,16 +179,16 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
           <label
             htmlFor={htmlFor}
             className={cn(
-              typographyTokens.bodySm,
+              typographyTokens.sm,
               'font-medium',
-              colorTokens.text,
-              disabled && colorTokens.textMuted
+              colorTokens.fg,
+              disabled && colorTokens.fgMuted
             )}
           >
             {label}
             {required && (
               <span
-                className={cn('ml-1', colorTokens.dangerSoftSurface)}
+                className={cn('ml-1', colorTokens.dangerSoft)}
                 aria-label="required"
               >
                 *
@@ -204,8 +204,8 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
         {helperText && (
           <p
             className={cn(
-              typographyTokens.bodySm,
-              isError ? colorTokens.dangerSoftSurface : colorTokens.textMuted
+              typographyTokens.sm,
+              isError ? colorTokens.dangerSoft : colorTokens.fgMuted
             )}
             role={isError ? 'alert' : undefined}
           >

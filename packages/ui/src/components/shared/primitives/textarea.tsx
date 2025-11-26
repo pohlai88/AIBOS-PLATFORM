@@ -35,37 +35,37 @@ const textareaVariants = {
     'w-full',
     'transition-all duration-200',
     'mcp-shared-component',
-    typographyTokens.bodyMd,
+    typographyTokens.base,
   ].join(' '),
   variants: {
     variant: {
       default: [
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.border}`,
         radiusTokens.md,
       ].join(' '),
 
       filled: [
         colorTokens.bgMuted,
-        colorTokens.text,
+        colorTokens.fg,
         'border-0',
         radiusTokens.md,
       ].join(' '),
 
       outlined: [
         'bg-transparent',
-        colorTokens.text,
+        colorTokens.fg,
         `border-2 ${colorTokens.border}`,
         radiusTokens.md,
       ].join(' '),
     },
     size: {
-      sm: [spacingTokens.sm, typographyTokens.bodySm, 'min-h-[80px]'].join(' '),
-      md: [spacingTokens.md, typographyTokens.bodyMd, 'min-h-[120px]'].join(
+      sm: [spacingTokens.sm, typographyTokens.sm, 'min-h-[80px]'].join(' '),
+      md: [spacingTokens.md, typographyTokens.base, 'min-h-[120px]'].join(
         ' '
       ),
-      lg: [spacingTokens.lg, typographyTokens.headingMd, 'min-h-[160px]'].join(
+      lg: [spacingTokens.lg, typographyTokens.h5, 'min-h-[160px]'].join(
         ' '
       ),
     },
@@ -264,15 +264,15 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           <label
             htmlFor={textareaId}
             className={cn(
-              typographyTokens.bodySm,
+              typographyTokens.sm,
               'font-medium',
-              colorTokens.text,
+              colorTokens.fg,
               disabled && 'opacity-50'
             )}
           >
             {label}
             {required && (
-              <span className={`text-[${colorTokens.dangerSoftSurface}] ml-1`}>
+              <span className={`text-[${colorTokens.dangerSoft}] ml-1`}>
                 *
               </span>
             )}
@@ -296,16 +296,16 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             // Error state styling
             error &&
               [
-                `border-[${colorTokens.dangerSoftSurface}]`,
-                `focus:border-[${colorTokens.dangerSoftSurface}]`,
-                `focus:ring-[${colorTokens.dangerSoftSurface}]`,
+                `border-[${colorTokens.dangerSoft}]`,
+                `focus:border-[${colorTokens.dangerSoft}]`,
+                `focus:ring-[${colorTokens.dangerSoft}]`,
               ].join(' '),
             // Focus styling (WCAG 2.1 required)
             'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
             // Disabled state styling
             disabled && 'cursor-not-allowed opacity-50',
             // Placeholder styling
-            `placeholder:${colorTokens.textMuted}`,
+            `placeholder:${colorTokens.fgMuted}`,
             className
           )}
           {...accessibilityProps}
@@ -318,7 +318,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {!error && helperText && (
             <span
               id={`${textareaId}-helper`}
-              className={cn(typographyTokens.bodySm, colorTokens.textMuted)}
+              className={cn(typographyTokens.sm, colorTokens.fgMuted)}
             >
               {helperText}
             </span>
@@ -328,8 +328,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             <span
               id={`${textareaId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`
+                typographyTokens.sm,
+                `text-[${colorTokens.dangerSoft}]`
               )}
               role="alert"
             >
@@ -341,8 +341,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {(showCharCount || maxLength) && (
             <span
               className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
+                typographyTokens.sm,
+                colorTokens.fgMuted,
                 'ml-auto'
               )}
             >

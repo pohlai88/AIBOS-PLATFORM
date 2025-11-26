@@ -36,11 +36,11 @@ const progressVariants = {
   ].join(' '),
   variants: {
     variant: {
-      default: colorTokens.text,
-      primary: `bg-[${colorTokens.primarySoftSurface}]`,
-      success: `bg-[${colorTokens.successSoftSurface}]`,
-      warning: `bg-[${colorTokens.warningSoftSurface}]`,
-      danger: `bg-[${colorTokens.dangerSoftSurface}]`,
+      default: colorTokens.fg,
+      primary: `bg-[${colorTokens.primarySoft}]`,
+      success: `bg-[${colorTokens.successSoft}]`,
+      warning: `bg-[${colorTokens.warningSoft}]`,
+      danger: `bg-[${colorTokens.dangerSoft}]`,
     },
     size: {
       sm: ['h-1', radiusTokens.full].join(' '),

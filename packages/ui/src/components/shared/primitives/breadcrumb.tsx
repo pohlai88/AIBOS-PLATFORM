@@ -71,22 +71,22 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
 const breadcrumbVariants = {
   nav: [
     'flex items-center flex-wrap gap-2',
-    typographyTokens.bodySm,
+    typographyTokens.sm,
     'mcp-shared-component',
   ].join(' '),
 
   item: ['inline-flex items-center gap-1.5'].join(' '),
 
   link: [
-    colorTokens.textMuted,
+    colorTokens.fgMuted,
     'hover:opacity-80',
     'transition-all duration-200',
     'no-underline hover:underline',
   ].join(' '),
 
-  current: [colorTokens.text, 'font-medium'].join(' '),
+  current: [colorTokens.fg, 'font-medium'].join(' '),
 
-  separator: [colorTokens.textMuted, 'select-none'].join(' '),
+  separator: [colorTokens.fgMuted, 'select-none'].join(' '),
 }
 
 /**

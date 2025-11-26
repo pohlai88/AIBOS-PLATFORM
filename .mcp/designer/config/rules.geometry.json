@@ -1,0 +1,29 @@
+{
+  "$schema": "../schemas/geometry.schema.json",
+  "iconSizes": {
+    "sm": { "width": 16, "height": 16 },
+    "md": { "width": 20, "height": 20 },
+    "lg": { "width": 24, "height": 24 },
+    "xl": { "width": 32, "height": 32 }
+  },
+  "minIconSize": 16,
+  "buttonMinHeight": 32,
+  "buttonMaxHeight": 56,
+  "cornerRadiusScale": {
+    "none": 0,
+    "sm": 4,
+    "md": 6,
+    "lg": 8,
+    "xl": 12,
+    "2xl": 16,
+    "full": 9999
+  },
+  "allowedRadiusValues": [0, 4, 6, 8, 12, 16, 9999],
+  "aspectRatios": {
+    "square": 1,
+    "video": 1.777,
+    "portrait": 0.75,
+    "landscape": 1.333
+  }
+}
+

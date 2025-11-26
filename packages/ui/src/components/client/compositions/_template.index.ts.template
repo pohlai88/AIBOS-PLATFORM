@@ -1,0 +1,27 @@
+/**
+ * {{COMPONENT_NAME}} - Layer 2 Radix Composition
+ *
+ * @module {{COMPONENT_NAME}}
+ * @layer 2
+ * @category {{CATEGORY}}
+ */
+
+export {
+  {{COMPONENT_NAME}},
+  {{COMPONENT_NAME}}Close,
+  {{COMPONENT_NAME}}Content,
+  {{COMPONENT_NAME}}Portal,
+  {{COMPONENT_NAME}}Trigger,
+  {{COMPONENT_LOWER}}SizeVariants,
+  {{COMPONENT_LOWER}}VariantStyles,
+} from './{{COMPONENT_LOWER}}'
+
+export type {
+  {{COMPONENT_NAME}}CloseProps,
+  {{COMPONENT_NAME}}ContentProps,
+  {{COMPONENT_NAME}}RootProps,
+  {{COMPONENT_NAME}}Size,
+  {{COMPONENT_NAME}}TriggerProps,
+  {{COMPONENT_NAME}}Variant,
+} from './{{COMPONENT_LOWER}}.types'
+

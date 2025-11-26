@@ -11,6 +11,7 @@ constitutions:
   tokens: "./tokens.yml"
   components: "./components.yml"
   rsc: "./rsc.yml"
+  a11y: "./a11y.yml"
 
 validators:
   token: "validators/token-validator.mjs"

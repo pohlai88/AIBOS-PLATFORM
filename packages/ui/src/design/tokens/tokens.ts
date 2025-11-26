@@ -1,203 +1,233 @@
-// src/design/tokens.ts
+// ======================================================================
+// AI-BOS Design Tokens v3.3 — FINAL SSOT VERSION
+// WCAG AA/AAA • Dark Mode • Safe Mode • Tenant Cascading
+// NO Tailwind classes. NO UI logic. Pure design tokens.
+// ======================================================================
 
-// Atomic color tokens mapped to Tailwind utilities (which are backed by CSS vars)
+// ---------------------------------------------------------------
+// COLOR TOKENS — Semantic Layers
+// ---------------------------------------------------------------
 export const colorTokens = {
-  // surfaces
-  bg: 'bg-bg',
-  bgMuted: 'bg-bg-muted',
-  bgElevated: 'bg-bg-elevated',
-  border: 'border-border',
-  borderSubtle: 'border-border-subtle',
-  ring: 'ring-ring',
+  bg: "var(--color-bg)",
+  bgMuted: "var(--color-bg-muted)",
+  bgElevated: "var(--color-bg-elevated)",
 
-  // text
-  text: 'text-fg',
-  textMuted: 'text-fg-muted',
-  textSubtle: 'text-fg-subtle',
+  fg: "var(--color-fg)",
+  fgMuted: "var(--color-fg-muted)",
+  fgSubtle: "var(--color-fg-subtle)",
 
-  // brand surfaces
-  primarySurface: 'bg-primary',
-  primarySoftSurface: 'bg-primary-soft',
-  secondarySurface: 'bg-secondary',
-  secondarySoftSurface: 'bg-secondary-soft',
+  primary: "var(--color-primary)",
+  primarySoft: "var(--color-primary-soft)",
+  primaryForeground: "var(--color-primary-foreground)",
 
-  // status surfaces
-  successSurface: 'bg-success',
-  successSoftSurface: 'bg-success-soft',
-  warningSurface: 'bg-warning',
-  warningSoftSurface: 'bg-warning-soft',
-  dangerSurface: 'bg-danger',
-  dangerSoftSurface: 'bg-danger-soft',
-} as const
+  secondary: "var(--color-secondary)",
+  secondarySoft: "var(--color-secondary-soft)",
+  secondaryForeground: "var(--color-secondary-foreground)",
 
-// Text-on-surface pairs (for a11y & clarity)
-export const accessibilityTokens = {
-  textOnBg: 'text-fg',
-  textOnBgMuted: 'text-fg-muted',
-  textOnBgElevated: 'text-fg',
+  brand: "var(--color-brand)",
+  brandSoft: "var(--color-brand-soft)",
+  brandForeground: "var(--color-brand-foreground)",
 
-  textOnPrimary: 'text-primary-foreground',
-  textOnSecondary: 'text-secondary-foreground',
+  success: "var(--color-success)",
+  successSoft: "var(--color-success-soft)",
+  successForeground: "var(--color-success-foreground)",
 
-  textOnSuccess: 'text-success-foreground',
-  textOnWarning: 'text-warning-foreground',
-  textOnDanger: 'text-danger-foreground',
-} as const
+  warning: "var(--color-warning)",
+  warningSoft: "var(--color-warning-soft)",
+  warningForeground: "var(--color-warning-foreground)",
 
-// Radius tokens – always use these instead of raw rounded-*
-export const radiusTokens = {
-  xs: 'rounded-[var(--radius-xs)]',
-  sm: 'rounded-[var(--radius-sm)]',
-  md: 'rounded-[var(--radius-md)]',
-  lg: 'rounded-[var(--radius-lg)]',
-  xl: 'rounded-[var(--radius-xl)]',
-  '2xl': 'rounded-[var(--radius-2xl)]',
-  full: 'rounded-[var(--radius-full)]',
-} as const
+  danger: "var(--color-danger)",
+  dangerSoft: "var(--color-danger-soft)",
+  dangerForeground: "var(--color-danger-foreground)",
 
-// Shadows – backed by CSS vars so theme can change softness
-export const shadowTokens = {
-  xs: 'shadow-[var(--shadow-xs)]',
-  sm: 'shadow-[var(--shadow-sm)]',
-  md: 'shadow-[var(--shadow-md)]',
-  lg: 'shadow-[var(--shadow-lg)]',
-} as const
+  border: "var(--color-border)",
+  borderSubtle: "var(--color-border-subtle)",
+  ring: "var(--color-ring)",
+} as const;
 
-// Spacing scale for components (MCP can choose from these)
-export const spacingTokens = {
-  xs: 'px-2 py-1',
-  sm: 'px-3 py-1.5',
-  md: 'px-4 py-2',
-  lg: 'px-5 py-2.5',
-} as const
-
-// Typography – semantic text styles
+// ---------------------------------------------------------------
+// TYPOGRAPHY TOKENS — Fonts + Headings + Displays
+// ---------------------------------------------------------------
 export const typographyTokens = {
-  // Labels (existing)
-  labelSm: 'text-[11px] font-medium tracking-wide uppercase',
-  label: 'text-sm font-medium',
+  // Base text sizes
+  xs: "var(--font-xs)",
+  sm: "var(--font-sm)",
+  base: "var(--font-base)",
+  lg: "var(--font-lg)",
 
-  // Body text (expanded)
-  bodySm: 'text-sm leading-relaxed',
-  bodyMd: 'text-[15px] leading-relaxed',
-  body: 'text-base leading-relaxed',
-  bodyLg: 'text-lg leading-relaxed',
+  // Headings
+  h1: "var(--font-h1)",
+  h2: "var(--font-h2)",
+  h3: "var(--font-h3)",
+  h4: "var(--font-h4)",
+  h5: "var(--font-h5)",
+  h6: "var(--font-h6)",
 
-  // Headings - visual sizes (existing)
-  headingSm: 'text-sm font-semibold',
-  headingMd: 'text-base font-semibold',
-  headingLg: 'text-lg font-semibold',
+  // Display
+  displaySm: "var(--font-display-sm)",
+  displayMd: "var(--font-display-md)",
+  displayLg: "var(--font-display-lg)",
 
-  // Headings - semantic levels (new)
-  h1: 'text-4xl font-semibold leading-tight',
-  h2: 'text-3xl font-semibold leading-tight',
-  h3: 'text-2xl font-semibold leading-normal',
-  h4: 'text-xl font-semibold leading-normal',
-  h5: 'text-lg font-semibold leading-normal',
-  h6: 'text-base font-semibold leading-normal',
+  // Added for MCP (missing previously)
+  lineHeightNormal: "var(--line-height-normal)",
+  lineHeightRelaxed: "var(--line-height-relaxed)",
 
-  // UI text (new)
-  caption: 'text-xs text-fg-subtle leading-normal',
-  helpText: 'text-xs text-fg-muted leading-normal',
-  overline: 'text-xs font-medium tracking-wide uppercase',
+  // Font family
+  fontSans: "var(--font-sans)",
+} as const;
 
-  // Display text (new)
-  display: 'text-5xl font-bold leading-none',
-} as const
+// ---------------------------------------------------------------
+// RADIUS TOKENS
+// ---------------------------------------------------------------
+export const radiusTokens = {
+  xxs: "var(--radius-xxs)",
+  xs: "var(--radius-xs)",
+  sm: "var(--radius-sm)",
+  md: "var(--radius-md)",
+  lg: "var(--radius-lg)",
+  xl: "var(--radius-xl)",
+  "2xl": "var(--radius-2xl)",
+  full: "var(--radius-full)",
+} as const;
 
-// High-level component presets – what MCP will mostly use
-export const componentTokens = {
-  buttonPrimary: [
-    'inline-flex items-center justify-center gap-1.5',
-    spacingTokens.sm,
-    radiusTokens.lg,
-    colorTokens.primarySurface,
-    accessibilityTokens.textOnPrimary,
-    shadowTokens.xs,
-    'transition hover:opacity-95 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-  ].join(' '),
+// ---------------------------------------------------------------
+// SHADOW TOKENS
+// ---------------------------------------------------------------
+export const shadowTokens = {
+  xs: "var(--shadow-xs)",
+  sm: "var(--shadow-sm)",
+  md: "var(--shadow-md)",
+  lg: "var(--shadow-lg)",
+} as const;
 
-  buttonSecondary: [
-    'inline-flex items-center justify-center gap-1.5',
-    spacingTokens.sm,
-    radiusTokens.lg,
-    colorTokens.secondarySoftSurface,
-    accessibilityTokens.textOnSecondary,
-    shadowTokens.xs,
-    'border border-border hover:bg-secondary-soft/80 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-  ].join(' '),
+// ---------------------------------------------------------------
+// SPACING TOKENS (ERP-Approved Scale)
+// ---------------------------------------------------------------
+export const spacingTokens = {
+  "2xs": "var(--spacing-2xs)",
+  xs: "var(--spacing-xs)",
+  sm: "var(--spacing-sm)",
+  md: "var(--spacing-md)",
+  lg: "var(--spacing-lg)",
+  xl: "var(--spacing-xl)",
+  "2xl": "var(--spacing-2xl)",
+} as const;
 
-  buttonGhost: [
-    'inline-flex items-center justify-center gap-1.5',
-    spacingTokens.sm,
-    radiusTokens.lg,
-    colorTokens.bgElevated,
-    accessibilityTokens.textOnBgElevated,
-    'border border-transparent hover:border-border hover:bg-bg-muted active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-  ].join(' '),
+// ---------------------------------------------------------------
+// ACCESSIBILITY TOKENS (WCAG AA / AAA)
+// ---------------------------------------------------------------
+export const contrastTokens = {
+  aa: { normal: 4.5, large: 3.0 },
+  aaa: { normal: 7.0, large: 4.5 },
+} as const;
 
-  card: [
-    colorTokens.bgElevated,
-    accessibilityTokens.textOnBgElevated,
-    'border border-border',
-    radiusTokens.lg,
-    shadowTokens.xs,
-    'p-4',
-  ].join(' '),
+// ---------------------------------------------------------------
+// SAFE MODE TOKENS — for High-Contrast Accessibility
+// ---------------------------------------------------------------
+export const safeModeTokens = {
+  fontMultiplier: "var(--safe-mode-font-multiplier)",
+} as const;
 
-  badgePrimary: [
-    'inline-flex items-center gap-1',
-    'px-2 py-0.5',
-    radiusTokens.full,
-    colorTokens.primarySoftSurface,
-    'text-[11px] font-medium',
-    'border border-transparent',
-  ].join(' '),
+// ---------------------------------------------------------------
+// THEME TOKENS — Component-Facing Layer (WCAG/Tenant Override-Safe)
+// Components MUST use these, not colorTokens/typographyTokens directly
+// ---------------------------------------------------------------
+export const themeTokens = {
+  // Surfaces
+  bg: "var(--theme-bg)",
+  bgMuted: "var(--theme-bg-muted)",
+  bgElevated: "var(--theme-bg-elevated)",
 
-  badgeMuted: [
-    'inline-flex items-center gap-1',
-    'px-2 py-0.5',
-    radiusTokens.full,
-    colorTokens.bgMuted,
-    accessibilityTokens.textOnBgMuted,
-    'text-[11px] font-medium',
-    'border border-border-subtle',
-  ].join(' '),
+  // Text
+  fg: "var(--theme-fg)",
+  fgMuted: "var(--theme-fg-muted)",
+  fgSubtle: "var(--theme-fg-subtle)",
 
-  input: [
-    colorTokens.bgElevated,
-    accessibilityTokens.textOnBgElevated,
-    'border',
-    colorTokens.border,
-    radiusTokens.md,
-    spacingTokens.sm,
-    typographyTokens.bodySm,
-    'transition',
-    'focus-visible:outline-none',
-    'focus-visible:ring-2',
-    'focus-visible:ring-ring',
-    'focus-visible:border-ring',
-    'disabled:opacity-50',
-    'disabled:cursor-not-allowed',
-    'placeholder:text-fg-subtle',
-  ].join(' '),
-} as const
+  // Primary
+  primary: "var(--theme-primary)",
+  primarySoft: "var(--theme-primary-soft)",
+  primaryForeground: "var(--theme-primary-foreground)",
 
-// Types to help MCP / devs stay inside the design system
-export type ColorTokenKey = keyof typeof colorTokens
-export type SpacingTokenKey = keyof typeof spacingTokens
-export type RadiusTokenKey = keyof typeof radiusTokens
-export type ShadowTokenKey = keyof typeof shadowTokens
-export type TypographyTokenKey = keyof typeof typographyTokens
-export type AccessibilityTokenKey = keyof typeof accessibilityTokens
-export type ComponentTokenKey = keyof typeof componentTokens
+  // Secondary
+  secondary: "var(--theme-secondary)",
+  secondarySoft: "var(--theme-secondary-soft)",
+  secondaryForeground: "var(--theme-secondary-foreground)",
 
-// Token categories for MCP validation
-export type TokenCategory =
-  | 'color'
-  | 'spacing'
-  | 'typography'
-  | 'radius'
-  | 'shadow'
-  | 'component'
-  | 'accessibility'
+  // Brand
+  brand: "var(--theme-brand)",
+  brandSoft: "var(--theme-brand-soft)",
+  brandForeground: "var(--theme-brand-foreground)",
+
+  // Status
+  success: "var(--theme-success)",
+  successSoft: "var(--theme-success-soft)",
+  successForeground: "var(--theme-success-foreground)",
+
+  warning: "var(--theme-warning)",
+  warningSoft: "var(--theme-warning-soft)",
+  warningForeground: "var(--theme-warning-foreground)",
+
+  danger: "var(--theme-danger)",
+  dangerSoft: "var(--theme-danger-soft)",
+  dangerForeground: "var(--theme-danger-foreground)",
+
+  // Border / Ring
+  border: "var(--theme-border)",
+  borderSubtle: "var(--theme-border-subtle)",
+  ring: "var(--theme-ring)",
+
+  // Shadows
+  shadowXs: "var(--theme-shadow-xs)",
+  shadowSm: "var(--theme-shadow-sm)",
+  shadowMd: "var(--theme-shadow-md)",
+  shadowLg: "var(--theme-shadow-lg)",
+
+  // Typography
+  fontXs: "var(--theme-font-xs)",
+  fontSm: "var(--theme-font-sm)",
+  fontBase: "var(--theme-font-base)",
+  fontLg: "var(--theme-font-lg)",
+  fontH1: "var(--theme-font-h1)",
+  fontH2: "var(--theme-font-h2)",
+  fontH3: "var(--theme-font-h3)",
+  fontH4: "var(--theme-font-h4)",
+  fontH5: "var(--theme-font-h5)",
+  fontH6: "var(--theme-font-h6)",
+  fontDisplaySm: "var(--theme-font-display-sm)",
+  fontDisplayMd: "var(--theme-font-display-md)",
+  fontDisplayLg: "var(--theme-font-display-lg)",
+  lineHeightNormal: "var(--theme-line-height-normal)",
+  lineHeightRelaxed: "var(--theme-line-height-relaxed)",
+  fontSans: "var(--theme-font-sans)",
+
+  // Spacing
+  spacing2xs: "var(--theme-spacing-2xs)",
+  spacingXs: "var(--theme-spacing-xs)",
+  spacingSm: "var(--theme-spacing-sm)",
+  spacingMd: "var(--theme-spacing-md)",
+  spacingLg: "var(--theme-spacing-lg)",
+  spacingXl: "var(--theme-spacing-xl)",
+  spacing2xl: "var(--theme-spacing-2xl)",
+
+  // Radius
+  radiusXxs: "var(--theme-radius-xxs)",
+  radiusXs: "var(--theme-radius-xs)",
+  radiusSm: "var(--theme-radius-sm)",
+  radiusMd: "var(--theme-radius-md)",
+  radiusLg: "var(--theme-radius-lg)",
+  radiusXl: "var(--theme-radius-xl)",
+  radius2xl: "var(--theme-radius-2xl)",
+  radiusFull: "var(--theme-radius-full)",
+} as const;
+
+// ---------------------------------------------------------------
+// TYPE EXPORTS (MCP Uses These for Validation)
+// ---------------------------------------------------------------
+export type ColorToken = keyof typeof colorTokens;
+export type RadiusToken = keyof typeof radiusTokens;
+export type ShadowToken = keyof typeof shadowTokens;
+export type SpacingToken = keyof typeof spacingTokens;
+export type TypographyToken = keyof typeof typographyTokens;
+export type ContrastToken = keyof typeof contrastTokens;
+export type SafeModeToken = keyof typeof safeModeTokens;
+export type ThemeToken = keyof typeof themeTokens;

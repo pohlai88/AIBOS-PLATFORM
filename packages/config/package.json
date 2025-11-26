@@ -9,12 +9,17 @@
     "@types/node": "^22.19.1",
     "typescript": "^5.9.3"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "exports": {
     ".": "./eslint.config.mjs",
     "./next": "./eslint-next.config.mjs",
     "./base": "./eslint-base.config.mjs"
   },
   "main": "./eslint.config.mjs",
+  "packageManager": "pnpm@8.15.0",
   "private": true,
   "scripts": {
     "lint": "eslint ."

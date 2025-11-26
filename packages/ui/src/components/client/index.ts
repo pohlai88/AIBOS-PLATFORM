@@ -1,28 +1,17 @@
 /**
- * Client Components - Interactive UI
+ * Client Components - React 19 Interactive UI
  *
- * Components that run in the browser
- * - Must have 'use client' directive
+ * All components require 'use client' directive.
  * - Browser APIs allowed
  * - Event handlers allowed
  * - React hooks allowed
- * - Minimize bundle size
- * - Only use when necessary
+ *
+ * @version 2.0.0
+ * @architecture Next.js 16 App Router
  */
 
-// Interactive UI components
-export * from './interactive'
+// Layer 2 - Compositions (Radix UI based)
+export * from './compositions'
 
-// Form components
-export * from './forms'
-
-// Context providers
-export * from './providers'
-
-// Note: Components will be built incrementally
-// Each component will be:
-// - Client-optimized
-// - MCP-validated
-// - Token-compliant
-// - Type-safe
-// - Performance-focused
+// Layer 3 - Functional Components
+export * from './functional'

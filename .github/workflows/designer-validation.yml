@@ -1,0 +1,53 @@
+name: Designer MCP Validation
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/components/**"
+      - "apps/web/app/**"
+      - "packages/ui/**"
+
+jobs:
+  validate:
+    name: Design Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }} | grep -E '\.(tsx?|jsx?)$' | grep -v '\.test\.' | grep -v '\.stories\.' | tr '\n' ' ')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Run Designer MCP Validation
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          npx tsx .mcp/designer/ci/ci.ts ${{ steps.changed-files.outputs.files }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPO_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+
+      - name: Skip validation
+        if: steps.changed-files.outputs.files == ''
+        run: echo "No component files changed, skipping validation"
+

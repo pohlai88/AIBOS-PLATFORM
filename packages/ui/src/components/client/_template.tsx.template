@@ -19,7 +19,6 @@ import * as React from 'react'
 // Import design tokens (client-safe)
 import {
   colorTokens,
-  accessibilityTokens,
   radiusTokens,
   shadowTokens,
   spacingTokens,
@@ -44,28 +43,28 @@ const [CLIENT_COMPONENT_LOWER]Variants = {
     variant: {
       default: [
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.borderSubtle}`,
         "hover:bg-gray-50 focus:ring-gray-500",
       ].join(" "),
 
       primary: [
-        colorTokens.primarySurface,
-        accessibilityTokens.textOnPrimary,
+        colorTokens.primary,
+        colorTokens.primaryForeground,
         shadowTokens.xs,
         "hover:opacity-90 focus:ring-blue-500",
       ].join(" "),
 
       secondary: [
-        colorTokens.secondarySoftSurface,
-        colorTokens.textMuted,
+        colorTokens.secondarySoft,
+        colorTokens.fgMuted,
         `border ${colorTokens.border}`,
         "hover:bg-gray-100 focus:ring-gray-500",
       ].join(" "),
 
       destructive: [
-        colorTokens.dangerSoftSurface,
-        accessibilityTokens.textOnDanger,
+        colorTokens.dangerSoft,
+        colorTokens.dangerForeground,
         shadowTokens.sm,
         "hover:opacity-90 focus:ring-red-500",
       ].join(" "),
@@ -73,22 +72,22 @@ const [CLIENT_COMPONENT_LOWER]Variants = {
     size: {
       sm: [
         spacingTokens.sm,
-        typographyTokens.bodySm,
+        typographyTokens.sm,
         radiusTokens.sm,
       ].join(" "),
       md: [
         spacingTokens.md,
-        typographyTokens.bodyMd,
+        typographyTokens.base,
         radiusTokens.md,
       ].join(" "),
       lg: [
         spacingTokens.lg,
-        typographyTokens.headingMd,
+        typographyTokens.h5,
         radiusTokens.lg,
       ].join(" "),
       xl: [
         spacingTokens.lg,
-        typographyTokens.headingLg,
+        typographyTokens.h4,
         radiusTokens.xl,
       ].join(" "),
     },

@@ -1,0 +1,19 @@
+{
+  "failOn": ["error"],
+  "warnOn": ["warning"],
+  "ignore": ["info"],
+  "tenants": ["default", "dlbb"],
+  "autoFix": true,
+  "github": {
+    "comment": true,
+    "createFixPR": true
+  },
+  "gitlab": {
+    "comment": true
+  },
+  "paths": {
+    "include": ["apps/web/components/**", "packages/ui/**"],
+    "exclude": ["**/*.test.tsx", "**/*.stories.tsx"]
+  }
+}
+

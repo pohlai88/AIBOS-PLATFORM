@@ -43,25 +43,25 @@ const [SERVER_COMPONENT_LOWER]Variants = {
     variant: {
       default: [
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.borderSubtle}`,
       ].join(" "),
 
       primary: [
-        colorTokens.primarySurface,
-        accessibilityTokens.textOnPrimary,
+        colorTokens.primary,
+        colorTokens.primaryForeground,
         shadowTokens.xs,
       ].join(" "),
 
       secondary: [
-        colorTokens.secondarySoftSurface,
-        colorTokens.textMuted,
+        colorTokens.secondarySoft,
+        colorTokens.fgMuted,
         `border ${colorTokens.border}`,
       ].join(" "),
 
       info: [
         colorTokens.bgMuted,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.borderSubtle}`,
         shadowTokens.sm,
       ].join(" "),
@@ -69,22 +69,22 @@ const [SERVER_COMPONENT_LOWER]Variants = {
     size: {
       sm: [
         spacingTokens.sm,
-        typographyTokens.bodySm,
+        typographyTokens.sm,
         radiusTokens.sm,
       ].join(" "),
       md: [
         spacingTokens.md,
-        typographyTokens.bodyMd,
+        typographyTokens.base,
         radiusTokens.md,
       ].join(" "),
       lg: [
         spacingTokens.lg,
-        typographyTokens.headingMd,
+        typographyTokens.h5,
         radiusTokens.lg,
       ].join(" "),
       xl: [
         spacingTokens.lg,
-        typographyTokens.headingLg,
+        typographyTokens.h4,
         radiusTokens.xl,
       ].join(" "),
     },

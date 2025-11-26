@@ -1,15 +1,12 @@
-/**
- * Server Data Components
- *
- * Components that fetch and display data from APIs or databases
- * - Async components allowed
- * - Direct database/API access
- * - Server-side data processing
- * - No client-side state
- */
+// Data Server Components - React 19 RSC Compliant
+export { AsyncBoundary } from './async-boundary'
+export type { AsyncBoundaryProps } from './async-boundary'
 
-// Data components will be built here incrementally
-// Examples: UserProfile, ProductList, DataTable, etc.
+export { ServerTable } from './server-table'
+export type { ServerTableProps, TableColumn } from './server-table'
 
-// Placeholder - ready for data-fetching components
-export {}
+export { DataList } from './data-list'
+export type { DataListProps, DataListItem } from './data-list'
+
+export { DataGrid } from './data-grid'
+export type { DataGridProps } from './data-grid'

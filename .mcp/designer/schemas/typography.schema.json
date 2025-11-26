@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TypographyRules",
+  "type": "object",
+  "properties": {
+    "minFontSize": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 32
+    },
+    "recommendedFontSize": {
+      "type": "number",
+      "minimum": 10,
+      "maximum": 32
+    },
+    "modularScale": {
+      "type": "number",
+      "minimum": 1.1,
+      "maximum": 1.5
+    },
+    "allowedWeights": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "enum": [100, 200, 300, 400, 500, 600, 700, 800]
+      },
+      "minItems": 1
+    },
+    "lineHeightRange": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "number", "minimum": 1.0, "maximum": 2.0 },
+        "max": { "type": "number", "minimum": 1.0, "maximum": 2.0 }
+      },
+      "required": ["min", "max"]
+    },
+    "maxHeadingJump": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 4
+    }
+  },
+  "required": [
+    "minFontSize",
+    "modularScale",
+    "allowedWeights",
+    "lineHeightRange"
+  ]
+}

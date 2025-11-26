@@ -101,7 +101,7 @@ export const Spinner = React.forwardRef<SVGSVGElement, SpinnerProps>(
         fill="none"
         className={cn(
           'animate-spin',
-          colorTokens.text,
+          colorTokens.fg,
           'mcp-shared-component',
           className
         )}

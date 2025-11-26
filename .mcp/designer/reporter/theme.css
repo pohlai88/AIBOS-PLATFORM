@@ -1,0 +1,150 @@
+/**
+ * AI-BOS Designer Report Theme
+ * Brandable CSS for HTML reports
+ */
+
+/* ============================================
+   CSS Variables (Theme Tokens)
+   ============================================ */
+
+:root {
+  /* Brand Colors - Default */
+  --report-primary: #2563eb;
+  --report-primary-soft: rgba(37, 99, 235, 0.1);
+  --report-accent: #3b82f6;
+
+  /* Surfaces */
+  --report-bg: #f3f4f6;
+  --report-bg-elevated: #ffffff;
+  --report-bg-muted: #f9fafb;
+
+  /* Text */
+  --report-fg: #111827;
+  --report-fg-muted: #6b7280;
+  --report-fg-subtle: #9ca3af;
+
+  /* Borders */
+  --report-border: #e5e7eb;
+  --report-border-subtle: #f3f4f6;
+
+  /* Severity Colors */
+  --report-error: #dc2626;
+  --report-error-bg: #fef2f2;
+  --report-warning: #d97706;
+  --report-warning-bg: #fffbeb;
+  --report-info: #2563eb;
+  --report-info-bg: #eff6ff;
+  --report-success: #059669;
+  --report-success-bg: #ecfdf5;
+
+  /* Typography */
+  --report-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --report-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --report-spacing-xs: 4px;
+  --report-spacing-sm: 8px;
+  --report-spacing-md: 16px;
+  --report-spacing-lg: 24px;
+  --report-spacing-xl: 40px;
+
+  /* Radius */
+  --report-radius-sm: 4px;
+  --report-radius-md: 8px;
+  --report-radius-lg: 12px;
+
+  /* Shadows */
+  --report-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --report-shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   DLBB Theme (Emerald)
+   ============================================ */
+
+[data-theme="dlbb"] {
+  --report-primary: #059669;
+  --report-primary-soft: rgba(5, 150, 105, 0.1);
+  --report-accent: #10b981;
+}
+
+/* ============================================
+   Client Template Theme (Purple)
+   ============================================ */
+
+[data-theme="client-template"] {
+  --report-primary: #7c3aed;
+  --report-primary-soft: rgba(124, 58, 237, 0.1);
+  --report-accent: #8b5cf6;
+}
+
+/* ============================================
+   Dark Mode
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --report-bg: #0a0a0b;
+    --report-bg-elevated: #1a1a1d;
+    --report-bg-muted: #27272a;
+
+    --report-fg: #fafafa;
+    --report-fg-muted: #a1a1aa;
+    --report-fg-subtle: #71717a;
+
+    --report-border: #3f3f46;
+    --report-border-subtle: #27272a;
+
+    --report-error-bg: rgba(220, 38, 38, 0.1);
+    --report-warning-bg: rgba(217, 119, 6, 0.1);
+    --report-info-bg: rgba(37, 99, 235, 0.1);
+    --report-success-bg: rgba(5, 150, 105, 0.1);
+  }
+}
+
+/* ============================================
+   High Contrast Mode (WCAG AAA)
+   ============================================ */
+
+[data-contrast="high"] {
+  --report-fg: #000000;
+  --report-bg: #ffffff;
+  --report-border: #000000;
+
+  --report-error: #b91c1c;
+  --report-warning: #92400e;
+  --report-info: #1e40af;
+  --report-success: #065f46;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  :root {
+    --report-bg: #ffffff;
+    --report-bg-elevated: #ffffff;
+    --report-shadow-sm: none;
+    --report-shadow-md: none;
+  }
+
+  body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+}
+

@@ -37,16 +37,16 @@
  * ```
  */
 
-import * as React from 'react'
-import { colorTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { colorTokens } from "../../../design/tokens/tokens";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Avatar Variants
  * - default: Standard avatar with elevated background
  * - placeholder: Avatar with muted background for placeholders
  */
-export type AvatarVariant = 'default' | 'placeholder'
+export type AvatarVariant = "default" | "placeholder";
 
 /**
  * Avatar Sizes
@@ -55,7 +55,7 @@ export type AvatarVariant = 'default' | 'placeholder'
  * - lg: Large avatar (48px)
  * - xl: Extra large avatar (64px)
  */
-export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl'
+export type AvatarSize = "sm" | "md" | "lg" | "xl";
 
 /**
  * Avatar Props
@@ -66,34 +66,34 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
    * Visual variant of the avatar
    * @default 'default'
    */
-  variant?: AvatarVariant
+  variant?: AvatarVariant;
 
   /**
    * Size of the avatar
    * @default 'md'
    */
-  size?: AvatarSize
+  size?: AvatarSize;
 
   /**
    * Image source URL
    */
-  src?: string
+  src?: string;
 
   /**
    * Alt text for the image (required for accessibility)
    * @required
    */
-  alt: string
+  alt: string;
 
   /**
    * Fallback text (usually initials) when image fails to load
    */
-  fallback?: string
+  fallback?: string;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -103,8 +103,8 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
   (
     {
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       src,
       alt,
       fallback,
@@ -113,8 +113,8 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
     },
     ref
   ) => {
-    const [imageError, setImageError] = React.useState(false)
-    const showFallback = !src || imageError
+    const [imageError, setImageError] = React.useState(false);
+    const showFallback = !src || imageError;
 
     /**
      * Base Styles
@@ -122,34 +122,34 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
      */
     const baseStyles = cn(
       // Display - flex for centering
-      'inline-flex items-center justify-center',
+      "inline-flex items-center justify-center",
 
       // Shape - circular
-      'rounded-full',
+      "rounded-full",
 
       // Typography - medium weight for fallback text
-      'font-medium',
+      "font-medium",
 
       // Overflow - hide image overflow
-      'overflow-hidden',
+      "overflow-hidden",
 
       // User select - prevent text selection
-      'select-none',
+      "select-none",
 
       // Shrink - prevent flex shrinking
-      'shrink-0'
-    )
+      "shrink-0"
+    );
 
     /**
      * Size Variants
      * Controls avatar dimensions and font size
      */
     const sizeStyles = {
-      sm: cn('h-8 w-8', 'text-xs'), // 32px
-      md: cn('h-10 w-10', 'text-sm'), // 40px
-      lg: cn('h-12 w-12', 'text-base'), // 48px
-      xl: cn('h-16 w-16', 'text-lg'), // 64px
-    }
+      sm: cn("h-8 w-8", "text-xs"), // 32px
+      md: cn("h-10 w-10", "text-sm"), // 40px
+      lg: cn("h-12 w-12", "text-base"), // 48px
+      xl: cn("h-16 w-16", "text-lg"), // 64px
+    };
 
     /**
      * Variant Styles
@@ -159,14 +159,14 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       default: cn(
         // Elevated background
         `bg-[${colorTokens.bgElevated}]`,
-        `text-[${colorTokens.text}]`
+        `text-[${colorTokens.fg}]`
       ),
       placeholder: cn(
         // Muted background for placeholders
         `bg-[${colorTokens.bgMuted}]`,
-        `text-[${colorTokens.textMuted}]`
+        `text-[${colorTokens.fgMuted}]`
       ),
-    }
+    };
 
     return (
       <div
@@ -210,11 +210,11 @@ export const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
           </svg>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Avatar.displayName = 'Avatar'
+Avatar.displayName = "Avatar";
 
 /**
  * Usage Examples:

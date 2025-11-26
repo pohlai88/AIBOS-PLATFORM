@@ -1,0 +1,22 @@
+/**
+ * [COMPONENT_NAME] - Layer 3 Functional Component
+ * @module [COMPONENT_NAME]
+ * @layer 3
+ * @category [CATEGORY]
+ * @library [LIBRARY_NAME]
+ */
+
+export {
+  [COMPONENT_NAME],
+  [COMPONENT_NAME_LOWER]Variants,
+} from './[COMPONENT_NAME_LOWER]'
+
+export type {
+  [COMPONENT_NAME]Props,
+  [COMPONENT_NAME]Size,
+  [COMPONENT_NAME]Variant,
+  [COMPONENT_NAME]HeaderProps,
+  [COMPONENT_NAME]ToolbarProps,
+  [COMPONENT_NAME]FooterProps,
+} from './[COMPONENT_NAME_LOWER].types'
+

@@ -21,7 +21,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { ValidationPipeline } from '../tools/ValidationPipeline'
 import { ComponentValidator } from '../tools/ComponentValidator'
-import { tokenHelpers } from '../../src/design/utilities/token-helpers'
+import * as tokenHelpers from '../../src/design/utilities/token-helpers'
 import type {
   ConstitutionRule,
   TenantContext,
@@ -390,20 +390,16 @@ export function useMcpValidation(
 
         // PATCH: Enhanced token validation with tenant context
         if (validateTokens) {
-          const tokenMatches = code.match(/--[\w-]+/g) || []
+          const tokenMatches = code.match(/--theme-[\w-]+/g) || []
           for (const token of tokenMatches) {
-            const validation = tokenHelpers.validateTokenUsage(
-              token.replace('--', ''),
-              hasClientDirective ? 'client' : 'server'
-            )
-            if (!validation.isValid) {
+            const tokenName = token.replace('--theme-', '')
+            if (!tokenHelpers.isThemeToken(tokenName)) {
               violations.push({
                 rule: 'token-usage',
-                message: `Invalid token usage: ${token}`,
+                message: `Unknown theme token: ${token}`,
                 severity: 'warning',
-                suggestion:
-                  validation.suggestions[0] || 'Use valid design system token',
-                autoFixable: true,
+                suggestion: 'Use tokens defined in themeTokens',
+                autoFixable: false,
               })
               score -= 5
             }

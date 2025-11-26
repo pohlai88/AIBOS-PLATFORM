@@ -1,0 +1,5 @@
+{
+  "allowedSurfaceRoles": ["primary", "secondary", "emerald", "muted"],
+  "forbiddenEffects": ["innerShadow", "strongShadow", "glass"]
+}
+

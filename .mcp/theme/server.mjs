@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
 
 // Get the workspace root
 const workspaceRoot = path.resolve(__dirname, "../../");
-const globalsCssPath = path.resolve(workspaceRoot, "packages/ui/src/design/globals.css");
+const globalsCssPath = path.resolve(workspaceRoot, "packages/ui/src/design/tokens/globals.css");
 
 // --- Governance / Metadata awareness ---------------------------------------
 

@@ -1,0 +1,17 @@
+{
+  "maxFrameWidth": 1440,
+  "minFrameWidth": 240,
+  "minFramePadding": 16,
+  "alignmentTolerance": 2,
+  "frameWidthExceptions": [
+    "Spinner",
+    "Avatar",
+    "Checkbox",
+    "Radio",
+    "Toggle",
+    "Switch",
+    "Badge",
+    "Icon",
+    "IconButton"
+  ]
+}

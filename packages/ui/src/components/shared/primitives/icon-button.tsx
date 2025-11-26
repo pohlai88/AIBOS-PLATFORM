@@ -45,30 +45,30 @@ const iconButtonVariants = {
     variant: {
       default: [
         colorTokens.bgElevated,
-        colorTokens.text,
+        colorTokens.fg,
         `border border-[${colorTokens.border}]`,
         shadowTokens.xs,
         'hover:opacity-90',
       ].join(' '),
 
       primary: [
-        colorTokens.primarySoftSurface,
+        colorTokens.primarySoft,
         'text-white',
         shadowTokens.sm,
         'hover:opacity-90',
       ].join(' '),
 
       secondary: [
-        colorTokens.secondarySoftSurface,
-        colorTokens.text,
+        colorTokens.secondarySoft,
+        colorTokens.fg,
         `border border-[${colorTokens.border}]`,
         'hover:opacity-90',
       ].join(' '),
 
-      ghost: ['bg-transparent', colorTokens.text, 'hover:bg-black/5'].join(' '),
+      ghost: ['bg-transparent', colorTokens.fg, 'hover:bg-black/5'].join(' '),
 
       danger: [
-        colorTokens.dangerSoftSurface,
+        colorTokens.dangerSoft,
         'text-white',
         shadowTokens.sm,
         'hover:opacity-90',

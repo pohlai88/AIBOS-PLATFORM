@@ -1,0 +1,24 @@
+{
+  "$schema": "../schemas/layout.schema.json",
+  "maxContentWidth": 1280,
+  "minContentWidth": 320,
+  "breakpoints": {
+    "sm": 640,
+    "md": 768,
+    "lg": 1024,
+    "xl": 1280,
+    "2xl": 1536
+  },
+  "containerPadding": {
+    "mobile": 16,
+    "tablet": 24,
+    "desktop": 32
+  },
+  "alignmentRules": {
+    "text": ["left", "center", "right"],
+    "icon": ["center"],
+    "button": ["left", "center", "right"]
+  },
+  "overflowPolicy": "prevent"
+}
+

@@ -1,30 +1,25 @@
 /**
- * AI-BOS UI Components - Clean Slate Architecture
+ * @aibos/ui - Component Library
  *
- * Next.js MCP Compliant Component System
- * - Server Components (RSC-optimized)
- * - Client Components (Interactive)
- * - Shared Components (Universal)
+ * React 19 RSC + Next.js 16 App Router Architecture
  *
- * @version 2.0.0 - Complete Rebuild
- * @architecture Next.js 16+ App Router
- * @mcp-ready Full MCP validation and compliance
- * @rsc-safe Server/Client boundary enforcement
+ * Import Patterns:
+ * - Server Components: import { Header } from '@aibos/ui/server'
+ * - Client Components: import { Dialog } from '@aibos/ui/client'
+ * - Shared Primitives: import { Button } from '@aibos/ui/shared'
+ *
+ * @version 2.0.0
+ * @mcp-certified true
  */
 
-// Server Components (default exports - RSC optimized)
+// Server Components (RSC - no client JS)
 export * from './server'
+
+// Shared Components (work in both environments)
 export * from './shared'
 
-// Client Components (named exports with clear indication)
-export * as ClientComponents from './client'
+// Client Components - namespaced to avoid conflicts
+export * as Client from './client'
 
-// Re-export design utilities for convenience
+// Design utilities
 export { cn } from '../design/utilities/cn'
-export { tokenHelpers } from '../design/utilities/token-helpers'
-
-// Note: Individual components will be built incrementally using:
-// - Modern Next.js 16+ patterns
-// - Professional token system
-// - MCP validation built-in
-// - Zero technical debt approach

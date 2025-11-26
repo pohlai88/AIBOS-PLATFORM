@@ -52,8 +52,8 @@ const alertDialogVariants = {
   body: [
     `px-[${spacingTokens.lg}]`,
     `pb-[${spacingTokens.lg}]`,
-    colorTokens.textMuted,
-    typographyTokens.bodySm,
+    colorTokens.fgMuted,
+    typographyTokens.sm,
   ].join(' '),
   footer: [
     `p-[${spacingTokens.lg}]`,
@@ -222,8 +222,8 @@ export const AlertDialogTitle = React.forwardRef<
   <h2
     ref={ref}
     className={cn(
-      typographyTokens.headingMd,
-      colorTokens.text,
+      typographyTokens.h5,
+      colorTokens.fg,
       'font-semibold',
       className
     )}
@@ -250,8 +250,8 @@ export const AlertDialogDescription = React.forwardRef<
   <p
     ref={ref}
     className={cn(
-      typographyTokens.bodySm,
-      colorTokens.textMuted,
+      typographyTokens.sm,
+      colorTokens.fgMuted,
       'leading-relaxed',
       className
     )}

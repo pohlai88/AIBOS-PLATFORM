@@ -18,6 +18,11 @@
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
   "private": true,
   "scripts": {
     "build": "pnpm sync-docs && next build",

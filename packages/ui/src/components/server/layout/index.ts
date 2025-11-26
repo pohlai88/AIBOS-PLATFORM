@@ -1,15 +1,15 @@
-/**
- * Server Layout Components
- *
- * Server-side layout components
- * - Headers, footers, navigation
- * - Page layouts and containers
- * - SEO-optimized structure
- * - Server-rendered layouts
- */
+// Layout Server Components - React 19 RSC Compliant
+export { Header } from './header'
+export type { HeaderProps } from './header'
 
-// Layout components will be built here incrementally
-// Examples: Header, Footer, Sidebar, PageLayout, etc.
+export { Navigation } from './navigation'
+export type { NavigationProps, NavItem } from './navigation'
 
-// Placeholder - ready for server layout components
-export {}
+export { Sidebar } from './sidebar'
+export type { SidebarProps } from './sidebar'
+
+export { ContentArea } from './content-area'
+export type { ContentAreaProps } from './content-area'
+
+export { Footer } from './footer'
+export type { FooterProps, FooterLink } from './footer'

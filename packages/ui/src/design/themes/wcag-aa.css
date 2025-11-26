@@ -1,82 +1,62 @@
-/**
- * WCAG AA Theme - Legal Compliance
- * 
- * WCAG AA contrast ratios (4.5:1 minimum)
- * Fixed theme - NO tenant overrides allowed
- * Loaded after globals.css to override tenant customizations
- */
+/* ======================================================================
+   AI-BOS WCAG AA Theme v3.3
+   Enhanced accessibility baseline for all users
+   Applies moderate improvements to typography, spacing,
+   borders, and interaction contrast.
+   ====================================================================== */
 
-:root[data-theme='wcag-aa'] {
-  /* Override accent bridge with AA-compliant colors */
-  --accent-bg: #1f2937; /* High contrast primary */
-  --accent-bg-hover: #111827;
-  --accent-bg-active: #000000;
-  --accent-subtle: rgba(31, 41, 55, 0.12);
-  --accent-foreground: #ffffff;
+   :root[data-theme="aa"] {
 
-  /* Override primary colors (derived from accent) */
-  --color-primary: #1f2937;
-  --color-primary-soft: rgba(31, 41, 55, 0.12);
-  --color-primary-foreground: #ffffff;
-
-  /* Secondary colors with AA compliance */
-  --secondary-bg: #4b5563;
-  --secondary-bg-hover: #374151;
-  --secondary-bg-active: #1f2937;
-  --secondary-foreground: #ffffff;
-
-  /* Surface colors - aligned with globals.css naming */
-  --color-bg: #ffffff;
-  --color-bg-muted: #f9fafb;
-  --color-bg-elevated: #ffffff;
-
-  /* Text colors with WCAG AA contrast (4.5:1) */
-  --color-fg: #000000;
-  --color-fg-muted: #1f2937;
-  --color-fg-subtle: #374151;
-
-  /* Border colors with sufficient contrast */
-  --color-border: #374151;
-  --color-border-muted: #1f2937;
-  --color-border-subtle: #000000;
-
-  /* Status colors with WCAG AA compliance */
-  --color-success: #166534;
-  --color-warning: #a16207;
-  --color-danger: #991b1b;
-  --color-info: #1e40af;
-}
-
-/* Lock out tenant overrides - AA theme wins over any tenant customization */
-/* Note: Some tokens are duplicated with !important for legal compliance */
-/* This ensures AA colors always override tenant customizations */
-:root[data-theme='wcag-aa'][data-tenant],
-:root[data-theme='wcag-aa'] {
-  /* Accessibility enhancements for WCAG AA */
-  --touch-target-min: 44px;
-  --focus-ring-width: 3px; /* WCAG requires 3px OR 2px + offset */
-  --focus-ring-color: #000000; /* High contrast focus ring */
-  --focus-ring-offset: 2px;
-
-  /* Ensure AA colors override any tenant customizations */
-  --accent-bg: #1f2937 !important;
-  --color-primary: #1f2937 !important;
-  --color-ring: #1f2937 !important;
-}
-
-/* WCAG AA: Ensure visible interactive state changes */
-:root[data-theme='wcag-aa'] button:hover,
-:root[data-theme='wcag-aa'] [role='button']:hover {
-  filter: brightness(0.9); /* Visible hover state */
-}
-
-:root[data-theme='wcag-aa'] button:active,
-:root[data-theme='wcag-aa'] [role='button']:active {
-  filter: brightness(0.8); /* Visible active state */
-}
-
-:root[data-theme='wcag-aa'] button:focus-visible,
-:root[data-theme='wcag-aa'] [role='button']:focus-visible {
-  outline: 3px solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
+    /* --------------------------------------------------------------- */
+    /* TYPOGRAPHY — 5% SCALE UP ACROSS ALL TEXT SIZES */
+    /* --------------------------------------------------------------- */
+    --theme-font-xs: calc(var(--font-xs) * 1.05);
+    --theme-font-sm: calc(var(--font-sm) * 1.05);
+    --theme-font-base: calc(var(--font-base) * 1.05);
+    --theme-font-lg: calc(var(--font-lg) * 1.05);
+  
+    --theme-font-h1: calc(var(--font-h1) * 1.05);
+    --theme-font-h2: calc(var(--font-h2) * 1.05);
+    --theme-font-h3: calc(var(--font-h3) * 1.05);
+    --theme-font-h4: calc(var(--font-h4) * 1.05);
+    --theme-font-h5: calc(var(--font-h5) * 1.05);
+    --theme-font-h6: calc(var(--font-h6) * 1.05);
+  
+    --theme-font-display-sm: calc(var(--font-display-sm) * 1.05);
+    --theme-font-display-md: calc(var(--font-display-md) * 1.05);
+    --theme-font-display-lg: calc(var(--font-display-lg) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* LINE HEIGHT — small boost (AAA applies larger boost) */
+    /* --------------------------------------------------------------- */
+    --theme-line-height-normal: calc(var(--line-height-normal) * 1.05);
+    --theme-line-height-relaxed: calc(var(--line-height-relaxed) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* INTERACTION — minimum tap area */
+    /* --------------------------------------------------------------- */
+    --theme-hit-min: 44px;
+  
+    /* --------------------------------------------------------------- */
+    /* BORDER CONTRAST — stronger for visibility */
+    /* --------------------------------------------------------------- */
+    --theme-border: color-mix(in srgb, var(--color-border) 85%, black 15%);
+    --theme-border-subtle: color-mix(in srgb, var(--color-border-subtle) 80%, black 20%);
+  
+    /* --------------------------------------------------------------- */
+    /* SPACING — slight increase for touch accuracy */
+    /* --------------------------------------------------------------- */
+    --theme-spacing-2xs: calc(var(--spacing-2xs) * 1.05);
+    --theme-spacing-xs: calc(var(--spacing-xs) * 1.05);
+    --theme-spacing-sm: calc(var(--spacing-sm) * 1.05);
+    --theme-spacing-md: calc(var(--spacing-md) * 1.05);
+    --theme-spacing-lg: calc(var(--spacing-lg) * 1.05);
+    --theme-spacing-xl: calc(var(--spacing-xl) * 1.05);
+    --theme-spacing-2xl: calc(var(--spacing-2xl) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* FOCUS RING — slightly more visible */
+    /* --------------------------------------------------------------- */
+    --theme-ring: color-mix(in srgb, var(--color-ring) 85%, black 15%);
+  }
+  

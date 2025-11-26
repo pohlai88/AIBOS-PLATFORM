@@ -81,3 +81,84 @@ export {
 
 // Card primitive - Content container component
 export { Card, type CardProps, type CardSize, type CardVariant } from './card'
+
+// Fieldset primitive - Form grouping component
+export {
+  Fieldset,
+  fieldsetVariants,
+  type FieldsetProps,
+  type FieldsetSize,
+  type FieldsetVariant,
+} from './fieldset'
+
+// FormDescription primitive - Helper text component
+export {
+  FormDescription,
+  formDescriptionVariants,
+  type FormDescriptionProps,
+  type FormDescriptionSize,
+} from './form-description'
+
+// FormError primitive - Error message component
+export {
+  FormError,
+  formErrorVariants,
+  type FormErrorProps,
+  type FormErrorSize,
+} from './form-error'
+
+// Tag primitive - Tag/chip component
+export {
+  Tag,
+  tagVariants,
+  type TagProps,
+  type TagSize,
+  type TagVariant,
+} from './tag'
+
+// Grid primitive - CSS Grid layout component
+export {
+  Grid,
+  gridVariants,
+  type GridCols,
+  type GridGap,
+  type GridProps,
+} from './grid'
+
+// Flex primitive - Flexbox layout component
+export {
+  Flex,
+  flexVariants,
+  type FlexAlign,
+  type FlexDirection,
+  type FlexGap,
+  type FlexJustify,
+  type FlexProps,
+  type FlexWrap,
+} from './flex'
+
+// Spacer primitive - Spacing utility component
+export {
+  Spacer,
+  spacerVariants,
+  type SpacerAxis,
+  type SpacerProps,
+  type SpacerSize,
+} from './spacer'
+
+// ScrollArea primitive - Simple scroll container
+export {
+  ScrollArea,
+  scrollAreaVariants,
+  type ScrollAreaOrientation,
+  type ScrollAreaProps,
+} from './scroll-area'
+
+// ResponsiveBox primitive - Responsive container
+export {
+  ResponsiveBox,
+  responsiveBoxVariants,
+  type Breakpoint,
+  type ResponsiveBoxProps,
+  type ResponsiveDisplay,
+} from './responsive-box'

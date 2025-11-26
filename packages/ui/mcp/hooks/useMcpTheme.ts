@@ -7,7 +7,7 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { ValidationPipeline } from '../tools/ValidationPipeline'
-import { tokenHelpers } from '../../src/design/utilities/token-helpers'
+import * as tokenHelpers from '../../src/design/utilities/token-helpers'
 import type { TenantContext, ConstitutionRule } from '../types/mcp'
 
 export interface McpThemeOverrides {
@@ -74,54 +74,81 @@ const themeCache = new Map<string, CachedTheme>()
 const CACHE_KEY_SEPARATOR = '::'
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
-// PATCH: Known tokens registry for validation
+// PATCH: Known theme tokens registry for validation (aligned with themeTokens v3.3)
 const KNOWN_TOKENS = new Set([
-  // Core tokens
-  '--color-bg',
-  '--color-bg-subtle',
-  '--color-bg-muted',
-  '--color-bg-elevated',
-  '--color-fg',
-  '--color-fg-muted',
-  '--color-fg-subtle',
-  '--color-fg-inverse',
-  '--color-primary',
-  '--color-primary-hover',
-  '--color-primary-active',
-  '--color-secondary',
-  '--color-accent',
-  '--color-border',
-  '--color-success',
-  '--color-warning',
-  '--color-error',
-  '--color-info',
-  // Spacing tokens
-  '--space-1',
-  '--space-2',
-  '--space-3',
-  '--space-4',
-  '--space-6',
-  '--space-8',
-  // Typography tokens
-  '--font-sans',
-  '--text-xs',
-  '--text-sm',
-  '--text-base',
-  '--text-lg',
-  // Radius tokens
-  '--radius-sm',
-  '--radius-md',
-  '--radius-lg',
-  '--radius-full',
-  // Shadow tokens
-  '--shadow-sm',
-  '--shadow-md',
-  '--shadow-lg',
-  // Animation tokens
-  '--duration-fast',
-  '--duration-normal',
-  '--ease-in',
-  '--ease-out',
+  // Surfaces
+  '--theme-bg',
+  '--theme-bg-muted',
+  '--theme-bg-elevated',
+  // Text
+  '--theme-fg',
+  '--theme-fg-muted',
+  '--theme-fg-subtle',
+  // Primary
+  '--theme-primary',
+  '--theme-primary-soft',
+  '--theme-primary-foreground',
+  // Secondary
+  '--theme-secondary',
+  '--theme-secondary-soft',
+  '--theme-secondary-foreground',
+  // Brand (tenant customizable)
+  '--theme-brand',
+  '--theme-brand-soft',
+  '--theme-brand-foreground',
+  // Status
+  '--theme-success',
+  '--theme-success-soft',
+  '--theme-success-foreground',
+  '--theme-warning',
+  '--theme-warning-soft',
+  '--theme-warning-foreground',
+  '--theme-danger',
+  '--theme-danger-soft',
+  '--theme-danger-foreground',
+  // Border / Ring
+  '--theme-border',
+  '--theme-border-subtle',
+  '--theme-ring',
+  // Shadows
+  '--theme-shadow-xs',
+  '--theme-shadow-sm',
+  '--theme-shadow-md',
+  '--theme-shadow-lg',
+  // Typography
+  '--theme-font-xs',
+  '--theme-font-sm',
+  '--theme-font-base',
+  '--theme-font-lg',
+  '--theme-font-h1',
+  '--theme-font-h2',
+  '--theme-font-h3',
+  '--theme-font-h4',
+  '--theme-font-h5',
+  '--theme-font-h6',
+  '--theme-font-display-sm',
+  '--theme-font-display-md',
+  '--theme-font-display-lg',
+  '--theme-line-height-normal',
+  '--theme-line-height-relaxed',
+  '--theme-font-sans',
+  // Spacing
+  '--theme-spacing-2xs',
+  '--theme-spacing-xs',
+  '--theme-spacing-sm',
+  '--theme-spacing-md',
+  '--theme-spacing-lg',
+  '--theme-spacing-xl',
+  '--theme-spacing-2xl',
+  // Radius
+  '--theme-radius-xxs',
+  '--theme-radius-xs',
+  '--theme-radius-sm',
+  '--theme-radius-md',
+  '--theme-radius-lg',
+  '--theme-radius-xl',
+  '--theme-radius-2xl',
+  '--theme-radius-full',
 ])
 
 /**
@@ -508,26 +535,28 @@ function validateAndFilterTenantOverrides(
   const warnings: string[] = []
 
   // PATCH: Tenant override safety rules
+  // Tokens tenants CANNOT override (accessibility critical)
   const TENANT_FORBIDDEN_TOKENS = new Set([
-    '--color-bg',
-    '--color-fg', // Core accessibility tokens
-    '--color-success',
-    '--color-warning',
-    '--color-error', // Status colors
-    '--focus-ring-color',
-    '--focus-ring-width', // Accessibility critical
+    '--theme-bg',
+    '--theme-fg', // Core accessibility tokens
+    '--theme-success',
+    '--theme-warning',
+    '--theme-danger', // Status colors
+    '--theme-ring', // Accessibility critical
   ])
 
+  // Tokens allowed in safe mode (brand customization only)
   const SAFE_MODE_ALLOWED_TOKENS = new Set([
-    '--color-primary',
-    '--color-accent', // Only accent colors allowed
-    '--radius-sm',
-    '--radius-md',
-    '--radius-lg', // Safe radius tokens
-    '--space-1',
-    '--space-2',
-    '--space-3',
-    '--space-4', // Safe spacing
+    '--theme-brand',
+    '--theme-brand-soft',
+    '--theme-brand-foreground', // Only brand colors allowed
+    '--theme-radius-sm',
+    '--theme-radius-md',
+    '--theme-radius-lg', // Safe radius tokens
+    '--theme-spacing-xs',
+    '--theme-spacing-sm',
+    '--theme-spacing-md',
+    '--theme-spacing-lg', // Safe spacing
   ])
 
   for (const [token, value] of Object.entries(tenantOverrides)) {
@@ -562,20 +591,16 @@ function validateAndFilterTenantOverrides(
       continue
     }
 
-    // Validate token value format
-    const validation = tokenHelpers.validateTokenUsage(
-      token.replace('--', ''),
-      'client'
-    )
-    if (!validation.isValid) {
+    // Validate token exists in design system
+    const tokenName = token.replace('--theme-', '')
+    if (!tokenHelpers.isThemeToken(tokenName)) {
       violations.push({
         token,
-        message: `Invalid token value '${value}' for '${token}'`,
-        severity: 'error',
-        suggestion: validation.suggestions[0] || 'Use valid CSS value',
+        message: `Unknown theme token '${token}'`,
+        severity: 'warning',
+        suggestion: 'Use tokens defined in themeTokens',
       })
-      removedTokens.push(token)
-      continue
+      // Allow unknown tokens but warn
     }
 
     // Token passed all checks
@@ -610,14 +635,18 @@ function enforceConstitutionSafeMode(
   const warnings: string[] = []
 
   // PATCH: Constitution safe mode rules
+  // Safe mode neutralizes colors to high-contrast grayscale
   const SAFE_MODE_NEUTRALS = {
-    '--color-primary': '#6b7280', // Neutral gray
-    '--color-accent': '#6b7280',
-    '--color-primary-hover': '#4b5563',
-    '--color-primary-active': '#374151',
-    '--shadow-sm': 'none',
-    '--shadow-md': 'none',
-    '--shadow-lg': 'none',
+    '--theme-primary': 'var(--theme-fg)', // Neutral to foreground
+    '--theme-primary-soft': 'var(--theme-border-subtle)',
+    '--theme-primary-foreground': 'var(--theme-bg)',
+    '--theme-brand': 'var(--theme-fg)',
+    '--theme-brand-soft': 'var(--theme-border-subtle)',
+    '--theme-brand-foreground': 'var(--theme-bg)',
+    '--theme-shadow-xs': 'none',
+    '--theme-shadow-sm': 'none',
+    '--theme-shadow-md': 'none',
+    '--theme-shadow-lg': 'none',
   }
 
   // Apply safe mode neutralization

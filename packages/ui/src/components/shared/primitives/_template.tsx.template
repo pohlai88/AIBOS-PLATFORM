@@ -50,7 +50,7 @@ const [COMPONENT_NAME_LOWER]Variants = {
       primary: [
         // Primary accent (tenant + theme aware)
         colorTokens.primarySoftSurface,
-        accessibilityTokens.textOnPrimary,
+        colorTokens.primaryForeground,
         shadowTokens.xs,
       ].join(" "),
 
@@ -64,7 +64,7 @@ const [COMPONENT_NAME_LOWER]Variants = {
       danger: [
         // Danger status action
         colorTokens.dangerSoftSurface,
-        accessibilityTokens.textOnDanger,
+        colorTokens.dangerForeground,
         shadowTokens.sm,
       ].join(" "),
     },

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SpacingRules",
+  "type": "object",
+  "properties": {
+    "gridStep": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 16
+    },
+    "allowedSpacing": {
+      "type": "array",
+      "items": { "type": "number", "minimum": 0, "maximum": 200 },
+      "minItems": 1
+    },
+    "siblingAlignmentTolerance": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 8
+    }
+  },
+  "required": ["gridStep", "allowedSpacing"]
+}

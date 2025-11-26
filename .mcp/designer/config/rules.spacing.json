@@ -1,0 +1,28 @@
+{
+  "$schema": "../schemas/spacing.schema.json",
+  "gridBase": 4,
+  "allowedSpacingValues": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96],
+  "componentSpacing": {
+    "button": {
+      "paddingX": { "min": 12, "max": 24 },
+      "paddingY": { "min": 8, "max": 16 }
+    },
+    "card": {
+      "padding": { "min": 16, "max": 32 }
+    },
+    "input": {
+      "paddingX": { "min": 12, "max": 16 },
+      "paddingY": { "min": 8, "max": 12 }
+    }
+  },
+  "gapScale": {
+    "2xs": 4,
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "2xl": 48
+  }
+}
+

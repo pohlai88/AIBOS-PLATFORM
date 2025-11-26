@@ -46,19 +46,19 @@ const radioVariants = {
       primary: [
         colorTokens.bgElevated,
         `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.primarySoftSurface}]`,
+        `checked:border-[${colorTokens.primarySoft}]`,
       ].join(' '),
 
       success: [
         colorTokens.bgElevated,
         `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.successSoftSurface}]`,
+        `checked:border-[${colorTokens.successSoft}]`,
       ].join(' '),
 
       danger: [
         colorTokens.bgElevated,
         `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.dangerSoftSurface}]`,
+        `checked:border-[${colorTokens.dangerSoft}]`,
       ].join(' '),
     },
     size: {
@@ -80,10 +80,10 @@ const dotVariants = {
   ].join(' '),
   variants: {
     variant: {
-      default: colorTokens.text,
-      primary: `bg-[${colorTokens.primarySoftSurface}]`,
-      success: `bg-[${colorTokens.successSoftSurface}]`,
-      danger: `bg-[${colorTokens.dangerSoftSurface}]`,
+      default: colorTokens.fg,
+      primary: `bg-[${colorTokens.primarySoft}]`,
+      success: `bg-[${colorTokens.successSoft}]`,
+      danger: `bg-[${colorTokens.dangerSoft}]`,
     },
     size: {
       sm: 'h-2 w-2',
@@ -99,12 +99,12 @@ const labelVariants = {
     'inline-flex items-center gap-2',
     'cursor-pointer',
     'select-none',
-    colorTokens.text,
+    colorTokens.fg,
   ].join(' '),
   size: {
-    sm: typographyTokens.bodySm,
-    md: typographyTokens.bodyMd,
-    lg: typographyTokens.headingMd,
+    sm: typographyTokens.sm,
+    md: typographyTokens.base,
+    lg: typographyTokens.h5,
   },
 }
 
@@ -271,8 +271,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             // Error state styling
             error &&
               [
-                `border-[${colorTokens.dangerSoftSurface}]`,
-                `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
+                `border-[${colorTokens.dangerSoft}]`,
+                `focus-visible:ring-[${colorTokens.dangerSoft}]`,
               ].join(' '),
             // Focus styling (WCAG 2.1 required)
             'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
@@ -310,8 +310,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             <span
               id={`${radioId}-helper`}
               className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
+                typographyTokens.sm,
+                colorTokens.fgMuted,
                 'mt-1'
               )}
             >
@@ -324,8 +324,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             <span
               id={`${radioId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`,
+                typographyTokens.sm,
+                `text-[${colorTokens.dangerSoft}]`,
                 'mt-1'
               )}
               role="alert"
@@ -357,8 +357,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           <span
             id={`${radioId}-helper`}
             className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
+              typographyTokens.sm,
+              colorTokens.fgMuted,
               'ml-7'
             )}
           >
@@ -371,8 +371,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           <span
             id={`${radioId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`,
+              typographyTokens.sm,
+              `text-[${colorTokens.dangerSoft}]`,
               'ml-7'
             )}
             role="alert"

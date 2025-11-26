@@ -16,7 +16,6 @@ import * as React from 'react'
 
 // Import design tokens (server-safe)
 import {
-  accessibilityTokens,
   colorTokens,
   radiusTokens,
   spacingTokens,
@@ -50,52 +49,52 @@ const badgeVariants = {
       default: [
         // Neutral badge
         colorTokens.bgMuted,
-        colorTokens.text,
+        colorTokens.fg,
         `border ${colorTokens.borderSubtle}`,
       ].join(' '),
 
       primary: [
-        // Primary brand badge
-        colorTokens.primarySoftSurface,
-        accessibilityTokens.textOnPrimary,
+        // Primary brand badge - SOLID color
+        colorTokens.primary,
+        colorTokens.primaryForeground,
         'border border-transparent',
       ].join(' '),
 
       secondary: [
-        // Secondary badge
-        colorTokens.secondarySoftSurface,
-        accessibilityTokens.textOnSecondary,
+        // Secondary badge - SOLID color
+        colorTokens.secondary,
+        colorTokens.secondaryForeground,
         'border border-transparent',
       ].join(' '),
 
       success: [
-        // Success status badge
-        colorTokens.successSoftSurface,
-        accessibilityTokens.textOnSuccess,
+        // Success status badge - SOLID color
+        colorTokens.success,
+        colorTokens.successForeground,
         'border border-transparent',
       ].join(' '),
 
       warning: [
-        // Warning status badge
-        colorTokens.warningSoftSurface,
-        accessibilityTokens.textOnWarning,
+        // Warning status badge - SOLID color
+        colorTokens.warning,
+        colorTokens.warningForeground,
         'border border-transparent',
       ].join(' '),
 
       danger: [
-        // Danger status badge
-        colorTokens.dangerSoftSurface,
-        accessibilityTokens.textOnDanger,
+        // Danger status badge - SOLID color
+        colorTokens.danger,
+        colorTokens.dangerForeground,
         'border border-transparent',
       ].join(' '),
     },
     size: {
       // Uses documented spacing + typography + radius tokens
-      sm: ['px-2 py-0.5', typographyTokens.bodySm, radiusTokens.sm].join(' '),
-      md: [spacingTokens.sm, typographyTokens.bodySm, radiusTokens.md].join(
+      sm: ['px-2 py-0.5', typographyTokens.sm, radiusTokens.sm].join(' '),
+      md: [spacingTokens.sm, typographyTokens.sm, radiusTokens.md].join(
         ' '
       ),
-      lg: [spacingTokens.md, typographyTokens.bodyMd, radiusTokens.lg].join(
+      lg: [spacingTokens.md, typographyTokens.base, radiusTokens.lg].join(
         ' '
       ),
     },

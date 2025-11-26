@@ -1,0 +1,34 @@
+{
+  "name": "@aibos/mcp-designer",
+  "version": "1.0.0",
+  "description": "AI-BOS Designer MCP - Design validation system for Figma governance",
+  "type": "module",
+  "main": "server.ts",
+  "scripts": {
+    "start": "tsx server.ts",
+    "dev": "tsx watch server.ts",
+    "build": "tsc",
+    "test": "tsx --test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mcp",
+    "figma",
+    "design-system",
+    "validation",
+    "ai-bos"
+  ],
+  "author": "AI-BOS Team",
+  "license": "MIT"
+}
+

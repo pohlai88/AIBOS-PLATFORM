@@ -7,7 +7,7 @@
     "@modelcontextprotocol/sdk": "^1.22.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "syncpack": "13.0.2",
+    "syncpack": "13.0.4",
     "tsx": "^4.19.2",
     "turbo": "^2.3.0"
   },

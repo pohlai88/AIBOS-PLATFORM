@@ -1,0 +1,17 @@
+{
+  "minButtonPaddingY": 8,
+  "minButtonPaddingX": 12,
+  "allowedIconSizes": [12, 14, 16, 20, 24, 32, 40, 48],
+  "allowedRadius": [0, 2, 4, 6, 8, 12, 9999],
+  "buttonPaddingExceptions": [
+    "Checkbox",
+    "Radio",
+    "Toggle",
+    "Switch",
+    "Avatar",
+    "Badge",
+    "Tooltip",
+    "Spinner",
+    "IconButton"
+  ]
+}

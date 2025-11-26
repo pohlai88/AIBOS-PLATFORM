@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LayoutRules",
+  "type": "object",
+  "properties": {
+    "maxFrameWidth": {
+      "type": "number",
+      "minimum": 300,
+      "maximum": 4000
+    },
+    "minFrameWidth": {
+      "type": "number",
+      "minimum": 120,
+      "maximum": 3000
+    },
+    "minFramePadding": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 200
+    },
+    "alignmentTolerance": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10
+    }
+  },
+  "required": ["maxFrameWidth", "minFrameWidth", "minFramePadding"]
+}

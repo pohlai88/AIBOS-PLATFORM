@@ -1,0 +1,25 @@
+{
+  "$schema": "../schemas/typography.schema.json",
+  "minFontSize": 12,
+  "maxFontSize": 96,
+  "allowedWeights": [400, 500, 600, 700],
+  "lineHeightRange": {
+    "min": 1.2,
+    "max": 2.0
+  },
+  "headingScale": {
+    "h1": { "min": 32, "max": 48 },
+    "h2": { "min": 24, "max": 36 },
+    "h3": { "min": 20, "max": 28 },
+    "h4": { "min": 18, "max": 24 },
+    "h5": { "min": 16, "max": 20 },
+    "h6": { "min": 14, "max": 18 }
+  },
+  "bodyScale": {
+    "xs": { "min": 12, "max": 12 },
+    "sm": { "min": 14, "max": 14 },
+    "base": { "min": 16, "max": 16 },
+    "lg": { "min": 18, "max": 18 }
+  }
+}
+

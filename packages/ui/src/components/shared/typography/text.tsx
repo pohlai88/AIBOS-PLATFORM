@@ -40,10 +40,10 @@ const textVariants = {
   ].join(' '),
   variants: {
     size: {
-      xs: typographyTokens.bodySm, // 14px (text-sm)
-      sm: typographyTokens.bodyMd, // 15px (text-[15px])
-      md: typographyTokens.body, // 16px (text-base)
-      lg: typographyTokens.bodyLg, // 18px (text-lg)
+      xs: typographyTokens.sm, // 14px (text-sm)
+      sm: typographyTokens.base, // 15px (text-[15px])
+      md: typographyTokens.base, // 16px (text-base)
+      lg: typographyTokens.lg, // 18px (text-lg)
     },
     weight: {
       normal: 'font-normal',
@@ -53,14 +53,14 @@ const textVariants = {
     },
     variant: {
       default: '', // No additional classes
-      label: typographyTokens.label, // 14px medium
-      caption: typographyTokens.caption, // 12px subtle
-      overline: typographyTokens.overline, // 12px medium uppercase
+      label: typographyTokens.sm, // 14px medium
+      caption: typographyTokens.xs, // 12px subtle
+      overline: typographyTokens.xs, // 12px medium uppercase
     },
     color: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      subtle: colorTokens.textSubtle,
+      default: colorTokens.fg,
+      muted: colorTokens.fgMuted,
+      subtle: colorTokens.fgSubtle,
       primary: 'text-primary',
       success: 'text-success',
       warning: 'text-warning',

@@ -42,12 +42,12 @@ const iconWrapperVariants = {
       xl: 'w-8 h-8', // 32px
     },
     variant: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      primary: colorTokens.primarySoftSurface,
-      success: colorTokens.successSoftSurface,
-      warning: colorTokens.warningSoftSurface,
-      danger: colorTokens.dangerSoftSurface,
+      default: colorTokens.fg,
+      muted: colorTokens.fgMuted,
+      primary: colorTokens.primarySoft,
+      success: colorTokens.successSoft,
+      warning: colorTokens.warningSoft,
+      danger: colorTokens.dangerSoft,
     },
   },
 }

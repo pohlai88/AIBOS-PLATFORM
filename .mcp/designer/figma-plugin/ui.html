@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Inter, system-ui, sans-serif;
+        padding: 16px;
+        background: #fafafa;
+        color: #111;
+      }
+      h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #111;
+      }
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #1d4ed8;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #374151;
+      }
+      .btn-secondary:hover {
+        background: #d1d5db;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .label {
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 6px;
+        display: block;
+      }
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+      }
+      .results {
+        margin-top: 16px;
+        padding: 12px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .result-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        font-size: 13px;
+      }
+      .result-error {
+        background: #fef2f2;
+        border-left: 3px solid #ef4444;
+      }
+      .result-warning {
+        background: #fffbeb;
+        border-left: 3px solid #f59e0b;
+      }
+      .result-info {
+        background: #eff6ff;
+        border-left: 3px solid #3b82f6;
+      }
+      .result-code {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .result-node {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 4px;
+      }
+      .status {
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      .status-success {
+        background: #ecfdf5;
+        color: #065f46;
+      }
+      .status-error {
+        background: #fef2f2;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>🎨 AI-BOS Designer Validator</h2>
+
+    <div class="section">
+      <label class="label">Theme</label>
+      <select id="theme">
+        <option value="default">Default</option>
+        <option value="dlbb">DLBB (Emerald)</option>
+        <option value="client-template">Client Template</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <button id="validateSelection" class="btn btn-primary">
+        Validate Selection
+      </button>
+      <button id="validatePage" class="btn btn-secondary">
+        Validate Entire Page
+      </button>
+    </div>
+
+    <div id="status"></div>
+    <div id="results" class="results" style="display: none;"></div>
+
+    <script>
+      const statusEl = document.getElementById("status");
+      const resultsEl = document.getElementById("results");
+      let exportedNodes = null;
+
+      document.getElementById("validateSelection").onclick = () => {
+        statusEl.innerHTML = '<div class="status">Exporting selection...</div>';
+        resultsEl.style.display = "none";
+        parent.postMessage(
+          { pluginMessage: { type: "VALIDATE_SELECTION" } },
+          "*"
+        );
+      };
+
+      document.getElementById("validatePage").onclick = () => {
+        statusEl.innerHTML = '<div class="status">Exporting page...</div>';
+        resultsEl.style.display = "none";
+        parent.postMessage({ pluginMessage: { type: "VALIDATE_PAGE" } }, "*");
+      };
+
+      window.onmessage = async (event) => {
+        const msg = event.data.pluginMessage;
+
+        if (msg.type === "NO_SELECTION") {
+          statusEl.innerHTML =
+            '<div class="status status-error">No selection found. Please select frames to validate.</div>';
+        }
+
+        if (msg.type === "NO_NODES") {
+          statusEl.innerHTML =
+            '<div class="status status-error">No nodes found on this page.</div>';
+        }
+
+        if (msg.type === "NODES_EXPORTED") {
+          exportedNodes = msg.data;
+          const theme = document.getElementById("theme").value;
+
+          statusEl.innerHTML = `<div class="status">Validating ${exportedNodes.length} node(s) with theme "${theme}"...</div>`;
+
+          // In production, this would call your MCP endpoint
+          // For now, we'll show the exported data
+          console.log("Exported Nodes:", exportedNodes);
+          console.log("Theme:", theme);
+
+          // Simulate validation results (replace with actual MCP call)
+          setTimeout(() => {
+            statusEl.innerHTML = `<div class="status status-success">✓ Exported ${exportedNodes.length} node(s) - Ready for MCP validation</div>`;
+            resultsEl.style.display = "block";
+            resultsEl.innerHTML = `<pre style="font-size: 11px; overflow-x: auto;">${JSON.stringify(exportedNodes, null, 2)}</pre>`;
+          }, 500);
+        }
+      };
+    </script>
+  </body>
+</html>
+

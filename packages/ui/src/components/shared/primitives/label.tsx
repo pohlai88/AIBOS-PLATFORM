@@ -107,7 +107,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       'font-medium',
 
       // Colors - standard text color
-      `text-[${colorTokens.text}]`,
+      `text-[${colorTokens.fg}]`,
 
       // Spacing - small margin bottom
       'mb-1.5',
@@ -157,7 +157,7 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
           <span
             className={cn(
               'ml-1',
-              `text-[${colorTokens.dangerSoftSurface}]`,
+              `text-[${colorTokens.dangerSoft}]`,
               'font-bold'
             )}
             aria-label="required"

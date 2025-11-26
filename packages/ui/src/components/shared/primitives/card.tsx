@@ -152,26 +152,26 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       default: cn(
         // Elevated background with subtle border
         `bg-[${colorTokens.bgElevated}]`,
-        `text-[${colorTokens.text}]`,
+        `text-[${colorTokens.fg}]`,
         `border border-[${colorTokens.borderSubtle}]`
       ),
       elevated: cn(
         // Elevated background with shadow
         `bg-[${colorTokens.bgElevated}]`,
-        `text-[${colorTokens.text}]`,
+        `text-[${colorTokens.fg}]`,
         shadowTokens.md,
         'border border-transparent'
       ),
       outlined: cn(
         // Standard background with prominent border
         `bg-[${colorTokens.bg}]`,
-        `text-[${colorTokens.text}]`,
+        `text-[${colorTokens.fg}]`,
         `border border-[${colorTokens.border}]`
       ),
       ghost: cn(
         // Transparent background
         'bg-transparent',
-        `text-[${colorTokens.text}]`,
+        `text-[${colorTokens.fg}]`,
         'border border-transparent'
       ),
     }
@@ -195,31 +195,35 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
         )
       : ''
 
+    const cardClassName = cn(
+      baseStyles,
+      sizeStyles[size],
+      variantStyles[variant],
+      interactiveStyles,
+      className
+    )
+
+    // Render button element when interactive for proper a11y
+    if (isInteractive) {
+      return (
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          type="button"
+          aria-label={props['aria-label'] || 'Interactive card'}
+          onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+          onKeyDown={onKeyDown as React.KeyboardEventHandler<HTMLButtonElement>}
+          className={cardClassName}
+        >
+          {children}
+        </button>
+      )
+    }
+
+    // Non-interactive card uses div
     return (
       <div
         ref={ref}
-        role={isInteractive ? 'button' : undefined}
-        tabIndex={isInteractive ? 0 : undefined}
-        onClick={onClick}
-        onKeyDown={
-          isInteractive
-            ? e => {
-                // Handle keyboard interaction (Enter/Space)
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  onClick?.(e as any)
-                }
-                onKeyDown?.(e)
-              }
-            : onKeyDown
-        }
-        className={cn(
-          baseStyles,
-          sizeStyles[size],
-          variantStyles[variant],
-          interactiveStyles,
-          className
-        )}
+        className={cardClassName}
         {...props}
       >
         {children}

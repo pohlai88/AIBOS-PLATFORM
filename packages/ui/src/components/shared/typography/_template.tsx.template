@@ -38,8 +38,8 @@ const [TYPOGRAPHY_COMPONENT_LOWER]Variants = {
       xs: typographyTokens.labelSm,
       sm: typographyTokens.bodySm,
       md: typographyTokens.bodyMd,
-      lg: typographyTokens.headingSm,
-      xl: typographyTokens.headingMd,
+      lg: typographyTokens.h6,
+      xl: typographyTokens.h5,
       '2xl': typographyTokens.headingLg,
       '3xl': typographyTokens.headingLg, // Extend as needed
     },
@@ -50,8 +50,8 @@ const [TYPOGRAPHY_COMPONENT_LOWER]Variants = {
       bold: "font-bold",
     },
     color: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
+      default: colorTokens.fg,
+      muted: colorTokens.fgMuted,
       subtle: colorTokens.textSubtle,
       primary: "text-primary",
       success: "text-success",

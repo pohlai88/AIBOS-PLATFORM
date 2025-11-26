@@ -1,63 +1,128 @@
-/**
- * Default Theme - Professional Aesthetic
- * 
- * Tenant-customizable theme that works through the accent bridge
- * Uses same token names as globals.css for perfect alignment
- * DLBB tenant will override accent-* to show emerald green
- */
+/* ======================================================================
+   AI-BOS Default Theme v3.3
+   WCAG AA Baseline Theme (Light Mode)
+   Mapped 1:1 to Design Tokens v3.3
+   ====================================================================== */
 
-:root[data-theme='default'] {
-  /* Accent bridge - tenant customizable (DLBB overrides these to emerald) */
-  --accent-bg: #2563eb; /* Blue default, DLBB → emerald */
-  --accent-bg-hover: #1d4ed8;
-  --accent-bg-active: #1e40af;
-  --accent-subtle: rgba(37, 99, 235, 0.12);
-  --accent-foreground: #f0f9ff;
-
-  /* Secondary accent */
-  --secondary-bg: #6b7280;
-  --secondary-bg-hover: #4b5563;
-  --secondary-bg-active: #374151;
-  --secondary-subtle: rgba(107, 114, 128, 0.12);
-  --secondary-foreground: #f9fafb;
-
-  /* Surface colors - aligned with globals.css naming */
-  --color-bg: #ffffff;
-  --color-bg-muted: #f9fafb;
-  --color-bg-elevated: #ffffff;
-
-  /* Text colors - aligned with globals.css naming */
-  --color-fg: #111827;
-  --color-fg-muted: #6b7280;
-  --color-fg-subtle: #9ca3af;
-
-  /* Border colors - aligned with globals.css naming */
-  --color-border: #e5e7eb;
-  --color-border-muted: #f3f4f6;
-  --color-border-subtle: #f9fafb;
-
-  /* Note: --color-primary is derived from --accent-bg in globals.css */
-  /* This allows tenant overrides to work through the accent bridge */
-}
-
-/* Dark mode variant for default theme - aligned token names */
-:root[data-theme='default'][data-mode='dark'],
-:root[data-theme='default'].dark {
-  /* Surface colors - dark mode */
-  --color-bg: #111827;
-  --color-bg-muted: #1f2937;
-  --color-bg-elevated: #374151;
-
-  /* Text colors - dark mode */
-  --color-fg: #f9fafb;
-  --color-fg-muted: #d1d5db;
-  --color-fg-subtle: #9ca3af;
-
-  /* Border colors - dark mode */
-  --color-border: #374151;
-  --color-border-muted: #4b5563;
-  --color-border-subtle: #6b7280;
-
-  /* Accent colors remain the same - tenant overrides still work */
-  /* DLBB will still show emerald in dark mode */
-}
+   :root[data-theme="default"],
+   :root:not([data-theme]) {
+   
+     /* --------------------------------------------------------------- */
+     /* SURFACES */
+     /* --------------------------------------------------------------- */
+     --theme-bg: var(--color-bg);
+     --theme-bg-muted: var(--color-bg-muted);
+     --theme-bg-elevated: var(--color-bg-elevated);
+   
+     /* --------------------------------------------------------------- */
+     /* TEXT */
+     /* --------------------------------------------------------------- */
+     --theme-fg: var(--color-fg);
+     --theme-fg-muted: var(--color-fg-muted);
+     --theme-fg-subtle: var(--color-fg-subtle);
+   
+     /* --------------------------------------------------------------- */
+     /* PRIMARY */
+     /* --------------------------------------------------------------- */
+     --theme-primary: var(--color-primary);
+     --theme-primary-soft: var(--color-primary-soft);
+     --theme-primary-foreground: var(--color-primary-foreground);
+   
+     /* --------------------------------------------------------------- */
+     /* SECONDARY */
+     /* --------------------------------------------------------------- */
+     --theme-secondary: var(--color-secondary);
+     --theme-secondary-soft: var(--color-secondary-soft);
+     --theme-secondary-foreground: var(--color-secondary-foreground);
+   
+     /* --------------------------------------------------------------- */
+     /* BRAND */
+     /* --------------------------------------------------------------- */
+     --theme-brand: var(--color-brand);
+     --theme-brand-soft: var(--color-brand-soft);
+     --theme-brand-foreground: var(--color-brand-foreground);
+   
+     /* --------------------------------------------------------------- */
+     /* STATUS */
+     /* --------------------------------------------------------------- */
+     --theme-success: var(--color-success);
+     --theme-success-soft: var(--color-success-soft);
+     --theme-success-foreground: var(--color-success-foreground);
+   
+     --theme-warning: var(--color-warning);
+     --theme-warning-soft: var(--color-warning-soft);
+     --theme-warning-foreground: var(--color-warning-foreground);
+   
+     --theme-danger: var(--color-danger);
+     --theme-danger-soft: var(--color-danger-soft);
+     --theme-danger-foreground: var(--color-danger-foreground);
+   
+     /* --------------------------------------------------------------- */
+     /* BORDER / RING */
+     /* --------------------------------------------------------------- */
+     --theme-border: var(--color-border);
+     --theme-border-subtle: var(--color-border-subtle);
+     --theme-ring: var(--color-ring);
+   
+     /* --------------------------------------------------------------- */
+     /* SHADOWS */
+     /* --------------------------------------------------------------- */
+     --theme-shadow-xs: var(--shadow-xs);
+     --theme-shadow-sm: var(--shadow-sm);
+     --theme-shadow-md: var(--shadow-md);
+     --theme-shadow-lg: var(--shadow-lg);
+   
+     /* --------------------------------------------------------------- */
+     /* TYPOGRAPHY — BASE TEXT SIZES */
+     /* --------------------------------------------------------------- */
+     --theme-font-xs: var(--font-xs);
+     --theme-font-sm: var(--font-sm);
+     --theme-font-base: var(--font-base);
+     --theme-font-lg: var(--font-lg);
+   
+     /* --------------------------------------------------------------- */
+     /* TYPOGRAPHY — HEADINGS */
+     /* --------------------------------------------------------------- */
+     --theme-font-h1: var(--font-h1);
+     --theme-font-h2: var(--font-h2);
+     --theme-font-h3: var(--font-h3);
+     --theme-font-h4: var(--font-h4);
+     --theme-font-h5: var(--font-h5);
+     --theme-font-h6: var(--font-h6);
+   
+     /* --------------------------------------------------------------- */
+     --theme-font-display-sm: var(--font-display-sm);
+     --theme-font-display-md: var(--font-display-md);
+     --theme-font-display-lg: var(--font-display-lg);
+   
+     /* Line Heights */
+     --theme-line-height-normal: var(--line-height-normal);
+     --theme-line-height-relaxed: var(--line-height-relaxed);
+   
+     /* Font Family */
+     --theme-font-sans: var(--font-sans);
+   
+     /* --------------------------------------------------------------- */
+     /* SPACING SCALE */
+     /* --------------------------------------------------------------- */
+     --theme-spacing-2xs: var(--spacing-2xs);
+     --theme-spacing-xs: var(--spacing-xs);
+     --theme-spacing-sm: var(--spacing-sm);
+     --theme-spacing-md: var(--spacing-md);
+     --theme-spacing-lg: var(--spacing-lg);
+     --theme-spacing-xl: var(--spacing-xl);
+     --theme-spacing-2xl: var(--spacing-2xl);
+   
+     /* --------------------------------------------------------------- */
+     /* RADIUS */
+     /* --------------------------------------------------------------- */
+     --theme-radius-xxs: var(--radius-xxs);
+     --theme-radius-xs: var(--radius-xs);
+     --theme-radius-sm: var(--radius-sm);
+     --theme-radius-md: var(--radius-md);
+     --theme-radius-lg: var(--radius-lg);
+     --theme-radius-xl: var(--radius-xl);
+     --theme-radius-2xl: var(--radius-2xl);
+     --theme-radius-full: var(--radius-full);
+   }
+   
