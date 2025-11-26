@@ -337,37 +337,37 @@ kernel/
 
 ### 5.1 TODO/FIXME Comments (27 found)
 
-| File | Line | Comment |
-|------|------|---------|
-| `ai/lynx.adapter.ts` | 7 | `Lynx placeholder for: ${prompt}` |
-| `ai/lynx.client.ts` | 7-9 | TODO: DeepSeek, Anthropic, Groq fallbacks |
-| `ai/lynx.client.ts` | 75-81 | TODO: Tertiary/Quaternary/Quinary fallbacks |
-| `ai/lynx.client.ts` | 134 | TODO: Add more providers |
-| `boot/environment.ts` | 15 | TODO: Implement environment loader with validation |
-| `boot/environment.ts` | 27 | TODO: Implement validation |
-| `bootstrap/steps/07-tenants.ts` | 5-6 | TODO: Load tenants from DB, init default tenant |
-| `events/handlers/ai.handler.ts` | 6, 15 | TODO: Enable when Lynx AI is fully integrated |
-| `events/handlers/audit.handler.ts` | 12 | TODO: Persist to audit log table |
-| `events/handlers/workflow.handler.ts` | 5, 13 | TODO: Connect to workflow engine |
-| `security/permissions.ts` | 16 | TODO: Implement permission checks |
-| `security/rbac.ts` | 19, 29, 33 | TODO: Implement RBAC |
-| `security/validation.ts` | 12 | TODO: metadata-driven output validation |
-| `security/policies/default.policy.ts` | 35 | TODO: Implement policy evaluation |
-| `security/validators/input.validator.ts` | 11 | TODO: Upgrade to Zod/Typebox on Hardening v2 |
-| `validation/contract.validator.ts` | 12, 21 | TODO: Implement contract/action validation |
+| File                                     | Line       | Comment                                            |
+| ---------------------------------------- | ---------- | -------------------------------------------------- |
+| `ai/lynx.adapter.ts`                     | 7          | `Lynx placeholder for: ${prompt}`                  |
+| `ai/lynx.client.ts`                      | 7-9        | TODO: DeepSeek, Anthropic, Groq fallbacks          |
+| `ai/lynx.client.ts`                      | 75-81      | TODO: Tertiary/Quaternary/Quinary fallbacks        |
+| `ai/lynx.client.ts`                      | 134        | TODO: Add more providers                           |
+| `boot/environment.ts`                    | 15         | TODO: Implement environment loader with validation |
+| `boot/environment.ts`                    | 27         | TODO: Implement validation                         |
+| `bootstrap/steps/07-tenants.ts`          | 5-6        | TODO: Load tenants from DB, init default tenant    |
+| `events/handlers/ai.handler.ts`          | 6, 15      | TODO: Enable when Lynx AI is fully integrated      |
+| `events/handlers/audit.handler.ts`       | 12         | TODO: Persist to audit log table                   |
+| `events/handlers/workflow.handler.ts`    | 5, 13      | TODO: Connect to workflow engine                   |
+| `security/permissions.ts`                | 16         | TODO: Implement permission checks                  |
+| `security/rbac.ts`                       | 19, 29, 33 | TODO: Implement RBAC                               |
+| `security/validation.ts`                 | 12         | TODO: metadata-driven output validation            |
+| `security/policies/default.policy.ts`    | 35         | TODO: Implement policy evaluation                  |
+| `security/validators/input.validator.ts` | 11         | TODO: Upgrade to Zod/Typebox on Hardening v2       |
+| `validation/contract.validator.ts`       | 12, 21     | TODO: Implement contract/action validation         |
 
 ### 5.2 Console.log Usage (81 occurrences)
 
 **High-priority files to refactor:**
 
-| File | Count | Severity | Recommendation |
-|------|-------|----------|----------------|
-| `bootstrap/steps/*.ts` | 30+ | Medium | Replace with `baseLogger.info()` |
-| `boot/index.ts` | 9 | Medium | Replace with structured logger |
-| `api/index.ts` | 12 | High | Replace with `baseLogger` |
-| `ai/lynx.client.ts` | 8 | Medium | Replace with `createTraceLogger()` |
-| `index.ts` | 2 | Low | Keep for CLI feedback |
-| `actions/action-registry.ts` | 1 | Low | Replace with logger.warn() |
+| File                         | Count | Severity | Recommendation                     |
+| ---------------------------- | ----- | -------- | ---------------------------------- |
+| `bootstrap/steps/*.ts`       | 30+   | Medium   | Replace with `baseLogger.info()`   |
+| `boot/index.ts`              | 9     | Medium   | Replace with structured logger     |
+| `api/index.ts`               | 12    | High     | Replace with `baseLogger`          |
+| `ai/lynx.client.ts`          | 8     | Medium   | Replace with `createTraceLogger()` |
+| `index.ts`                   | 2     | Low      | Keep for CLI feedback              |
+| `actions/action-registry.ts` | 1     | Low      | Replace with logger.warn()         |
 
 **Sample violations:**
 
@@ -386,35 +386,35 @@ console.warn("⚠️ Lynx (local Ollama) failed. Attempting OpenAI fallback.");
 
 ### 5.3 Placeholder/Stub Implementations
 
-| File | Function | Status |
-|------|----------|--------|
-| `ai/lynx.adapter.ts` | `callLynx()` | Returns placeholder string |
-| `security/rbac.ts` | `hasPermission()` | Stub (always returns false) |
-| `security/rbac.ts` | `checkAccess()` | Stub (always returns false) |
-| `security/permissions.ts` | `checkPermission()` | Stub (not implemented) |
-| `security/policies/default.policy.ts` | `evaluate()` | Stub (not implemented) |
-| `validation/contract.validator.ts` | `validateContract()` | Stub (not implemented) |
-| `validation/contract.validator.ts` | `validateActionInput()` | Stub (not implemented) |
+| File                                  | Function                | Status                      |
+| ------------------------------------- | ----------------------- | --------------------------- |
+| `ai/lynx.adapter.ts`                  | `callLynx()`            | Returns placeholder string  |
+| `security/rbac.ts`                    | `hasPermission()`       | Stub (always returns false) |
+| `security/rbac.ts`                    | `checkAccess()`         | Stub (always returns false) |
+| `security/permissions.ts`             | `checkPermission()`     | Stub (not implemented)      |
+| `security/policies/default.policy.ts` | `evaluate()`            | Stub (not implemented)      |
+| `validation/contract.validator.ts`    | `validateContract()`    | Stub (not implemented)      |
+| `validation/contract.validator.ts`    | `validateActionInput()` | Stub (not implemented)      |
 
 ### 5.4 Legacy/Backward Compatibility Code
 
-| File | Pattern | Notes |
-|------|---------|-------|
-| `api/router.ts` | Legacy routes | Optional auth for backward compat |
-| `audit/audit-logger.ts` | `logAudit()` | Legacy function wrapper |
-| `audit/audit.store.ts` | `AuditStore` class | Legacy class for old API |
-| `audit/emit.ts` | `emitKernelEvent()` etc. | Legacy emit functions |
-| `storage/db.ts` | `Database` export | Legacy static class |
-| `storage/redis.ts` | `Redis` export | Legacy static class |
+| File                    | Pattern                  | Notes                             |
+| ----------------------- | ------------------------ | --------------------------------- |
+| `api/router.ts`         | Legacy routes            | Optional auth for backward compat |
+| `audit/audit-logger.ts` | `logAudit()`             | Legacy function wrapper           |
+| `audit/audit.store.ts`  | `AuditStore` class       | Legacy class for old API          |
+| `audit/emit.ts`         | `emitKernelEvent()` etc. | Legacy emit functions             |
+| `storage/db.ts`         | `Database` export        | Legacy static class               |
+| `storage/redis.ts`      | `Redis` export           | Legacy static class               |
 
 ### 5.5 Generic Error Throws (use typed errors instead)
 
-| File | Line | Current | Should Use |
-|------|------|---------|------------|
-| `security/sandbox.ts` | 35 | `throw new Error(...)` | `EngineNotFoundError` |
-| `security/sandbox.ts` | 40 | `throw new Error(...)` | `ActionNotFoundError` |
-| `security/validation.ts` | 7 | `throw new Error(...)` | `ValidationError` |
-| `auth/api-key.service.ts` | 106 | `throw new Error(...)` | `ConfigurationError` |
+| File                      | Line | Current                | Should Use            |
+| ------------------------- | ---- | ---------------------- | --------------------- |
+| `security/sandbox.ts`     | 35   | `throw new Error(...)` | `EngineNotFoundError` |
+| `security/sandbox.ts`     | 40   | `throw new Error(...)` | `ActionNotFoundError` |
+| `security/validation.ts`  | 7    | `throw new Error(...)` | `ValidationError`     |
+| `auth/api-key.service.ts` | 106  | `throw new Error(...)` | `ConfigurationError`  |
 
 ---
 

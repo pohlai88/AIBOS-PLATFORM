@@ -1,7 +1,7 @@
 /**
- * Validation Module
+ * Validation Module Exports
  */
+
+export * from './contract.validator';
 export * from './manifest.validator';
 export * from './metadata.validator';
-export * from './contract.validator';
-
