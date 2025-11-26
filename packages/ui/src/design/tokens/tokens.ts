@@ -111,6 +111,20 @@ export const spacingTokens = {
   lg: "var(--spacing-lg)",
   xl: "var(--spacing-xl)",
   "2xl": "var(--spacing-2xl)",
+  "3xl": "var(--spacing-3xl)",
+  "4xl": "var(--spacing-4xl)",
+  "5xl": "var(--spacing-5xl)",
+  "6xl": "var(--spacing-6xl)",
+} as const;
+
+// ---------------------------------------------------------------
+// LETTER SPACING TOKENS
+// ---------------------------------------------------------------
+export const trackingTokens = {
+  tight: "var(--tracking-tight)",
+  normal: "var(--tracking-normal)",
+  wide: "var(--tracking-wide)",
+  wider: "var(--tracking-wider)",
 } as const;
 
 // ---------------------------------------------------------------
@@ -208,6 +222,16 @@ export const themeTokens = {
   spacingLg: "var(--theme-spacing-lg)",
   spacingXl: "var(--theme-spacing-xl)",
   spacing2xl: "var(--theme-spacing-2xl)",
+  spacing3xl: "var(--theme-spacing-3xl)",
+  spacing4xl: "var(--theme-spacing-4xl)",
+  spacing5xl: "var(--theme-spacing-5xl)",
+  spacing6xl: "var(--theme-spacing-6xl)",
+
+  // Letter Spacing
+  trackingTight: "var(--theme-tracking-tight)",
+  trackingNormal: "var(--theme-tracking-normal)",
+  trackingWide: "var(--theme-tracking-wide)",
+  trackingWider: "var(--theme-tracking-wider)",
 
   // Radius
   radiusXxs: "var(--theme-radius-xxs)",
