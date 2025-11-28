@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-BOS Nexus-Lynx | The Architecture of Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+      :root {
+        --bg-void: #000000;
+        --bg-deep: #050505;
+        --glass-surface: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-highlight: rgba(255, 255, 255, 0.15);
+
+        /* Apple-esque Warmth (The Human/Control) */
+        --accent-warm: #c69f78;
+        --accent-warm-dim: rgba(198, 159, 120, 0.1);
+
+        /* ElevenLabs Electric (The AI/Agent) */
+        --accent-cool: #3b82f6;
+        --accent-cool-glow: rgba(59, 130, 246, 0.4);
+
+        --text-primary: #f5f5f7;
+        --text-secondary: #86868b;
+      }
+
+      /* RESET & BASE */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg-void);
+        color: var(--text-primary);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        selection-background-color: var(--accent-warm);
+        selection-color: black;
+      }
+
+      /* TYPOGRAPHY SYSTEM */
+      h1,
+      h2,
+      h3 {
+        letter-spacing: -0.03em; /* Apple "Display" tightness */
+        font-weight: 500;
+      }
+
+      .font-mono {
+        font-family: "JetBrains Mono", monospace;
+        letter-spacing: 0.05em;
+      }
+
+      .text-hero {
+        background: linear-gradient(180deg, #ffffff 0%, #86868b 120%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      /* GLASSMORPHISM - THE APPLE TOUCH */
+      .glass-panel {
+        background: var(--glass-surface);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        border-top: 1px solid var(--glass-highlight); /* Top light catch */
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      /* UTILITIES */
+      .section-container {
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        z-index: 10;
+        isolation: isolate; /* Creates new stacking context above canvas */
+      }
+
+      /* Ensure text content is above canvas */
+      .section-container > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ------------------------------------------------
+           ACT I: THE ENTROPY (PARTICLES)
+           ------------------------------------------------ */
+      #canvas-noise {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.3; /* Reduced to ensure text visibility */
+      }
+
+      /* ------------------------------------------------
+           ACT II: THE NEXUS (THE STRING)
+           ------------------------------------------------ */
+      .string-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      /* ------------------------------------------------
+           ACT III: THE WORKFLOW (HUD)
+           ------------------------------------------------ */
+      .workflow-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto auto auto;
+        gap: 4rem;
+        max-width: 1200px;
+        width: 100%;
+        position: relative;
+      }
+
+      /* Dynamic SVG Lines Layer */
+      .connections-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: visible;
+      }
+
+      .connection-path {
+        fill: none;
+        stroke: var(--glass-border);
+        stroke-width: 2;
+      }
+
+      .data-packet {
+        fill: var(--accent-cool);
+        filter: drop-shadow(0 0 8px var(--accent-cool));
+        r: 3;
+      }
+
+      .node-card {
+        position: relative;
+        padding: 24px;
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 2;
+      }
+
+      .node-card:hover {
+        transform: translateY(-5px) scale(1.02);
+        border-color: var(--accent-warm);
+      }
+
+      .node-status {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 8px;
+        height: 8px;
+        background: var(--accent-cool);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-cool);
+      }
+
+      /* ------------------------------------------------
+           ANIMATIONS & STATES
+           ------------------------------------------------ */
+      .fade-up {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .glow-text {
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+      }
+
+      .warm-gradient {
+        background: linear-gradient(135deg, var(--accent-warm), #8b6e4e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .cool-gradient {
+        background: linear-gradient(135deg, var(--accent-cool), #60a5fa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas-noise"></canvas>
+
+    <section class="section-container" id="act-1">
+      <div
+        class="max-w-4xl text-center relative"
+        style="z-index: 20; position: relative"
+      >
+        <h1 class="text-6xl md:text-8xl mb-8 fade-up">
+          <span class="text-hero">Life is </span>
+          <span
+            class="relative inline-block italic font-serif"
+            style="position: relative; z-index: 1"
+          >
+            <span
+              class="absolute inset-0 blur-[2px] opacity-80"
+              style="
+                color: #f5f5f7;
+                text-shadow: 0 0 10px rgba(245, 245, 247, 0.5);
+              "
+              >noisy</span
+            >
+            <span
+              class="relative"
+              style="
+                color: rgba(245, 245, 247, 0.95);
+                mix-blend-mode: overlay;
+                position: relative;
+              "
+              >noisy</span
+            >
+          </span>
+          <span class="text-hero">.</span>
+        </h1>
+        <p
+          class="text-xl md:text-2xl text-secondary mb-12 max-w-2xl mx-auto leading-relaxed fade-up"
+        >
+          We built AI to save time, but created a new kind of chaos. <br />
+          Ungoverned prompts. Black boxes. Infinite loops.
+        </p>
+        <div class="fade-up">
+          <div
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.02)]"
+          >
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span
+              class="text-xs font-mono text-secondary uppercase tracking-widest"
+              >System Entropy: High</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-container" id="act-2">
+      <canvas id="canvas-string" class="string-container"></canvas>
+      <div class="max-w-5xl text-center z-10 pointer-events-none">
+        <h2 class="text-5xl md:text-7xl mb-6 text-primary fade-up">
+          Enter the <span class="warm-gradient">Rhythm</span>.
+        </h2>
+        <p
+          class="text-lg md:text-xl text-secondary max-w-xl mx-auto mb-8 fade-up"
+        >
+          To fly, a kite needs a string. To work, Intelligence needs
+          constraints. We call this
+          <strong class="text-primary">AI-BOS</strong>.
+        </p>
+      </div>
+    </section>
+
+    <section class="section-container bg-[#030303]" id="act-3">
+      <div class="mb-16 text-center z-10">
+        <div class="inline-block mb-4">
+          <span
+            class="font-mono text-xs text-[#3B82F6] tracking-[0.2em] border border-[#3B82F6]/30 px-3 py-1 rounded"
+            >MCP GOVERNANCE ACTIVE</span
+          >
+        </div>
+        <h2 class="text-4xl md:text-5xl font-medium text-hero">
+          The Nexus Workflow
+        </h2>
+      </div>
+
+      <div class="workflow-grid" id="workflow-grid">
+        <svg class="connections-layer" id="svg-connections"></svg>
+
+        <div class="glass-panel node-card col-start-2 fade-up" id="node-1">
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-[rgba(255,255,255,0.05)] rounded-lg">
+              <i data-lucide="mic" class="w-5 h-5 text-secondary"></i>
+            </div>
+            <span class="font-mono text-[10px] text-secondary">01</span>
+          </div>
+          <h3 class="text-lg font-medium mb-1">Human Intent</h3>
+          <p class="text-sm text-secondary leading-relaxed">
+            Raw input captured. Context vectorization initialized.
+          </p>
+        </div>
+
+        <div
+          class="glass-panel node-card col-start-1 row-start-2 mt-12 fade-up"
+          id="node-2"
+        >
+          <div class="node-status"></div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-[rgba(59,130,246,0.1)] rounded-lg">
+              <i data-lucide="brain-circuit" class="w-5 h-5 text-[#3B82F6]"></i>
+            </div>
+            <span class="font-mono text-[10px] text-[#3B82F6]">LYNX CORE</span>
+          </div>
+          <h3 class="text-lg font-medium mb-1 text-white">Lynx Intelligence</h3>
+          <p class="text-sm text-secondary leading-relaxed">
+            Multi-model reasoning. Probability assessment: 98.4%.
+          </p>
+        </div>
+
+        <div
+          class="glass-panel node-card col-start-3 row-start-2 mt-12 fade-up"
+          id="node-3"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-[rgba(198,159,120,0.1)] rounded-lg">
+              <i
+                data-lucide="shield-check"
+                class="w-5 h-5 text-[var(--accent-warm)]"
+              ></i>
+            </div>
+            <span class="font-mono text-[10px] text-[var(--accent-warm)]"
+              >AUDIT</span
+            >
+          </div>
+          <h3 class="text-lg font-medium mb-1 text-white">MCP Policy</h3>
+          <p class="text-sm text-secondary leading-relaxed">
+            Safety rails engaged. Permission boundaries enforced.
+          </p>
+        </div>
+
+        <div
+          class="glass-panel node-card col-start-2 row-start-3 mt-12 fade-up"
+          id="node-4"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <div class="p-2 bg-[rgba(255,255,255,0.05)] rounded-lg">
+              <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="font-mono text-[10px] text-secondary">EXEC</span>
+          </div>
+          <h3 class="text-lg font-medium mb-1">Agentic Action</h3>
+          <p class="text-sm text-secondary leading-relaxed">
+            Task executed. Result hashed and returned to user.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-container" style="min-height: 80vh">
+      <div class="max-w-4xl text-center z-10">
+        <h2 class="text-5xl md:text-7xl mb-8 text-hero fade-up">
+          Design your <span class="cool-gradient">Flow</span>.
+        </h2>
+        <p class="text-xl text-secondary mb-12 fade-up">
+          When the noise stops, the work begins.
+        </p>
+        <button
+          class="fade-up group relative px-8 py-4 bg-white text-black rounded-full text-lg font-medium overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+        >
+          <span class="relative z-10 flex items-center gap-2">
+            Initialize System
+            <i
+              data-lucide="arrow-right"
+              class="w-4 h-4 transition-transform group-hover:translate-x-1"
+            ></i>
+          </span>
+        </button>
+      </div>
+
+      <div class="absolute bottom-8 text-center w-full">
+        <p
+          class="font-mono text-[10px] text-zinc-800 uppercase tracking-widest"
+        >
+          Designed for Humans • Powered by Nexus-Lynx
+        </p>
+      </div>
+    </section>
+
+    <script>
+      // --- 1. SETUP & UTILS ---
+      lucide.createIcons();
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- 2. ACT I: ELEGANT NOISE (PARTICLES) ---
+      const initNoise = () => {
+        const canvas = document.getElementById("canvas-noise");
+        const ctx = canvas.getContext("2d");
+        let width, height;
+        let particles = [];
+
+        const resize = () => {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        };
+
+        class Particle {
+          constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.size = Math.random() * 2;
+            this.alpha = Math.random() * 0.5;
+          }
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < 0) this.x = width;
+            if (this.x > width) this.x = 0;
+            if (this.y < 0) this.y = height;
+            if (this.y > height) this.y = 0;
+          }
+          draw() {
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+            ctx.fillRect(this.x, this.y, this.size, this.size);
+          }
+        }
+
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        const animate = () => {
+          ctx.clearRect(0, 0, width, height);
+          particles.forEach((p) => {
+            p.update();
+            p.draw();
+          });
+          requestAnimationFrame(animate);
+        };
+
+        window.addEventListener("resize", resize);
+        resize();
+        animate();
+
+        // Fade out noise on scroll to Act 2
+        gsap.to(canvas, {
+          opacity: 0,
+          scrollTrigger: {
+            trigger: "#act-2",
+            start: "top center",
+            end: "center center",
+            scrub: true,
+          },
+        });
+      };
+
+      // --- 3. ACT II: THE LIVING STRING (PHYSICS) ---
+      const initString = () => {
+        const canvas = document.getElementById("canvas-string");
+        const ctx = canvas.getContext("2d");
+        let width, height;
+        let time = 0;
+
+        const resize = () => {
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width;
+          canvas.height = height;
+        };
+        window.addEventListener("resize", resize);
+        resize();
+
+        let mouse = { x: 0, y: 0 };
+        window.addEventListener("mousemove", (e) => {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+        });
+
+        const animate = () => {
+          ctx.clearRect(0, 0, width, height);
+          time += 0.01;
+
+          ctx.beginPath();
+          ctx.moveTo(0, height / 2);
+
+          for (let x = 0; x < width; x += 5) {
+            // Base Wave
+            let y = height / 2 + Math.sin(x * 0.003 + time) * 50;
+
+            // Mouse Interaction (Magnetic Pull)
+            const dist = Math.abs(x - mouse.x);
+            const range = 200;
+            if (dist < range) {
+              const force = (range - dist) / range;
+              y += (mouse.y - y) * force * 0.3;
+            }
+
+            ctx.lineTo(x, y);
+          }
+
+          // Gradient Stroke
+          const grad = ctx.createLinearGradient(0, 0, width, 0);
+          grad.addColorStop(0, "rgba(198, 159, 120, 0)"); // Fade in
+          grad.addColorStop(0.5, "rgba(198, 159, 120, 1)"); // Warm center
+          grad.addColorStop(1, "rgba(59, 130, 246, 0)"); // Fade out to Cool
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          requestAnimationFrame(animate);
+        };
+        animate();
+      };
+
+      // --- 4. ACT III: DYNAMIC CONNECTIONS (LOGIC) ---
+      const initWorkflow = () => {
+        const svg = document.getElementById("svg-connections");
+        const nodes = {
+          n1: document.getElementById("node-1"),
+          n2: document.getElementById("node-2"),
+          n3: document.getElementById("node-3"),
+          n4: document.getElementById("node-4"),
+        };
+
+        const drawLine = (start, end, id) => {
+          const startRect = start.getBoundingClientRect();
+          const endRect = end.getBoundingClientRect();
+          const containerRect = document
+            .getElementById("workflow-grid")
+            .getBoundingClientRect();
+
+          // Calculate center relative to grid container
+          const x1 = startRect.left + startRect.width / 2 - containerRect.left;
+          const y1 = startRect.top + startRect.height / 2 - containerRect.top;
+          const x2 = endRect.left + endRect.width / 2 - containerRect.left;
+          const y2 = endRect.top + endRect.height / 2 - containerRect.top;
+
+          let path = document.getElementById(id);
+          if (!path) {
+            path = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path"
+            );
+            path.id = id;
+            path.classList.add("connection-path");
+            svg.appendChild(path);
+
+            // Create data packet
+            const packet = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "circle"
+            );
+            packet.classList.add("data-packet");
+
+            const animateMotion = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "animateMotion"
+            );
+            animateMotion.setAttribute("dur", "1.5s");
+            animateMotion.setAttribute("repeatCount", "indefinite");
+            animateMotion.setAttribute(
+              "path",
+              `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${
+                (y1 + y2) / 2
+              }, ${x2} ${y2}`
+            );
+
+            packet.appendChild(animateMotion);
+            svg.appendChild(packet);
+          }
+
+          // Bezier Curve
+          const d = `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${
+            (y1 + y2) / 2
+          }, ${x2} ${y2}`;
+          path.setAttribute("d", d);
+          // Update animation path
+          path.nextElementSibling
+            .querySelector("animateMotion")
+            .setAttribute("path", d);
+        };
+
+        const updateLines = () => {
+          drawLine(nodes.n1, nodes.n2, "path-1-2"); // Input -> Lynx
+          drawLine(nodes.n1, nodes.n3, "path-1-3"); // Input -> MCP
+          drawLine(nodes.n2, nodes.n4, "path-2-4"); // Lynx -> Action
+          drawLine(nodes.n3, nodes.n4, "path-3-4"); // MCP -> Action
+        };
+
+        // Observer to redraw lines when layout settles
+        const ro = new ResizeObserver(updateLines);
+        ro.observe(document.getElementById("workflow-grid"));
+
+        // Initial Draw
+        setTimeout(updateLines, 500);
+        window.addEventListener("resize", updateLines);
+      };
+
+      // --- 5. ANIMATION TRIGGERS ---
+      const initScroll = () => {
+        gsap.utils.toArray(".fade-up").forEach((el) => {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 85%",
+              },
+            }
+          );
+        });
+      };
+
+      // --- INIT ---
+      window.addEventListener("load", () => {
+        initNoise();
+        initString();
+        initWorkflow();
+        initScroll();
+      });
+    </script>
+  </body>
+</html>

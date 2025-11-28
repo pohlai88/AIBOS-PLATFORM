@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-BOS | THE BEAST SYSTEM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      :root {
+        --void: #050505;
+        --void-deep: #000000;
+        --neon-orange: #ff4d00;
+        --neon-blue: #00f3ff;
+        --neon-lime: #ccff00;
+        --glass: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --ease-beast: cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        background-color: var(--void);
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* --- UTILS --- */
+      .mono { font-family: "JetBrains Mono", monospace; }
+      .beast-ease { transition: all 0.6s var(--ease-beast); }
+      
+      /* GRAIN TEXTURE */
+      .grain {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 9999; opacity: 0.07;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      /* --- SECTION 1: THE LISTENING --- */
+      #hero {
+        height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+
+      #thread-canvas {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 1;
+        transition: opacity 0.5s ease; /* Smooth fade out */
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 8vw, 9rem);
+        font-weight: 200;
+        line-height: 0.9;
+        text-align: center;
+        letter-spacing: -0.04em;
+        mix-blend-mode: difference;
+      }
+
+      /* --- SECTION 2: THE CONTROL PLANE (INTERACTIVE) --- */
+      #control-plane {
+        min-height: 100vh;
+        background: var(--void-deep);
+        position: relative;
+        z-index: 20; /* Sit above the canvas */
+        padding: 6rem 2rem;
+        border-top: 1px solid var(--glass-border);
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .tech-card {
+        background: var(--void);
+        border: 1px solid var(--glass-border);
+        padding: 2.5rem;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.4s var(--ease-beast), border-color 0.4s;
+      }
+
+      .tech-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--neon-orange);
+      }
+
+      .tech-card:hover .card-bg-glow { opacity: 0.2; }
+
+      .card-bg-glow {
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at top right, var(--neon-orange), transparent 60%);
+        opacity: 0; transition: opacity 0.4s; pointer-events: none;
+      }
+
+      .card-number {
+        font-size: 8rem;
+        font-weight: 900;
+        color: rgba(255,255,255,0.03);
+        position: absolute;
+        bottom: -20px; right: -20px;
+        line-height: 1;
+      }
+
+      /* --- MODAL SYSTEM --- */
+      .modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(20px);
+        z-index: 1000;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+      .modal-window {
+        width: 90%; max-width: 900px;
+        background: #09090b;
+        border: 1px solid var(--neon-orange);
+        border-radius: 12px;
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 0 100px rgba(255, 77, 0, 0.15);
+        transform: scale(0.95); transition: transform 0.4s var(--ease-beast);
+      }
+      .modal-overlay.active .modal-window { transform: scale(1); }
+
+      .modal-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #333;
+        display: flex; justify-content: space-between; align-items: center;
+        background: #111;
+      }
+
+      .modal-content {
+        padding: 2rem;
+        min-height: 400px;
+        font-family: "JetBrains Mono", monospace;
+        color: #0f0; /* Matrix green fallback */
+        position: relative;
+      }
+
+      /* Specific Modal Visuals */
+      .terminal-text { color: #a5b4fc; font-size: 14px; line-height: 1.6; }
+      .cursor { display: inline-block; width: 8px; height: 16px; background: #a5b4fc; animation: blink 1s infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      .flow-svg path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 3s linear forwards; }
+      @keyframes dash { to { stroke-dashoffset: 0; } }
+
+      /* --- SECTION 3: THE BEAST (OUTCOME) --- */
+      #beast-mode {
+        min-height: 100vh;
+        background: #fff;
+        color: #000;
+        position: relative;
+        z-index: 20;
+        display: flex; align-items: center; justify-content: center;
+        padding: 4rem;
+        overflow: hidden;
+      }
+
+      .beast-container {
+        max-width: 1600px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+
+      .huge-type {
+        font-size: 7vw;
+        font-weight: 900;
+        line-height: 0.85;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
+      }
+
+      .stat-block {
+        border-top: 4px solid #000;
+        padding-top: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-num { font-size: 5rem; font-weight: 800; }
+      .stat-label { font-size: 1.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;}
+
+      /* Glitch Effect for Beast Text */
+      .glitch-wrapper { position: relative; display: inline-block; }
+      .glitch::before, .glitch::after {
+        content: attr(data-text);
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      }
+      .glitch::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+      .glitch::after { left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim2 5s infinite linear alternate-reverse; }
+
+      @keyframes glitch-anim {
+        0% { clip: rect(31px, 9999px, 94px, 0); }
+        4.166% { clip: rect(91px, 9999px, 43px, 0); }
+        8.333% { clip: rect(14px, 9999px, 63px, 0); }
+        /* ... simplified for brevity ... */
+        100% { clip: rect(67px, 9999px, 5px, 0); }
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="grain"></div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="mono text-xs text-gray-400" id="modalTitle">SYSTEM.EXEC // PID: 8842</div>
+                <button onclick="closeModal()" class="text-white hover:text-neon-orange"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-content" id="modalBody">
+                </div>
+        </div>
+    </div>
+
+    <canvas id="thread-canvas"></canvas>
+
+    <section id="hero">
+        <div class="relative z-10 px-6">
+            <div class="mono text-neon-orange mb-6 text-center animate-pulse tracking-[0.2em] text-sm">
+                /// SYSTEM LISTENING ///
+            </div>
+            <h1 class="hero-title">
+                THE NOISE<br>
+                IS <span class="text-gray-500 italic">DEAFENING.</span>
+            </h1>
+            <p class="text-center mt-8 text-gray-400 max-w-xl mx-auto mono text-sm">
+                Scroll to kill the signal and initialize the Engine.
+            </p>
+        </div>
+    </section>
+
+    <section id="control-plane">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-20 border-l-2 border-neon-orange pl-8">
+                <h2 class="text-6xl font-bold mb-4">THE CONTROL PLANE</h2>
+                <p class="text-xl text-gray-400 max-w-2xl">
+                    Don't just chat with AI. Orchestrate it. <br>
+                    <span class="text-white font-bold">Click a node to inspect the runtime.</span>
+                </p>
+            </div>
+
+            <div class="card-grid">
+                
+                <div class="tech-card" onclick="triggerModal('input')">
+                    <div class="card-bg-glow"></div>
+                    <div class="card-number">01</div>
+                    <div>
+                        <i data-lucide="terminal" class="text-neon-orange w-10 h-10 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">Raw Injection</h3>
+                        <p class="text-gray-400 text-sm mono">
+                            > Ingest Unstructured Data<br>
+                            > Normalize Vectors<br>
+                            > Prepare Context Window
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-neon-orange text-sm font-bold tracking-widest uppercase">
+                        View Log <i data-lucide="arrow-right" class="ml-2 w-4"></i>
+                    </div>
+                </div>
+
+                <div class="tech-card" onclick="triggerModal('governance')">
+                    <div class="card-bg-glow" style="background: radial-gradient(circle at top right, var(--neon-blue), transparent 60%);"></div>
+                    <div class="card-number">02</div>
+                    <div>
+                        <i data-lucide="shield-check" class="text-neon-blue w-10 h-10 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">MCP Protocol</h3>
+                        <p class="text-gray-400 text-sm mono">
+                            > Validate Permissions<br>
+                            > Check Policy Manifest<br>
+                            > Deny/Approve Action
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-neon-blue text-sm font-bold tracking-widest uppercase">
+                        Inspect Logic <i data-lucide="arrow-right" class="ml-2 w-4"></i>
+                    </div>
+                </div>
+
+                <div class="tech-card" onclick="triggerModal('execution')">
+                    <div class="card-bg-glow" style="background: radial-gradient(circle at top right, var(--neon-lime), transparent 60%);"></div>
+                    <div class="card-number">03</div>
+                    <div>
+                        <i data-lucide="zap" class="text-neon-lime w-10 h-10 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-2">Execution</h3>
+                        <p class="text-gray-400 text-sm mono">
+                            > API Handshake<br>
+                            > Write Database<br>
+                            > Trigger Webhook
+                        </p>
+                    </div>
+                    <div class="mt-8 flex items-center text-neon-lime text-sm font-bold tracking-widest uppercase">
+                        See Output <i data-lucide="arrow-right" class="ml-2 w-4"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="beast-mode">
+        <div class="beast-container">
+            <div>
+                <div class="mono text-black mb-4 font-bold tracking-widest">/// STATUS: DEPLOYED ///</div>
+                <h2 class="huge-type glitch-wrapper">
+                    <span class="glitch" data-text="SILENCE">SILENCE</span><br>
+                    THE<br>
+                    DOUBT.
+                </h2>
+            </div>
+            <div>
+                <p class="text-xl font-medium mb-12 leading-relaxed">
+                    Generative AI isn't a toy. It's an industrial revolution in a box.
+                    While others debate "if" it works, you are deploying agents that do the work of ten men in ten seconds.
+                </p>
+                
+                <div class="stat-block">
+                    <div class="stat-num">100%</div>
+                    <div class="stat-label">Governance Adherence</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-num">0.4s</div>
+                    <div class="stat-label">Mean Response Time</div>
+                </div>
+
+                <button class="bg-black text-white px-8 py-4 text-lg font-bold hover:bg-neon-orange transition-colors duration-300 w-full md:w-auto">
+                    DEPLOY NEXUS-LYNX
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        lucide.createIcons();
+
+        // --- SCROLL LOGIC (Kill the Thread) ---
+        const canvas = document.getElementById('thread-canvas');
+        const heroHeight = document.getElementById('hero').offsetHeight;
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            // Fade out canvas as user scrolls out of hero
+            const opacity = Math.max(0, 1 - (scrollY / (heroHeight * 0.8)));
+            canvas.style.opacity = opacity;
+            // Optional: Stop rendering if opacity is 0 for performance
+        });
+
+
+        // --- PHYSICS ENGINE (THE THREAD) ---
+        const ctx = canvas.getContext('2d');
+        let width, height, mouse = { x: -1000, y: -1000 };
+        
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        resize();
+
+        let time = 0;
+        function animate() {
+            if (canvas.style.opacity === '0') {
+                requestAnimationFrame(animate);
+                return; 
+            }
+            
+            ctx.clearRect(0, 0, width, height);
+            time += 0.01;
+
+            ctx.beginPath();
+            // A more erratic, "noisy" wave for the first section
+            for (let x = 0; x <= width; x += 5) {
+                let y = (height / 2) + Math.sin(x * 0.01 + time) * 50 + Math.sin(x * 0.03 - time) * 20;
+                
+                // Mouse repulsion
+                const dist = Math.abs(x - mouse.x);
+                if (dist < 200) {
+                    y += (mouse.y - y) * ((200 - dist) / 200);
+                }
+                
+                if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = '#ff4d00';
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff4d00';
+            ctx.stroke();
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+
+        // --- MODAL LOGIC (THE INTERACTION) ---
+        const modal = document.getElementById('modalOverlay');
+        const modalBody = document.getElementById('modalBody');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Close on clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Simulators
+        const simulators = {
+            input: {
+                title: "TERMINAL.LOG // DATA INGESTION",
+                run: () => {
+                    modalBody.innerHTML = '<div class="terminal-text" id="term-out"></div><span class="cursor"></span>';
+                    const output = document.getElementById('term-out');
+                    const lines = [
+                        "Initialising LYNX Core...",
+                        "Connecting to Slack API [wss://slack.com/rtm]... CONNECTED",
+                        "Ingesting Stream: Channel #marketing-ops",
+                        "Scanning for Intents...",
+                        "> Found Intent: 'Approve Budget Q3'",
+                        "> Vectorizing payload... [0.02ms]",
+                        "Sending to LLM Context Window..."
+                    ];
+                    let i = 0;
+                    function typeLine() {
+                        if (i < lines.length) {
+                            output.innerHTML += `<div>${lines[i]}</div>`;
+                            i++;
+                            setTimeout(typeLine, 300); // Typing speed
+                        } else {
+                            output.innerHTML += `<div style="color:#0f0; margin-top:10px;">>> READY FOR GOVERNANCE</div>`;
+                        }
+                    }
+                    typeLine();
+                }
+            },
+            governance: {
+                title: "MCP.GATE // SECURITY PROTOCOL",
+                run: () => {
+                    // SVG Animation of a logic gate
+                    modalBody.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-full">
+                            <svg width="200" height="200" viewBox="0 0 100 100" class="flow-svg mb-4">
+                                <circle cx="50" cy="50" r="45" stroke="#333" stroke-width="2" fill="none" />
+                                <path d="M 50 20 L 50 40 L 30 60 L 70 60 L 50 40" stroke="#00f3ff" stroke-width="2" fill="none" />
+                                <circle cx="50" cy="50" r="40" stroke="#00f3ff" stroke-width="1" fill="none" stroke-opacity="0.5" />
+                            </svg>
+                            <div class="text-center mono">
+                                <div class="text-neon-blue mb-2">ANALYSING PERMISSIONS...</div>
+                                <div class="text-xs text-gray-500">User: Admin<br>Policy: Finance_Write<br>Limit: $5,000</div>
+                                <div class="mt-4 bg-neon-blue text-black px-4 py-1 font-bold text-sm rounded">PASSED</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+            execution: {
+                title: "SYSTEM.ACT // DEPLOYMENT",
+                run: () => {
+                    modalBody.innerHTML = `
+                        <div class="grid gap-4">
+                             <div class="bg-white/5 p-4 border-l-2 border-neon-lime flex justify-between items-center">
+                                <span class="text-sm">Generate SQL Query</span>
+                                <span class="text-neon-lime text-xs">COMPLETE</span>
+                             </div>
+                             <div class="bg-white/5 p-4 border-l-2 border-neon-lime flex justify-between items-center" style="opacity:0.8">
+                                <span class="text-sm">Update 'Budgets' Table</span>
+                                <span class="text-neon-lime text-xs">COMPLETE</span>
+                             </div>
+                             <div class="bg-white/5 p-4 border-l-2 border-neon-lime flex justify-between items-center" style="opacity:0.6">
+                                <span class="text-sm">Slack Notification</span>
+                                <span class="text-neon-lime text-xs">SENT</span>
+                             </div>
+                             <div class="mt-6 text-center">
+                                <h1 class="text-4xl font-bold text-neon-lime">DONE.</h1>
+                                <p class="text-xs text-gray-500 mt-2">Total Runtime: 420ms</p>
+                             </div>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        function triggerModal(type) {
+            modal.classList.add('active');
+            modalTitle.innerText = simulators[type].title;
+            simulators[type].run();
+        }
+
+    </script>
+  </body>
+</html>
