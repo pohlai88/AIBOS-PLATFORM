@@ -16,6 +16,7 @@
 import { neon, neonConfig, Pool } from "@neondatabase/serverless";
 import { StorageContract, QueryOptions, TransactionContext } from "../types";
 import { eventBus } from "../../events/event-bus";
+import { baseLogger } from "../../observability/logger";
 
 export interface NeonConfig {
   connectionString: string;
@@ -72,7 +73,7 @@ export class NeonConnector implements StorageContract {
 
     // Error handling
     this.pool.on("error", (err) => {
-      console.error("[Neon] Pool error:", err);
+      baseLogger.error({ err }, "[Neon] Pool error");
       eventBus.publish("storage.error", {
         type: "storage.error",
         provider: "neon",
@@ -100,7 +101,7 @@ export class NeonConnector implements StorageContract {
         timestamp: new Date().toISOString(),
       });
     } catch (error: any) {
-      console.error("[Neon] Connection failed:", error);
+      baseLogger.error({ error }, "[Neon] Connection failed");
       throw new Error(`Neon connection failed: ${error.message}`);
     }
   }
@@ -109,7 +110,7 @@ export class NeonConnector implements StorageContract {
     await this.pool.end();
     await Promise.all(this.readPools.map(pool => pool.end()));
 
-    console.log("[Neon] Disconnected");
+    baseLogger.info("[Neon] Disconnected");
 
     await eventBus.publish("storage.disconnected", {
       type: "storage.disconnected",
@@ -123,7 +124,7 @@ export class NeonConnector implements StorageContract {
       const result = await this.pool.query("SELECT 1 as health");
       return result.rows.length > 0;
     } catch (error) {
-      console.error("[Neon] Health check failed:", error);
+      baseLogger.error({ error }, "[Neon] Health check failed");
       return false;
     }
   }
@@ -139,7 +140,7 @@ export class NeonConnector implements StorageContract {
       const result = await pool.query(sql, params);
       return result.rows as T[];
     } catch (error: any) {
-      console.error("[Neon] Query failed:", error);
+      baseLogger.error({ error }, "[Neon] Query failed");
       throw error;
     }
   }
@@ -158,7 +159,7 @@ export class NeonConnector implements StorageContract {
       const result = await this.pool.query(sql, params);
       return result.rowCount || 0;
     } catch (error: any) {
-      console.error("[Neon] Execute failed:", error);
+      baseLogger.error({ error }, "[Neon] Execute failed");
       throw error;
     }
   }
@@ -289,7 +290,7 @@ export class NeonConnector implements StorageContract {
   // Neon-specific: Create database branch (for dev/staging)
   async createBranch(branchName: string, parentBranch?: string): Promise<void> {
     // This would require Neon API integration
-    console.log(`[Neon] Branch creation: ${branchName} (requires Neon API)`);
+    baseLogger.info({ branchName }, "[Neon] Branch creation: %s (requires Neon API)", branchName);
     throw new Error("Branch creation requires Neon Management API integration");
   }
 }

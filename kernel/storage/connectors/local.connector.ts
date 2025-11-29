@@ -54,7 +54,9 @@ export class LocalConnector implements StorageProvider {
 
         this.databases.set(dbPath, db);
 
-        console.info(`[LocalConnector] Initialized at: ${dbPath}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import('../../observability/logger');
+        baseLogger.info({ dbPath }, "[LocalConnector] Initialized at: %s", dbPath);
     }
 
     async validateConfig(config: StorageConfig): Promise<void> {

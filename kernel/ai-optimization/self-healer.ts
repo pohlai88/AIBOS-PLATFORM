@@ -15,6 +15,7 @@ import { CacheManager } from "../performance/cache-manager";
 import { ExecutionPool } from "../performance/execution-pool";
 import { ResourceThrottler } from "../performance/resource-throttler";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
@@ -121,46 +122,46 @@ export class SelfHealingEngine {
       switch (action) {
         case "clear_cache":
           CacheManager.clear();
-          console.log("🩹 Self-Heal: Cleared global cache");
+          baseLogger.info("🩹 Self-Heal: Cleared global cache");
           break;
 
         case "clear_tenant_cache":
           if (target) {
             CacheManager.clearTenant(target);
-            console.log(`🩹 Self-Heal: Cleared cache for tenant ${target}`);
+            baseLogger.info({ target }, "🩹 Self-Heal: Cleared cache for tenant %s", target);
           }
           break;
 
         case "reset_patterns":
           PatternRecognitionEngine.clear();
-          console.log("🩹 Self-Heal: Reset pattern engine");
+          baseLogger.info("🩹 Self-Heal: Reset pattern engine");
           break;
 
         case "clear_queue":
           const cleared = ExecutionPool.clearQueue();
-          console.log(`🩹 Self-Heal: Cleared ${cleared} queued tasks`);
+          baseLogger.info({ cleared }, "🩹 Self-Heal: Cleared %d queued tasks", cleared);
           break;
 
         case "request_gc":
           ResourceThrottler.requestGC();
-          console.log("🩹 Self-Heal: Requested garbage collection");
+          baseLogger.info("🩹 Self-Heal: Requested garbage collection");
           break;
 
         case "reduce_concurrency":
           ExecutionPool.setMaxConcurrent(5);
-          console.log("🩹 Self-Heal: Reduced concurrency to 5");
+          baseLogger.info("🩹 Self-Heal: Reduced concurrency to 5");
           break;
 
         case "soft_reset":
           CacheManager.clear();
           PatternRecognitionEngine.applyDecay();
           ExecutionPool.resetStats();
-          console.log("🩹 Self-Heal: Performed soft reset");
+          baseLogger.info("🩹 Self-Heal: Performed soft reset");
           break;
       }
     } catch (error) {
       success = false;
-      console.error(`🩹 Self-Heal failed: ${action}`, error);
+      baseLogger.error({ action, error }, "🩹 Self-Heal failed: %s", action);
     }
 
     const event: HealingEvent = {
@@ -188,7 +189,7 @@ export class SelfHealingEngine {
    * Emergency full reset
    */
   static emergencyReset(): HealingEvent[] {
-    console.log("🚨 Self-Heal: EMERGENCY RESET");
+    baseLogger.warn("🚨 Self-Heal: EMERGENCY RESET");
     
     return [
       this.heal("clear_cache", "Emergency"),

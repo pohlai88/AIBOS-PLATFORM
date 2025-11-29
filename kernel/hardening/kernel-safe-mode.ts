@@ -12,6 +12,7 @@
 import { SovereignMode } from "./sovereign-mode";
 import { AutoTuner } from "../watchdog/auto-tuner";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
@@ -83,7 +84,12 @@ export class KernelSafeMode {
       timestamp: new Date().toISOString(),
     } as any);
 
-    console.log(`🛑 Kernel Safe Mode: ${level.toUpperCase()} — ${reason}`);
+    baseLogger.warn(
+      { level, reason, activatedBy },
+      "🛑 Kernel Safe Mode: %s — %s",
+      level.toUpperCase(),
+      reason
+    );
   }
 
   /**
@@ -114,7 +120,7 @@ export class KernelSafeMode {
       timestamp: new Date().toISOString(),
     } as any);
 
-    console.log(`🟢 Kernel Safe Mode: DEACTIVATED`);
+    baseLogger.info("🟢 Kernel Safe Mode: DEACTIVATED");
   }
 
   /**

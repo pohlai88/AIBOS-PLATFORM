@@ -16,6 +16,7 @@
 import { Pool, PoolClient, QueryResult } from "pg";
 import { StorageContract, QueryOptions, TransactionContext } from "../types";
 import { eventBus } from "../../events/event-bus";
+import { baseLogger } from "../../observability/logger";
 
 export interface AWSRDSConfig {
   host: string;
@@ -75,7 +76,7 @@ export class AWSRDSConnector implements StorageContract {
 
     // Pool error handling
     this.pool.on("error", (err) => {
-      console.error("[AWS RDS] Unexpected pool error:", err);
+      baseLogger.error({ err }, "[AWS RDS] Unexpected pool error");
       eventBus.publish("storage.error", {
         type: "storage.error",
         provider: "aws",
@@ -91,7 +92,13 @@ export class AWSRDSConnector implements StorageContract {
       await client.query("SELECT NOW()");
       client.release();
       
-      console.log(`[AWS RDS] Connected to ${this.config.host}:${this.config.port}/${this.config.database}`);
+      baseLogger.info(
+        { host: this.config.host, port: this.config.port, database: this.config.database },
+        "[AWS RDS] Connected to %s:%d/%s",
+        this.config.host,
+        this.config.port,
+        this.config.database
+      );
       
       await eventBus.publish("storage.connected", {
         type: "storage.connected",
@@ -101,7 +108,7 @@ export class AWSRDSConnector implements StorageContract {
         timestamp: new Date().toISOString(),
       });
     } catch (error: any) {
-      console.error("[AWS RDS] Connection failed:", error);
+      baseLogger.error({ error }, "[AWS RDS] Connection failed");
       throw new Error(`AWS RDS connection failed: ${error.message}`);
     }
   }
@@ -110,7 +117,7 @@ export class AWSRDSConnector implements StorageContract {
     await this.pool.end();
     await Promise.all(this.readPools.map(pool => pool.end()));
     
-    console.log("[AWS RDS] Disconnected");
+    baseLogger.info("[AWS RDS] Disconnected");
     
     await eventBus.publish("storage.disconnected", {
       type: "storage.disconnected",
@@ -124,7 +131,7 @@ export class AWSRDSConnector implements StorageContract {
       const result = await this.pool.query("SELECT 1 as health");
       return result.rows.length > 0;
     } catch (error) {
-      console.error("[AWS RDS] Health check failed:", error);
+      baseLogger.error({ error }, "[AWS RDS] Health check failed");
       return false;
     }
   }
@@ -141,7 +148,7 @@ export class AWSRDSConnector implements StorageContract {
       const result: QueryResult = await pool.query(sql, params);
       return result.rows as T[];
     } catch (error: any) {
-      console.error("[AWS RDS] Query failed:", error);
+      baseLogger.error({ error }, "[AWS RDS] Query failed");
       throw error;
     }
   }
@@ -160,7 +167,7 @@ export class AWSRDSConnector implements StorageContract {
       const result: QueryResult = await this.pool.query(sql, params);
       return result.rowCount || 0;
     } catch (error: any) {
-      console.error("[AWS RDS] Execute failed:", error);
+      baseLogger.error({ error }, "[AWS RDS] Execute failed");
       throw error;
     }
   }

@@ -15,6 +15,7 @@
 import { ConnectionPool, config as SQLConfig, Request, Transaction } from "mssql";
 import { StorageContract, QueryOptions, TransactionContext } from "../types";
 import { eventBus } from "../../events/event-bus";
+import { baseLogger } from "../../observability/logger";
 
 export interface AzureSQLConfig {
   server: string;
@@ -77,7 +78,7 @@ export class AzureSQLConnector implements StorageContract {
 
     // Pool error handling
     this.pool.on("error", (err) => {
-      console.error("[Azure SQL] Pool error:", err);
+      baseLogger.error({ err }, "[Azure SQL] Pool error");
       eventBus.publish("storage.error", {
         type: "storage.error",
         provider: "azure",
@@ -92,7 +93,12 @@ export class AzureSQLConnector implements StorageContract {
       await this.pool.connect();
       this.connected = true;
 
-      console.log(`[Azure SQL] Connected to ${this.config.server}/${this.config.database}`);
+      baseLogger.info(
+        { server: this.config.server, database: this.config.database },
+        "[Azure SQL] Connected to %s/%s",
+        this.config.server,
+        this.config.database
+      );
 
       await eventBus.publish("storage.connected", {
         type: "storage.connected",
@@ -102,7 +108,7 @@ export class AzureSQLConnector implements StorageContract {
         timestamp: new Date().toISOString(),
       });
     } catch (error: any) {
-      console.error("[Azure SQL] Connection failed:", error);
+      baseLogger.error({ error }, "[Azure SQL] Connection failed");
       throw new Error(`Azure SQL connection failed: ${error.message}`);
     }
   }
@@ -111,7 +117,7 @@ export class AzureSQLConnector implements StorageContract {
     await this.pool.close();
     this.connected = false;
 
-    console.log("[Azure SQL] Disconnected");
+    baseLogger.info("[Azure SQL] Disconnected");
 
     await eventBus.publish("storage.disconnected", {
       type: "storage.disconnected",
@@ -125,7 +131,7 @@ export class AzureSQLConnector implements StorageContract {
       const result = await this.pool.request().query("SELECT 1 as health");
       return result.recordset.length > 0;
     } catch (error) {
-      console.error("[Azure SQL] Health check failed:", error);
+      baseLogger.error({ error }, "[Azure SQL] Health check failed");
       return false;
     }
   }
@@ -151,7 +157,7 @@ export class AzureSQLConnector implements StorageContract {
       const result = await request.query(sql);
       return result.recordset as T[];
     } catch (error: any) {
-      console.error("[Azure SQL] Query failed:", error);
+      baseLogger.error({ error }, "[Azure SQL] Query failed");
       throw error;
     }
   }
@@ -179,7 +185,7 @@ export class AzureSQLConnector implements StorageContract {
       const result = await request.query(sql);
       return result.rowsAffected[0] || 0;
     } catch (error: any) {
-      console.error("[Azure SQL] Execute failed:", error);
+      baseLogger.error({ error }, "[Azure SQL] Execute failed");
       throw error;
     }
   }

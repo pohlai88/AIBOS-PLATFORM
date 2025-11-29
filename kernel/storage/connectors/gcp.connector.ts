@@ -16,6 +16,7 @@
 import { Pool, PoolClient, QueryResult } from "pg";
 import { StorageContract, QueryOptions, TransactionContext } from "../types";
 import { eventBus } from "../../events/event-bus";
+import { baseLogger } from "../../observability/logger";
 
 export interface GCPCloudSQLConfig {
   // Connection via Cloud SQL Proxy
@@ -78,7 +79,7 @@ export class GCPCloudSQLConnector implements StorageContract {
 
     // Error handling
     this.pool.on("error", (err) => {
-      console.error("[GCP Cloud SQL] Pool error:", err);
+      baseLogger.error({ err }, "[GCP Cloud SQL] Pool error");
       eventBus.publish("storage.error", {
         type: "storage.error",
         provider: "gcp",
@@ -132,7 +133,12 @@ export class GCPCloudSQLConnector implements StorageContract {
         ? `Cloud SQL: ${this.config.instanceConnectionName}`
         : `Direct: ${this.config.host}:${this.config.port}`;
 
-      console.log(`[GCP Cloud SQL] Connected to ${connectionInfo}/${this.config.database}`);
+      baseLogger.info(
+        { connectionInfo, database: this.config.database },
+        "[GCP Cloud SQL] Connected to %s/%s",
+        connectionInfo,
+        this.config.database
+      );
 
       await eventBus.publish("storage.connected", {
         type: "storage.connected",
@@ -142,7 +148,7 @@ export class GCPCloudSQLConnector implements StorageContract {
         timestamp: new Date().toISOString(),
       });
     } catch (error: any) {
-      console.error("[GCP Cloud SQL] Connection failed:", error);
+      baseLogger.error({ error }, "[GCP Cloud SQL] Connection failed");
       throw new Error(`GCP Cloud SQL connection failed: ${error.message}`);
     }
   }
@@ -151,7 +157,7 @@ export class GCPCloudSQLConnector implements StorageContract {
     await this.pool.end();
     await Promise.all(this.readPools.map(pool => pool.end()));
 
-    console.log("[GCP Cloud SQL] Disconnected");
+    baseLogger.info("[GCP Cloud SQL] Disconnected");
 
     await eventBus.publish("storage.disconnected", {
       type: "storage.disconnected",
@@ -165,7 +171,7 @@ export class GCPCloudSQLConnector implements StorageContract {
       const result = await this.pool.query("SELECT 1 as health");
       return result.rows.length > 0;
     } catch (error) {
-      console.error("[GCP Cloud SQL] Health check failed:", error);
+      baseLogger.error({ error }, "[GCP Cloud SQL] Health check failed");
       return false;
     }
   }
@@ -181,7 +187,7 @@ export class GCPCloudSQLConnector implements StorageContract {
       const result: QueryResult = await pool.query(sql, params);
       return result.rows as T[];
     } catch (error: any) {
-      console.error("[GCP Cloud SQL] Query failed:", error);
+      baseLogger.error({ error }, "[GCP Cloud SQL] Query failed");
       throw error;
     }
   }
@@ -200,7 +206,7 @@ export class GCPCloudSQLConnector implements StorageContract {
       const result: QueryResult = await this.pool.query(sql, params);
       return result.rowCount || 0;
     } catch (error: any) {
-      console.error("[GCP Cloud SQL] Execute failed:", error);
+      baseLogger.error({ error }, "[GCP Cloud SQL] Execute failed");
       throw error;
     }
   }

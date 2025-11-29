@@ -39,7 +39,9 @@ export class SupabaseConnector implements StorageProvider {
         const client = createClient(config.connectionString, apiKey);
         this.clients.set(config.connectionString, client);
 
-        console.info('[SupabaseConnector] Initialized');
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import('../../observability/logger');
+        baseLogger.info('[SupabaseConnector] Initialized');
     }
 
     async validateConfig(config: StorageConfig): Promise<void> {
