@@ -14,6 +14,7 @@ import {
   mcpSessionManager,
   mcpManifestSchema,
 } from "../../mcp";
+import { resourceDiscovery } from "../../mcp/discovery/resource-discovery";
 import {
   validateJsonBody,
   validateParams,
@@ -320,5 +321,61 @@ export function registerMcpRoutes(app: Hono) {
       });
     }
   );
+
+  // GET /mcp/resources - List resources (F-12: Resource Discovery)
+  app.get("/mcp/resources", async (c) => {
+    const serverId = c.req.query("serverId");
+    const type = c.req.query("type");
+    const query = c.req.query("query");
+    const limit = c.req.query("limit") ? parseInt(c.req.query("limit")!) : undefined;
+
+    let resources;
+
+    if (query) {
+      resources = await resourceDiscovery.searchResources(query, {
+        serverId,
+        type,
+        limit,
+      });
+    } else if (serverId) {
+      resources = await resourceDiscovery.listResources(serverId);
+    } else if (type) {
+      resources = await resourceDiscovery.getResourcesByType(type);
+    } else {
+      // List all resources
+      const servers = mcpRegistry.list();
+      resources = [];
+      for (const manifest of servers) {
+        const serverResources = await resourceDiscovery.listResources(manifest.id);
+        resources.push(...serverResources);
+      }
+    }
+
+    return c.json({
+      count: resources.length,
+      resources,
+    });
+  });
+
+  // GET /mcp/resources/types - Get available resource types
+  app.get("/mcp/resources/types", async (c) => {
+    const types = await resourceDiscovery.getResourceTypes();
+    return c.json({
+      count: types.length,
+      types,
+    });
+  });
+
+  // GET /mcp/resources/:uri/metadata - Get resource metadata
+  app.get("/mcp/resources/:uri/metadata", async (c) => {
+    const uri = decodeURIComponent(c.req.param("uri"));
+    const metadata = await resourceDiscovery.getResourceMetadata(uri);
+
+    if (!metadata) {
+      return c.json({ error: "Resource not found" }, 404);
+    }
+
+    return c.json(metadata);
+  });
 }
 
