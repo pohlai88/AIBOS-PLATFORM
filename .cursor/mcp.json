@@ -1,16 +1,11 @@
 {
   "mcpServers": {
     "github": {
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "__REDACTED__"
-        // NOTE: Removed real token due to push protection.
-        // Provide token at runtime via environment (e.g. GITHUB_TOKEN) instead of committing secrets.
-      }
-    },
-    "next-devtools": {
       "command": "npx",
-      "args": ["-y", "next-devtools-mcp@latest"]
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
     },
     "git": {
       "command": "npx",
@@ -35,38 +30,41 @@
       "command": "npx",
       "args": ["-y", "mcp-playwright@latest"]
     },
-    "react-validation": {
-      "args": [".mcp/react/server.mjs"],
-      "command": "node"
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
     },
     "aibos-theme": {
-      "args": [".mcp/theme/server.mjs"],
-      "command": "node"
+      "command": "node",
+      "args": [".mcp/theme/server.mjs"]
     },
     "aibos-filesystem": {
-      "args": [".mcp/filesystem/server.mjs"],
-      "command": "node"
+      "command": "node",
+      "args": [".mcp/filesystem/server.mjs"]
     },
     "aibos-documentation": {
       "command": "node",
-      "args": [".mcp/documentation/server.mjs"],
-      "cwd": "D:\\AIBOS-PLATFORM"
+      "args": [".mcp/documentation/server.mjs"]
     },
     "aibos-ui-generator": {
-      "args": [".mcp/ui-generator/server.mjs"],
-      "command": "node"
+      "command": "node",
+      "args": [".mcp/ui-generator/server.mjs"]
     },
     "aibos-component-generator": {
-      "args": [".mcp/component-generator/server.mjs"],
-      "command": "node"
+      "command": "node",
+      "args": [".mcp/component-generator/server.mjs"]
     },
     "aibos-a11y-validation": {
-      "args": [".mcp/a11y/server.mjs"],
-      "command": "node"
+      "command": "node",
+      "args": [".mcp/a11y/server.mjs"]
     },
     "aibos-convention-validation": {
       "command": "node",
       "args": [".mcp/convention-validation/server.mjs"]
+    },
+    "aibos-react-validation": {
+      "command": "node",
+      "args": [".mcp/react/server.mjs"]
     },
     "aibos-designer": {
       "command": "npx",
