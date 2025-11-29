@@ -9,6 +9,8 @@
  * 5. QUINARY: Groq Llama 3 Turbo (TODO)
  */
 
+import { baseLogger } from "../observability/logger";
+
 const LYNX_MODEL = process.env.LYNX_MODEL || "deepseek-r1:7b";
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -38,9 +40,9 @@ export async function lynx(prompt: string): Promise<string> {
         return data.response;
       }
     }
-    console.warn("⚠️ Lynx (local Ollama) failed. Attempting OpenAI fallback.");
+    baseLogger.warn("⚠️ Lynx (local Ollama) failed. Attempting OpenAI fallback.");
   } catch (err) {
-    console.warn("⚠️ Lynx (local Ollama) error:", err);
+    baseLogger.warn({ err }, "⚠️ Lynx (local Ollama) error");
   }
 
   // 2. Fallback → OpenAI
@@ -62,13 +64,13 @@ export async function lynx(prompt: string): Promise<string> {
         const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
         const content = data.choices?.[0]?.message?.content;
         if (content) {
-          console.info("✅ OpenAI fallback successful.");
+          baseLogger.info("✅ OpenAI fallback successful.");
           return content;
         }
       }
-      console.warn("⚠️ OpenAI fallback failed:", response.status);
+      baseLogger.warn({ status: response.status }, "⚠️ OpenAI fallback failed: %d", response.status);
     } catch (err) {
-      console.warn("⚠️ OpenAI fallback error:", err);
+      baseLogger.warn({ err }, "⚠️ OpenAI fallback error");
     }
   }
 
@@ -117,7 +119,7 @@ export async function lynxStream(prompt: string, onChunk: (text: string) => void
       return;
     }
   } catch (err) {
-    console.warn("⚠️ Lynx stream failed, falling back to non-stream.");
+    baseLogger.warn("⚠️ Lynx stream failed, falling back to non-stream.");
   }
 
   // Fallback: non-streaming call

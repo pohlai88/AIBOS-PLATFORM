@@ -13,6 +13,7 @@
 import { eventBus } from '../events/event-bus';
 import { sagaEngine } from '../workflows/saga.engine';
 import { workflowRegistry } from '../workflows/workflow.registry';
+import { baseLogger } from './logger';
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -171,7 +172,9 @@ export class HealthMonitor {
     }, intervalMs);
 
     // Run initial check
-    this.check().catch(console.error);
+    this.check().catch((err) => {
+      baseLogger.error({ err }, "[HealthMonitor] Health check failed");
+    });
   }
 
   /**

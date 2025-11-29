@@ -19,6 +19,7 @@
 import { secretManager } from './secret.manager';
 import { eventBus } from '../../events/event-bus';
 import { appendAuditEntry } from '../../audit/hash-chain.store';
+import { baseLogger } from '../../observability/logger';
 import type { RotationPolicy, SecretType } from './types';
 import { DEFAULT_ROTATION_POLICIES } from './types';
 
@@ -36,26 +37,26 @@ export class RotationScheduler {
      */
     start(): void {
         if (this.running) {
-            console.warn('[RotationScheduler] Already running');
+            baseLogger.warn('[RotationScheduler] Already running');
             return;
         }
 
-        console.info('[RotationScheduler] Starting automated rotation scheduler...');
+        baseLogger.info('[RotationScheduler] Starting automated rotation scheduler...');
 
         // Check every hour
         this.intervalId = setInterval(() => {
             this.checkAndRotate().catch(err => {
-                console.error('[RotationScheduler] Error during rotation check:', err);
+                baseLogger.error({ err }, '[RotationScheduler] Error during rotation check');
             });
         }, 60 * 60 * 1000); // 1 hour
 
         // Run immediately on start
         this.checkAndRotate().catch(err => {
-            console.error('[RotationScheduler] Error during initial rotation check:', err);
+            baseLogger.error({ err }, '[RotationScheduler] Error during initial rotation check');
         });
 
         this.running = true;
-        console.info('[RotationScheduler] ✅ Scheduler started');
+        baseLogger.info('[RotationScheduler] ✅ Scheduler started');
     }
 
     /**
@@ -67,14 +68,14 @@ export class RotationScheduler {
             this.intervalId = null;
         }
         this.running = false;
-        console.info('[RotationScheduler] Scheduler stopped');
+        baseLogger.info('[RotationScheduler] Scheduler stopped');
     }
 
     /**
      * Check all secrets and rotate if needed
      */
     private async checkAndRotate(): Promise<void> {
-        console.info('[RotationScheduler] Checking secrets for rotation...');
+        baseLogger.info('[RotationScheduler] Checking secrets for rotation...');
 
         const metadata = secretManager.listMetadata();
         const rotations: Promise<void>[] = [];
@@ -82,16 +83,27 @@ export class RotationScheduler {
         for (const meta of metadata) {
             const policy = this.policies.get(meta.type);
             if (!policy) {
-                console.warn(`[RotationScheduler] No policy for secret type: ${meta.type}`);
+                baseLogger.warn({ type: meta.type }, '[RotationScheduler] No policy for secret type: %s', meta.type);
                 continue;
             }
 
             // Check if rotation needed
             if (meta.ageDays >= policy.rotationIntervalDays) {
-                console.info(`[RotationScheduler] Secret '${meta.type}' needs rotation (age: ${meta.ageDays} days, policy: ${policy.rotationIntervalDays} days)`);
+                baseLogger.info(
+                    { type: meta.type, ageDays: meta.ageDays, policyDays: policy.rotationIntervalDays },
+                    "[RotationScheduler] Secret '%s' needs rotation (age: %d days, policy: %d days)",
+                    meta.type,
+                    meta.ageDays,
+                    policy.rotationIntervalDays
+                );
                 rotations.push(this.rotateWithRetry(meta.type, policy));
             } else {
-                console.debug(`[RotationScheduler] Secret '${meta.type}' is healthy (age: ${meta.ageDays} days)`);
+                baseLogger.debug(
+                    { type: meta.type, ageDays: meta.ageDays },
+                    "[RotationScheduler] Secret '%s' is healthy (age: %d days)",
+                    meta.type,
+                    meta.ageDays
+                );
             }
 
             // Check if stale (approaching max age)
@@ -110,7 +122,11 @@ export class RotationScheduler {
         }
 
         await Promise.allSettled(rotations);
-        console.info(`[RotationScheduler] Rotation check complete (${rotations.length} secrets rotated)`);
+        baseLogger.info(
+            { rotationCount: rotations.length },
+            '[RotationScheduler] Rotation check complete (%d secrets rotated)',
+            rotations.length
+        );
     }
 
     /**
@@ -124,21 +140,26 @@ export class RotationScheduler {
                 const result = await secretManager.rotateSecret(type);
 
                 if (result.success) {
-                    console.info(`[RotationScheduler] ✅ Rotated ${type} successfully`);
+                    baseLogger.info({ type }, '[RotationScheduler] ✅ Rotated %s successfully', type);
 
                     // Schedule promotion after grace period
                     setTimeout(async () => {
                         try {
                             await secretManager.promoteNext(type);
-                            console.info(`[RotationScheduler] ✅ Promoted ${type} to active`);
+                            baseLogger.info({ type }, '[RotationScheduler] ✅ Promoted %s to active', type);
                         } catch (err) {
-                            console.error(`[RotationScheduler] Failed to promote ${type}:`, err);
+                            baseLogger.error({ type, err }, '[RotationScheduler] Failed to promote %s', type);
                         }
                     }, policy.gracePeriodHours * 60 * 60 * 1000);
 
                     return;
                 } else {
-                    console.warn(`[RotationScheduler] Rotation failed for ${type}: ${result.error}`);
+                    baseLogger.warn(
+                        { type, error: result.error },
+                        '[RotationScheduler] Rotation failed for %s: %s',
+                        type,
+                        result.error
+                    );
                     
                     // If blocked by AI Guardian (high load), retry later
                     if (result.error?.includes('AI Guardian blocked')) {
@@ -151,7 +172,13 @@ export class RotationScheduler {
                 }
             } catch (err) {
                 attempt++;
-                console.error(`[RotationScheduler] Rotation attempt ${attempt}/${maxRetries} failed for ${type}:`, err);
+                baseLogger.error(
+                    { type, attempt, maxRetries, err },
+                    '[RotationScheduler] Rotation attempt %d/%d failed for %s',
+                    attempt,
+                    maxRetries,
+                    type
+                );
 
                 if (attempt < maxRetries) {
                     await new Promise(resolve => setTimeout(resolve, 5 * 60 * 1000)); // Wait 5min

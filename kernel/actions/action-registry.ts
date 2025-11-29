@@ -4,6 +4,8 @@
  * Maps actionId → handler function
  */
 
+import { baseLogger } from "../observability/logger";
+
 export type ActionContext = {
   tenantId: string | null;
   subject?: string | null;    // user / engine ID
@@ -30,7 +32,7 @@ export function registerActionHandler<Input = unknown, Output = unknown>(
   handler: ActionHandler<Input, Output>
 ): void {
   if (handlers.has(actionId)) {
-    console.warn(`[ActionRegistry] Overwriting handler for actionId=${actionId}`);
+    baseLogger.warn({ actionId }, "[ActionRegistry] Overwriting handler for actionId=%s", actionId);
   }
   handlers.set(actionId, handler as ActionHandler);
 }

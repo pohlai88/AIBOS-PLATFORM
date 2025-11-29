@@ -12,6 +12,7 @@
 
 import { eventBus } from "../events/event-bus";
 import type { EventPayload } from "../events/event-types";
+import { baseLogger } from "../observability/logger";
 
 /**
  * Register all core event handlers
@@ -19,30 +20,30 @@ import type { EventPayload } from "../events/event-types";
  * Call this at kernel boot (after engine registration)
  */
 export function registerCoreEventHandlers(): void {
-  console.info("[EventBus] Registering core event handlers...");
+  baseLogger.info("[EventBus] Registering core event handlers...");
 
   // ============================================================================
   // SYSTEM EVENTS
   // ============================================================================
 
   eventBus.on("kernel.info", (e: EventPayload) => {
-    console.info("[KERNEL INFO]", e.payload);
+    baseLogger.info({ payload: e.payload }, "[KERNEL INFO]");
   });
 
   eventBus.on("kernel.warn", (e: EventPayload) => {
-    console.warn("[KERNEL WARN]", e.payload);
+    baseLogger.warn({ payload: e.payload }, "[KERNEL WARN]");
   });
 
   eventBus.on("kernel.error", (e: EventPayload) => {
-    console.error("[KERNEL ERROR]", e.payload);
+    baseLogger.error({ payload: e.payload }, "[KERNEL ERROR]");
   });
 
   eventBus.on("kernel.booted", (e: EventPayload) => {
-    console.info("[KERNEL] ✅ Kernel booted successfully", e.payload);
+    baseLogger.info({ payload: e.payload }, "[KERNEL] ✅ Kernel booted successfully");
   });
 
   eventBus.on("kernel.shutdown", (e: EventPayload) => {
-    console.info("[KERNEL] 🛑 Kernel shutting down", e.payload);
+    baseLogger.info({ payload: e.payload }, "[KERNEL] 🛑 Kernel shutting down");
   });
 
   // ============================================================================
@@ -50,19 +51,18 @@ export function registerCoreEventHandlers(): void {
   // ============================================================================
 
   eventBus.on("audit.entry.appended", (e: EventPayload) => {
-    console.log("[AUDIT] Entry appended", {
-      tenant: e.tenantId,
-      actor: e.actorId,
-      action: e.payload,
-    });
+    baseLogger.info(
+      { tenant: e.tenantId, actor: e.actorId, action: e.payload },
+      "[AUDIT] Entry appended"
+    );
   });
 
   eventBus.on("audit.chain.verified", (e: EventPayload) => {
-    console.log("[AUDIT] Chain verified", e.payload);
+    baseLogger.info({ payload: e.payload }, "[AUDIT] Chain verified");
   });
 
   eventBus.on("audit.chain.tampered", (e: EventPayload) => {
-    console.error("[AUDIT] 🚨 CRITICAL: Chain tampered!", e.payload);
+    baseLogger.error({ payload: e.payload }, "[AUDIT] 🚨 CRITICAL: Chain tampered!");
     // TODO: Integrate with alerting system (PagerDuty, Slack, etc.)
   });
 
@@ -71,35 +71,35 @@ export function registerCoreEventHandlers(): void {
   // ============================================================================
 
   eventBus.on("workflow.saga.started", (e: EventPayload) => {
-    console.log("[WORKFLOW] Saga started", e.payload);
+    baseLogger.info({ payload: e.payload }, "[WORKFLOW] Saga started");
   });
 
   eventBus.on("workflow.saga.step.started", (e: EventPayload) => {
-    console.log("[WORKFLOW] Saga step started", e.payload);
+    baseLogger.debug({ payload: e.payload }, "[WORKFLOW] Saga step started");
   });
 
   eventBus.on("workflow.saga.step.completed", (e: EventPayload) => {
-    console.log("[WORKFLOW] Saga step completed", e.payload);
+    baseLogger.debug({ payload: e.payload }, "[WORKFLOW] Saga step completed");
   });
 
   eventBus.on("workflow.saga.step.failed", (e: EventPayload) => {
-    console.warn("[WORKFLOW] Saga step failed", e.payload);
+    baseLogger.warn({ payload: e.payload }, "[WORKFLOW] Saga step failed");
   });
 
   eventBus.on("workflow.saga.compensation.started", (e: EventPayload) => {
-    console.log("[WORKFLOW] Compensation started", e.payload);
+    baseLogger.info({ payload: e.payload }, "[WORKFLOW] Compensation started");
   });
 
   eventBus.on("workflow.saga.compensation.completed", (e: EventPayload) => {
-    console.log("[WORKFLOW] Compensation completed", e.payload);
+    baseLogger.info({ payload: e.payload }, "[WORKFLOW] Compensation completed");
   });
 
   eventBus.on("workflow.saga.completed", (e: EventPayload) => {
-    console.log("[WORKFLOW] ✅ Saga completed", e.payload);
+    baseLogger.info({ payload: e.payload }, "[WORKFLOW] ✅ Saga completed");
   });
 
   eventBus.on("workflow.saga.failed", (e: EventPayload) => {
-    console.error("[WORKFLOW] ❌ Saga failed", e.payload);
+    baseLogger.error({ payload: e.payload }, "[WORKFLOW] ❌ Saga failed");
   });
 
   // ============================================================================
@@ -107,27 +107,27 @@ export function registerCoreEventHandlers(): void {
   // ============================================================================
 
   eventBus.on("ai.guardian.decision", (e: EventPayload) => {
-    console.log("[AI GUARDIAN] Decision made", e.payload);
+    baseLogger.info({ payload: e.payload }, "[AI GUARDIAN] Decision made");
   });
 
   eventBus.on("ai.schema.review.started", (e: EventPayload) => {
-    console.log("[AI GUARDIAN] Schema review started", e.payload);
+    baseLogger.info({ payload: e.payload }, "[AI GUARDIAN] Schema review started");
   });
 
   eventBus.on("ai.schema.review.completed", (e: EventPayload) => {
-    console.log("[AI GUARDIAN] Schema review completed", e.payload);
+    baseLogger.info({ payload: e.payload }, "[AI GUARDIAN] Schema review completed");
   });
 
   eventBus.on("ai.validation.override", (e: EventPayload) => {
-    console.warn("[AI GUARDIAN] Validation override", e.payload);
+    baseLogger.warn({ payload: e.payload }, "[AI GUARDIAN] Validation override");
   });
 
   eventBus.on("ai.drift.detected", (e: EventPayload) => {
-    console.warn("[AI GUARDIAN] 🔍 Drift detected", e.payload);
+    baseLogger.warn({ payload: e.payload }, "[AI GUARDIAN] 🔍 Drift detected");
   });
 
   eventBus.on("ai.healing.applied", (e: EventPayload) => {
-    console.log("[AI GUARDIAN] 🩹 Self-healing applied", e.payload);
+    baseLogger.info({ payload: e.payload }, "[AI GUARDIAN] 🩹 Self-healing applied");
   });
 
   // ============================================================================
@@ -135,22 +135,22 @@ export function registerCoreEventHandlers(): void {
   // ============================================================================
 
   eventBus.on("journal.entry.created", (e: EventPayload) => {
-    console.log("[DOMAIN] Journal entry created", {
-      tenant: e.tenantId,
-      payload: e.payload,
-    });
+    baseLogger.info(
+      { tenant: e.tenantId, payload: e.payload },
+      "[DOMAIN] Journal entry created"
+    );
   });
 
   eventBus.on("metadata.entity.updated", (e: EventPayload) => {
-    console.log("[DOMAIN] Metadata entity updated", e.payload);
+    baseLogger.info({ payload: e.payload }, "[DOMAIN] Metadata entity updated");
   });
 
   eventBus.on("contract.updated", (e: EventPayload) => {
-    console.log("[DOMAIN] Contract updated", e.payload);
+    baseLogger.info({ payload: e.payload }, "[DOMAIN] Contract updated");
   });
 
   eventBus.on("engine.registered", (e: EventPayload) => {
-    console.log("[DOMAIN] Engine registered", e.payload);
+    baseLogger.info({ payload: e.payload }, "[DOMAIN] Engine registered");
   });
 
   // ============================================================================
@@ -158,22 +158,21 @@ export function registerCoreEventHandlers(): void {
   // ============================================================================
 
   eventBus.on("action.dispatched", (e: EventPayload) => {
-    console.log("[ACTION] Dispatched", {
-      tenant: e.tenantId,
-      actor: e.actorId,
-      action: e.payload,
-    });
+    baseLogger.info(
+      { tenant: e.tenantId, actor: e.actorId, action: e.payload },
+      "[ACTION] Dispatched"
+    );
   });
 
   eventBus.on("action.completed", (e: EventPayload) => {
-    console.log("[ACTION] Completed", e.payload);
+    baseLogger.info({ payload: e.payload }, "[ACTION] Completed");
   });
 
   eventBus.on("action.failed", (e: EventPayload) => {
-    console.warn("[ACTION] Failed", e.payload);
+    baseLogger.warn({ payload: e.payload }, "[ACTION] Failed");
   });
 
-  console.info("[EventBus] ✅ Core event handlers registered");
+  baseLogger.info("[EventBus] ✅ Core event handlers registered");
 }
 
 /**

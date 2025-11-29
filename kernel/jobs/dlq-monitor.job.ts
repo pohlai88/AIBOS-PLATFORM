@@ -13,6 +13,7 @@
 
 import { schedule } from "node-cron";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 /**
  * DLQ Monitor Configuration
@@ -55,7 +56,7 @@ export async function monitorDLQ(config: Partial<DLQMonitorConfig> = {}): Promis
   // Get current DLQ entries
   const deadLetters = eventBus.getDeadLetters();
 
-  console.info(`[DLQ Monitor] Checking DLQ (${deadLetters.length} entries)...`);
+  baseLogger.info({ dlqSize: deadLetters.length }, "[DLQ Monitor] Checking DLQ (%d entries)...", deadLetters.length);
 
   if (deadLetters.length === 0) {
     return {
@@ -69,12 +70,17 @@ export async function monitorDLQ(config: Partial<DLQMonitorConfig> = {}): Promis
 
   // Log DLQ entries
   for (const entry of deadLetters) {
-    console.warn(`[DLQ] Failed event: ${entry.event}`, {
-      payload: entry.payload,
-      error: entry.error.message,
-      retries: entry.retries,
-      failedAt: entry.failedAt,
-    });
+    baseLogger.warn(
+      {
+        event: entry.event,
+        payload: entry.payload,
+        error: entry.error.message,
+        retries: entry.retries,
+        failedAt: entry.failedAt,
+      },
+      "[DLQ] Failed event: %s",
+      entry.event
+    );
   }
 
   // Attempt retry if enabled
@@ -86,7 +92,12 @@ export async function monitorDLQ(config: Partial<DLQMonitorConfig> = {}): Promis
     succeeded = result.succeeded;
     failed = result.failed;
 
-    console.info(`[DLQ Monitor] Retry results: ${succeeded} succeeded, ${failed} failed`);
+    baseLogger.info(
+      { succeeded, failed },
+      "[DLQ Monitor] Retry results: %d succeeded, %d failed",
+      succeeded,
+      failed
+    );
   }
 
   // Alert if threshold exceeded
@@ -131,10 +142,10 @@ async function sendDLQAlert(alert: {
   threshold: number;
   entries: Array<unknown>;
 }): Promise<void> {
-  console.error("[DLQ Monitor] 🚨 ALERT: DLQ threshold exceeded!", {
-    size: alert.dlqSize,
-    threshold: alert.threshold,
-  });
+  baseLogger.error(
+    { size: alert.dlqSize, threshold: alert.threshold },
+    "[DLQ Monitor] 🚨 ALERT: DLQ threshold exceeded!"
+  );
 
   // TODO: Integrate with alerting system
   // - PagerDuty
@@ -164,18 +175,18 @@ async function sendDLQAlert(alert: {
 export function startDLQMonitor(config: Partial<DLQMonitorConfig> = {}): void {
   const cfg = { ...DEFAULT_CONFIG, ...config };
 
-  console.info(`[DLQ Monitor] Starting DLQ monitor (schedule: ${cfg.schedule})...`);
+  baseLogger.info({ schedule: cfg.schedule }, "[DLQ Monitor] Starting DLQ monitor (schedule: %s)...", cfg.schedule);
 
   // Schedule monitoring job
   schedule(cfg.schedule, async () => {
     try {
       await monitorDLQ(cfg);
     } catch (error) {
-      console.error("[DLQ Monitor] Monitoring job failed:", error);
+      baseLogger.error({ error }, "[DLQ Monitor] Monitoring job failed");
     }
   });
 
-  console.info("[DLQ Monitor] ✅ DLQ monitor started");
+  baseLogger.info("[DLQ Monitor] ✅ DLQ monitor started");
 }
 
 /**

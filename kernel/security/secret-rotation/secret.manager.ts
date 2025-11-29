@@ -22,6 +22,7 @@
 import crypto from 'node:crypto';
 import { eventBus } from '../../events/event-bus';
 import { appendAuditEntry } from '../../audit/hash-chain.store';
+import { baseLogger } from '../../observability/logger';
 import type { SecretType, SecretMetadata, RotationResult } from './types';
 
 // ─────────────────────────────────────────────────────────────
@@ -56,11 +57,11 @@ export class SecretManager {
      */
     async initialize(): Promise<void> {
         if (this.initialized) {
-            console.warn('[SecretManager] Already initialized');
+            baseLogger.warn('[SecretManager] Already initialized');
             return;
         }
 
-        console.info('[SecretManager] Initializing from vault...');
+        baseLogger.info('[SecretManager] Initializing from vault...');
 
         // Load all secrets from vault
         const vaultSecrets = await this.fetchFromVault();
@@ -73,7 +74,7 @@ export class SecretManager {
         eventBus.subscribe('security.secret.rotation.requested', this.handleRotationRequest.bind(this));
 
         this.initialized = true;
-        console.info(`[SecretManager] Initialized with ${secrets.size} secret types`);
+        baseLogger.info({ secretCount: secrets.size }, '[SecretManager] Initialized with %d secret types', secrets.size);
     }
 
     /**
@@ -124,12 +125,16 @@ export class SecretManager {
      * Rotate secret (AI-validated)
      */
     async rotateSecret(type: SecretType, tenantId = 'system'): Promise<RotationResult> {
-        console.info(`[SecretManager] Rotating secret: ${type}`);
+        baseLogger.info({ type }, '[SecretManager] Rotating secret: %s', type);
 
         // Step 1: AI Guardian validation (load check)
         const systemLoad = await this.getSystemLoad();
         if (systemLoad > 0.7) {
-            console.warn(`[SecretManager] Rotation blocked by AI Guardian: System load ${systemLoad * 100}% > 70%`);
+            baseLogger.warn(
+                { type, systemLoad: systemLoad * 100 },
+                '[SecretManager] Rotation blocked by AI Guardian: System load %d%% > 70%%',
+                systemLoad * 100
+            );
             return {
                 success: false,
                 type,
@@ -185,7 +190,7 @@ export class SecretManager {
             },
         });
 
-        console.info(`[SecretManager] ✅ Secret rotated: ${type}`);
+        baseLogger.info({ type }, '[SecretManager] ✅ Secret rotated: %s', type);
 
         return {
             success: true,
@@ -199,7 +204,7 @@ export class SecretManager {
      * Promote next key to active (after grace period)
      */
     async promoteNext(type: SecretType, tenantId = 'system'): Promise<void> {
-        console.info(`[SecretManager] Promoting next key to active: ${type}`);
+        baseLogger.info({ type }, '[SecretManager] Promoting next key to active: %s', type);
 
         const pair = secrets.get(type);
         if (!pair) {
@@ -243,7 +248,7 @@ export class SecretManager {
             },
         });
 
-        console.info(`[SecretManager] ✅ Key promoted: ${type}`);
+        baseLogger.info({ type }, '[SecretManager] ✅ Key promoted: %s', type);
     }
 
     /**
@@ -331,7 +336,7 @@ export class SecretManager {
 
     private async updateVault(type: SecretType, pair: SecretPair): Promise<void> {
         // TODO: Implement real vault update
-        console.info(`[SecretManager] Vault updated: ${type}`);
+        baseLogger.info({ type }, '[SecretManager] Vault updated: %s', type);
     }
 
     private async getSystemLoad(): Promise<number> {

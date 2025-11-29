@@ -3,6 +3,7 @@ import { schedule } from "node-cron";
 import { verifyAuditChain } from "../audit/hash-chain.store";
 import { kernelContainer } from "../core/container";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 interface VerificationResult {
   tenantId: string;
@@ -46,9 +47,10 @@ export async function runAuditChainVerification(): Promise<
 
     // Log critical failures
     if (!result.valid) {
-      console.error(
-        `[CRITICAL] Audit chain integrity failure for tenant ${tenant_id}:`,
-        result.errors
+      baseLogger.error(
+        { tenantId: tenant_id, errors: result.errors },
+        "[CRITICAL] Audit chain integrity failure for tenant %s",
+        tenant_id
       );
 
       // Send alert (integrate with your alerting system)
@@ -59,8 +61,12 @@ export async function runAuditChainVerification(): Promise<
         errors: result.errors,
       });
     } else {
-      console.info(
-        `[OK] Audit chain verified for tenant ${tenant_id} (${await getChainLength(tenant_id)} entries)`
+      const chainLength = await getChainLength(tenant_id);
+      baseLogger.info(
+        { tenantId: tenant_id, chainLength },
+        "[OK] Audit chain verified for tenant %s (%d entries)",
+        tenant_id,
+        chainLength
       );
     }
   }
@@ -84,7 +90,7 @@ async function sendSecurityAlert(alert: {
   errors: string[];
 }): Promise<void> {
   // TODO: Integrate with PagerDuty, Slack, Email, etc.
-  console.error("[SECURITY ALERT]", JSON.stringify(alert, null, 2));
+  baseLogger.error({ alert }, "[SECURITY ALERT] %s", alert.title);
 }
 
 /**
@@ -94,19 +100,22 @@ async function sendSecurityAlert(alert: {
 export function startAuditVerificationJob() {
   // Run at 2 AM every day
   schedule("0 2 * * *", async () => {
-    console.info("[AuditVerification] Starting nightly verification...");
+    baseLogger.info("[AuditVerification] Starting nightly verification...");
     try {
       const results = await runAuditChainVerification();
       const failures = results.filter((r) => !r.valid);
 
-      console.info(
-        `[AuditVerification] Completed: ${results.length} tenants verified, ${failures.length} failures`
+      baseLogger.info(
+        { total: results.length, failures: failures.length },
+        "[AuditVerification] Completed: %d tenants verified, %d failures",
+        results.length,
+        failures.length
       );
     } catch (error) {
-      console.error("[AuditVerification] Job failed:", error);
+      baseLogger.error({ error }, "[AuditVerification] Job failed");
     }
   });
 
-  console.info("[AuditVerification] Scheduled nightly job at 2:00 AM");
+  baseLogger.info("[AuditVerification] Scheduled nightly job at 2:00 AM");
 }
 

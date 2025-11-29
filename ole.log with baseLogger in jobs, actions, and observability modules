@@ -1,0 +1,5 @@
+[33mc03126f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m refactor: Replace console.log with baseLogger in core modules (index, dispatcher, security, container, registry, boot)
+[33mf59bace[m refactor: Replace console.log with baseLogger in bootstrap and API files
+[33ma875f51[m docs: Update reports index - Add Integration Verification Report
+[33m1800fe5[m docs: Add integration verification report - All integrations verified
+[33m0e1d582[m docs: Update reports index - Add Architecture Shortfall Analysis
