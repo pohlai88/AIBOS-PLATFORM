@@ -1,134 +1,52 @@
-/**
- * Journal Entry Domain Schema
- *
- * Zod schemas aligned with kernel_field_dictionary canonical slugs:
- * - journal_date
- * - gl_account_code
- * - debit_amount
- * - credit_amount
- * - line_description
- * - document_number
- * - currency_code
- * - created_by
- */
+// contracts/schemas/journal-entry.schema.ts
+import { z } from 'zod';
 
-import { z } from "zod";
-
-/**
- * One journal line – aligned with kernel_field_dictionary
- */
-export const ZJournalEntryLine = z
-  .object({
-    gl_account_code: z
-      .string()
-      .min(1, "GL account code is required")
-      .describe("Code of the GL account being debited or credited"),
-
-    debit_amount: z
-      .number()
-      .nonnegative("Debit amount cannot be negative")
-      .default(0)
-      .describe("Debit amount in transaction currency"),
-
-    credit_amount: z
-      .number()
-      .nonnegative("Credit amount cannot be negative")
-      .default(0)
-      .describe("Credit amount in transaction currency"),
-
-    line_description: z
-      .string()
-      .max(512, "Line description too long")
-      .optional()
-      .describe("Description for the journal line"),
-
-    document_number: z
-      .string()
-      .max(64, "Document number too long")
-      .optional()
-      .describe("External document or reference number"),
-
-    currency_code: z
-      .string()
-      .length(3, "Currency code must be 3 letters (ISO-4217)")
-      .default("MYR")
-      .describe("Transaction currency code (e.g. MYR, USD)"),
-  })
-  .refine(
-    (line) => line.debit_amount === 0 || line.credit_amount === 0,
-    {
-      message: "A line cannot have both debit and credit non-zero",
-      path: ["debit_amount"],
-    },
-  );
-
-export type JournalEntryLine = z.infer<typeof ZJournalEntryLine>;
-
-/**
- * Input schema for accounting.createJournalEntry
- *
- * Fields aligned with kernel_business_terms + kernel_field_dictionary
- */
-export const ZCreateJournalEntryInput = z
-  .object({
-    journal_date: z
-      .string()
-      .regex(
-        /^\d{4}-\d{2}-\d{2}$/,
-        "journal_date must be in format YYYY-MM-DD",
-      )
-      .describe("Journal posting date (YYYY-MM-DD)"),
-
-    lines: z
-      .array(ZJournalEntryLine)
-      .min(1, "At least one journal line is required")
-      .describe("Journal entry lines"),
-
-    created_by: z
-      .string()
-      .min(1, "created_by is required")
-      .describe("User who created the journal entry"),
-  })
-  .refine(
-    (payload) => {
-      const totalDebit = payload.lines.reduce(
-        (sum, l) => sum + (l.debit_amount ?? 0),
-        0,
-      );
-      const totalCredit = payload.lines.reduce(
-        (sum, l) => sum + (l.credit_amount ?? 0),
-        0,
-      );
-      return Math.abs(totalDebit - totalCredit) < 0.001; // floating point tolerance
-    },
-    {
-      message: "Total debit must equal total credit",
-      path: ["lines"],
-    },
-  );
-
-export type CreateJournalEntryInput = z.infer<typeof ZCreateJournalEntryInput>;
-
-/**
- * Output schema for accounting.createJournalEntry
- */
-export const ZCreateJournalEntryOutput = z.object({
-  journal_entry_id: z
-    .string()
-    .min(1, "journal_entry_id is required")
-    .describe("Identifier of the created journal entry"),
-
-  status: z
-    .enum(["posted", "draft", "pending_approval"])
-    .default("posted")
-    .describe("Posting status of the journal entry"),
-
-  posted_at: z
-    .string()
-    .datetime()
-    .optional()
-    .describe("Timestamp when the entry was posted (ISO-8601)"),
+// Core journal entry line (debit/credit pair flattened for simplicity).
+// You can extend this later to support multi-line entries if your schema
+// already has a header/lines split.
+export const JournalEntrySchema = z.object({
+  id: z.string().min(1),
+  tenantId: z.string().min(1),
+  orgId: z.string().min(1).optional(),
+  journalNo: z.string().min(1),
+  journalDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // ISO date
+  debitAccountId: z.string().min(1),
+  creditAccountId: z.string().min(1),
+  amount: z.number().finite(),
+  currencyCode: z.string().min(3).max(3),
+  description: z.string().max(2048).optional(),
+  status: z.enum(['draft', 'posted', 'void']).default('posted'),
+  createdAt: z.string().datetime(),
+  createdBy: z.string().optional(),
+  updatedAt: z.string().datetime().optional(),
+  updatedBy: z.string().optional(),
 });
 
-export type CreateJournalEntryOutput = z.infer<typeof ZCreateJournalEntryOutput>;
+export type JournalEntry = z.infer<typeof JournalEntrySchema>;
 
+// Input schema for accounting.read.journal_entries
+export const ReadJournalEntriesInputSchema = z.object({
+  // Tenant is taken from auth/HTTP, but we allow optional filter override
+  // for system-level calls. In most cases this should be ignored and
+  // kernel will use the authenticated tenant.
+  tenantId: z.string().min(1).optional(),
+  // Optional filters
+  dateFrom: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  dateTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  accountId: z.string().min(1).optional(),
+  status: z.enum(['draft', 'posted', 'void']).optional(),
+  // Pagination
+  page: z.number().int().min(1).default(1),
+  pageSize: z.number().int().min(1).max(500).default(50),
+});
+
+export type ReadJournalEntriesInput = z.infer<typeof ReadJournalEntriesInputSchema>;
+
+export const ReadJournalEntriesOutputSchema = z.object({
+  items: z.array(JournalEntrySchema),
+  page: z.number().int().min(1),
+  pageSize: z.number().int().min(1),
+  total: z.number().int().min(0),
+});
+
+export type ReadJournalEntriesOutput = z.infer<typeof ReadJournalEntriesOutputSchema>;

@@ -2,7 +2,9 @@ import { lynx } from "./lynx.client";
 import { metadataRegistry } from "../registry/metadata.registry";
 import { uiRegistry } from "../ui/ui.registry";
 import { contractEngine } from "../contracts/contract-engine";
-import { log } from "../utils/logger";
+import { createContextLogger } from "../observability/logger";
+
+const logger = createContextLogger({ module: "kernel:ai:governance" });
 
 export const governanceHooks = {
   async analyzeMetadata() {
@@ -124,14 +126,14 @@ ${JSON.stringify(metadata, null, 2)}
 
 // Auto-run governance on boot (optional)
 export async function runBootGovernance() {
-  log.info("🤖 Running Lynx governance checks...");
+  logger.info("Running Lynx governance checks...");
   
   const metadataAnalysis = await governanceHooks.analyzeMetadata();
-  log.info("📋 Metadata Analysis:", metadataAnalysis);
+  logger.info({ analysis: metadataAnalysis }, "governance.metadata.complete");
   
   const uiAnalysis = await governanceHooks.analyzeUI();
-  log.info("🎨 UI Analysis:", uiAnalysis);
+  logger.info({ analysis: uiAnalysis }, "governance.ui.complete");
   
-  log.info("🤖 Lynx governance complete.");
+  logger.info("governance.boot.complete");
 }
 

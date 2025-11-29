@@ -1,9 +1,11 @@
 import { contractEngine } from "../../contracts/contract-engine";
 import { ContractError } from "../../hardening/errors/contract-error";
-import { log } from "../../utils/logger";
+import { createContextLogger } from "../../observability/logger";
+
+const logger = createContextLogger({ module: "kernel:boot:contracts" });
 
 export async function bootContracts(engines: any[]) {
-  console.log("🧾 Validating engine contracts...");
+  logger.info("Validating engine contracts...");
   
   let failed = 0;
   
@@ -19,13 +21,13 @@ export async function bootContracts(engines: any[]) {
       }
       
       if (result.warnings.length > 0) {
-        log.warn(`⚠️  Engine '${engine.name}' warnings:`, result.warnings);
+        logger.warn({ engine: engine.name, warnings: result.warnings }, "contract.warnings");
       }
     } catch (err) {
       if (err instanceof ContractError) {
-        log.error(`❌ ${err.message}`, err.cause);
+        logger.error({ err, engine: engine.name }, "contract.validation.failed");
       } else {
-        log.error(`❌ Contract validation failed for '${engine.name}':`, err);
+        logger.error({ err, engine: engine.name }, "contract.validation.error");
       }
       failed++;
     }
@@ -35,6 +37,6 @@ export async function bootContracts(engines: any[]) {
     throw new ContractError(`${failed} engine(s) failed validation. Aborting boot.`);
   }
   
-  console.log("   All engine contracts validated.");
+  logger.info({ count: engines.length }, "contract.validation.complete");
 }
 

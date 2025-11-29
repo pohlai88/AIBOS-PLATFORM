@@ -1,20 +1,22 @@
 import { eventBus } from "../event-bus";
-import { log } from "../../utils/logger";
+import { createContextLogger } from "../../observability/logger";
 import { askLynx } from "../../ai/lynx.adapter";
 
+const logger = createContextLogger({ module: "kernel:events:ai" });
+
 // AI/Lynx handler for intelligent event analysis
-// TODO: Enable when Lynx AI is fully integrated
+// TODO[KERNEL-AI]: Enable when Lynx AI is fully integrated
 
 eventBus.subscribe("*", async (event) => {
   // Only process significant events for AI analysis
   const significantEvents = ["invoice.created", "payment.failed", "anomaly.detected"];
-  
+
   if (significantEvents.includes(event.name)) {
-    log.info(`🤖 AI Analysis: ${event.name}`);
-    
-    // TODO: Enable AI analysis
+    logger.info({ event: event.name }, "ai.analysis.triggered");
+
+    // TODO[KERNEL-AI]: Enable AI analysis
     // const analysis = await askLynx(`Analyze this event: ${JSON.stringify(event)}`);
-    // log.info(`🤖 Lynx says: ${analysis}`);
+    // logger.info({ analysis }, "ai.analysis.complete");
   }
 });
 

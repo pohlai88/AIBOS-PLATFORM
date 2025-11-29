@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-BOS | ARTIFACT Layer Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0A0A0B; 
+            color: #F2F0E9; 
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ======== ARTIFACT LAYER CSS ======== */
+        
+        /* 1. ATMOSPHERIC GRAIN */
+        .bg-noise {
+            position: relative;
+        }
+        .bg-noise::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.035;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* 2. PHOTONIC BORDER */
+        .border-photonic {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.0) 100%);
+            border: 1px solid transparent;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 0 1px rgba(0,0,0,0.2),
+                0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .border-photonic-amber {
+            border-top: 1px solid rgba(212, 163, 115, 0.6);
+            box-shadow: 
+                0 0 0 1px rgba(212, 163, 115, 0.1),
+                0 0 20px rgba(212, 163, 115, 0.15);
+        }
+
+        /* 3. METALLIC TEXT */
+        .text-metallic {
+            background: linear-gradient(180deg, #FFFFFF 0%, #A8A29E 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 4. SENTIENT GLOW */
+        .glow-ambient {
+            background: radial-gradient(
+                circle at 50% -20%, 
+                rgba(212, 163, 115, 0.08) 0%, 
+                rgba(10, 10, 11, 0) 60%
+            );
+        }
+
+        /* 5. SHIMMER ANIMATION */
+        .animate-shimmer {
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.05) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ADDITIONAL CINEMATIC EFFECTS */
+        .glow-pulse {
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .hover-lift {
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+        }
+
+        /* GRADIENT DIVIDER */
+        .gradient-divider {
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                rgba(212, 163, 115, 0) 0%,
+                rgba(212, 163, 115, 0.6) 50%,
+                rgba(212, 163, 115, 0) 100%
+            );
+        }
+    </style>
+</head>
+<body class="bg-noise min-h-screen">
+
+    <!-- AMBIENT GLOW BACKGROUND -->
+    <div class="fixed inset-0 glow-ambient pointer-events-none"></div>
+
+    <!-- HEADER -->
+    <header class="relative z-20 h-16 border-b border-white/5 flex items-center justify-between px-8 backdrop-blur-xl">
+        <div class="flex items-center gap-4">
+            <div class="w-2 h-2 bg-[#D4A373] rounded-full glow-pulse"></div>
+            <span class="font-mono text-xs tracking-[0.2em] text-stone-400 uppercase">AI-BOS / Artifact Layer</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <span class="text-xs text-stone-500 font-mono">v10.0 CINEMATIC</span>
+            <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-xs font-medium">
+                JP
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="relative z-10 max-w-7xl mx-auto px-8 py-16">
+
+        <!-- HERO SECTION -->
+        <div class="mb-20">
+            <h1 class="text-metallic text-6xl font-extralight tracking-tight mb-4">
+                The Cinematic Interface
+            </h1>
+            <p class="text-stone-400 text-lg font-light max-w-2xl leading-relaxed">
+                Not just colors and borders—<span class="text-white">lighting, texture, and refraction</span>. 
+                This is what happens when you think like a cinematographer.
+            </p>
+        </div>
+
+        <!-- DEMONSTRATION GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+
+            <!-- CARD 1: PHOTONIC BORDER + METALLIC TEXT -->
+            <div class="relative group rounded-2xl border-photonic overflow-hidden hover-lift">
+                <div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                
+                <div class="relative z-10 p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="cpu" class="w-5 h-5 text-[#D4A373]"></i>
+                        <span class="text-xs font-mono text-stone-400 tracking-widest uppercase">Neural Network</span>
+                    </div>
+                    
+                    <h3 class="text-metallic text-3xl font-light mb-3">
+                        Distributed Intelligence
+                    </h3>
+                    
+                    <p class="text-stone-400 text-sm font-light leading-relaxed mb-6">
+                        40,201 nodes analyzed. Latency reduced by 18.3%. The system is self-optimizing.
+                    </p>
+
+                    <div class="gradient-divider mb-6"></div>
+
+                    <div class="flex gap-4">
+                        <button class="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-mono text-white transition-all duration-300 hover:border-[#D4A373]/30">
+                            VIEW METRICS
+                        </button>
+                        <button class="px-4 py-2 text-xs font-mono text-stone-400 hover:text-[#D4A373] transition-colors duration-300 flex items-center gap-2">
+                            TRACE LINEAGE <i data-lucide="git-branch" class="w-3 h-3"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: AMBER PHOTONIC + SHIMMER -->
+            <div class="relative group rounded-2xl border-photonic border-photonic-amber overflow-hidden hover-lift">
+                <div class="absolute inset-0 animate-shimmer opacity-50"></div>
+                
+                <div class="relative z-10 p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <i data-lucide="zap" class="w-5 h-5 text-[#D4A373]"></i>
+                        <span class="text-xs font-mono text-[#D4A373] tracking-widest uppercase">Opportunity Detected</span>
+                    </div>
+                    
+                    <h3 class="text-metallic text-3xl font-light mb-3">
+                        Supply Chain Optimization
+                    </h3>
+                    
+                    <p class="text-stone-400 text-sm font-light leading-relaxed mb-6">
+                        Vietnam node latency decreased 14%. Recommended allocation: <span class="text-white font-medium">+200 units</span>. Confidence: 87%.
+                    </p>
+
+                    <div class="gradient-divider mb-6"></div>
+
+                    <div class="flex gap-4">
+                        <button class="px-4 py-2 bg-[#D4A373] hover:bg-[#E0B589] text-[#0A0A0B] rounded-lg text-xs font-mono font-medium transition-all duration-300 shadow-lg hover:shadow-[#D4A373]/20">
+                            [ EXECUTE ]
+                        </button>
+                        <button class="px-4 py-2 text-xs font-mono text-stone-400 hover:text-white transition-colors duration-300">
+                            SIMULATE FIRST
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FULL WIDTH SHOWCASE -->
+        <div class="relative group rounded-2xl border-photonic overflow-hidden mb-16 hover-lift">
+            <div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            
+            <div class="relative z-10 p-10">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    
+                    <!-- METRIC 1 -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+                            <span class="text-xs font-mono text-stone-400 uppercase tracking-wider">Compliance</span>
+                        </div>
+                        <h4 class="text-metallic text-5xl font-extralight mb-2">99.8%</h4>
+                        <p class="text-stone-500 text-xs font-light">Audit trail validated across 4 MCP nodes</p>
+                    </div>
+
+                    <!-- METRIC 2 -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="activity" class="w-4 h-4 text-[#D4A373]"></i>
+                            <span class="text-xs font-mono text-stone-400 uppercase tracking-wider">Processing</span>
+                        </div>
+                        <h4 class="text-metallic text-5xl font-extralight mb-2">2.4M</h4>
+                        <p class="text-stone-500 text-xs font-light">Events analyzed per second</p>
+                    </div>
+
+                    <!-- METRIC 3 -->
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="target" class="w-4 h-4 text-blue-400"></i>
+                            <span class="text-xs font-mono text-stone-400 uppercase tracking-wider">Accuracy</span>
+                        </div>
+                        <h4 class="text-metallic text-5xl font-extralight mb-2">94.1%</h4>
+                        <p class="text-stone-500 text-xs font-light">Predictive model confidence</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TECHNICAL BREAKDOWN -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- EFFECT BREAKDOWN 1 -->
+            <div class="relative rounded-xl border border-white/5 p-6 bg-white/[0.02]">
+                <h4 class="text-white text-sm font-medium mb-4 flex items-center gap-2">
+                    <div class="w-1 h-1 bg-[#D4A373] rounded-full"></div>
+                    Photonic Borders
+                </h4>
+                <p class="text-stone-400 text-xs font-light leading-relaxed mb-3">
+                    Standard borders are replaced with <span class="text-white font-mono">gradient masks</span> and 
+                    <span class="text-white font-mono">top-light refraction</span>. The brain perceives depth through simulated studio lighting.
+                </p>
+                <code class="text-[10px] font-mono text-stone-500 block bg-black/30 p-2 rounded">
+                    border-top: 1px solid rgba(255,255,255,0.15);
+                </code>
+            </div>
+
+            <!-- EFFECT BREAKDOWN 2 -->
+            <div class="relative rounded-xl border border-white/5 p-6 bg-white/[0.02]">
+                <h4 class="text-white text-sm font-medium mb-4 flex items-center gap-2">
+                    <div class="w-1 h-1 bg-[#D4A373] rounded-full"></div>
+                    Atmospheric Grain
+                </h4>
+                <p class="text-stone-400 text-xs font-light leading-relaxed mb-3">
+                    Subtle <span class="text-white font-mono">fractal noise</span> at 3.5% opacity transforms flat blacks into 
+                    <span class="text-white font-mono">tactile surfaces</span>—anodized aluminum, not pixels.
+                </p>
+                <code class="text-[10px] font-mono text-stone-500 block bg-black/30 p-2 rounded">
+                    opacity: 0.035; baseFrequency: 0.65;
+                </code>
+            </div>
+
+            <!-- EFFECT BREAKDOWN 3 -->
+            <div class="relative rounded-xl border border-white/5 p-6 bg-white/[0.02]">
+                <h4 class="text-white text-sm font-medium mb-4 flex items-center gap-2">
+                    <div class="w-1 h-1 bg-[#D4A373] rounded-full"></div>
+                    Metallic Text
+                </h4>
+                <p class="text-stone-400 text-xs font-light leading-relaxed mb-3">
+                    Headlines use <span class="text-white font-mono">linear gradients</span> with background-clip to create 
+                    an <span class="text-white font-mono">engraved steel</span> effect instead of flat white.
+                </p>
+                <code class="text-[10px] font-mono text-stone-500 block bg-black/30 p-2 rounded">
+                    gradient(180deg, #FFF 0%, #A8A29E 100%);
+                </code>
+            </div>
+
+            <!-- EFFECT BREAKDOWN 4 -->
+            <div class="relative rounded-xl border border-white/5 p-6 bg-white/[0.02]">
+                <h4 class="text-white text-sm font-medium mb-4 flex items-center gap-2">
+                    <div class="w-1 h-1 bg-[#D4A373] rounded-full"></div>
+                    Sentient Glow
+                </h4>
+                <p class="text-stone-400 text-xs font-light leading-relaxed mb-3">
+                    A <span class="text-white font-mono">radial gradient</span> positioned above the viewport creates 
+                    ambient "intelligence presence" without overwhelming the content.
+                </p>
+                <code class="text-[10px] font-mono text-stone-500 block bg-black/30 p-2 rounded">
+                    circle at 50% -20%, rgba(212,163,115,0.08);
+                </code>
+            </div>
+
+        </div>
+
+        <!-- CLOSING MESSAGE -->
+        <div class="mt-20 text-center">
+            <p class="text-stone-500 text-sm font-light mb-2">
+                This is the <span class="text-metallic text-lg font-medium">0.8 difference</span>
+            </p>
+            <p class="text-stone-600 text-xs font-mono">
+                CINEMATOGRAPHY × DESIGN SYSTEM = ARTIFACT
+            </p>
+        </div>
+
+    </main>
+
+    <!-- FLOATING COMMAND BAR -->
+    <div class="fixed bottom-8 left-0 w-full flex justify-center px-4 z-30">
+        <div class="w-full max-w-2xl border-photonic-amber rounded-full flex items-center px-6 py-4 backdrop-blur-2xl bg-black/40">
+            <i data-lucide="sparkles" class="w-4 h-4 text-[#D4A373] mr-3 glow-pulse"></i>
+            <input 
+                type="text" 
+                placeholder="Ask AI-BOS to analyze, predict, or execute..." 
+                class="bg-transparent border-none outline-none text-sm text-white placeholder-stone-500 w-full font-light"
+            >
+            <div class="text-[10px] font-mono text-stone-600 border border-white/10 rounded px-2 py-1">CMD+K</div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Add subtle parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const glow = document.querySelector('.glow-ambient');
+            if (glow) {
+                glow.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+
+</body>
+</html>
+

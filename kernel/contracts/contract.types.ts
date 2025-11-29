@@ -1,61 +1,98 @@
-import type { z } from "zod";
-
-export interface ContractResult {
-  ok: boolean;
-  errors: string[];
-  warnings: string[];
-}
-
-// ─────────────────────────────────────────────────────────────
-// Action Contract Types
-// ─────────────────────────────────────────────────────────────
-
-export type RiskBand = "low" | "medium" | "high" | "critical";
-export type SideEffectLevel = "none" | "read" | "local" | "write" | "external";
-
-export interface KernelActionMetadata {
-  /** Domain: 'finance', 'hr', 'sales', etc. */
-  domain: string;
-  /** Category within domain: 'journal_entries', 'payroll', etc. */
-  category?: string;
-  /** Human-readable description */
-  description?: string;
-  /** Searchable tags */
-  tags?: string[];
-  /** Reference to data contract slug: 'journal_entries' */
-  dataContractRef?: string;
-  /** Risk classification */
-  riskBand?: RiskBand;
-  /** Side effect level */
-  sideEffectLevel?: SideEffectLevel;
-}
+// contracts/contract.types.ts
+import type { z } from 'zod';
 
 /**
- * Generic runtime contract for actions.
- *
- * TInSchema / TOutSchema = Zod schemas (runtime); types inferred at compile-time.
+ * Kernel Action Contract
+ * 
+ * Defines the metadata and validation schemas for a kernel action.
+ * This is the "contract" that engines must implement and that the
+ * kernel uses for:
+ * - Input/output validation
+ * - Policy enforcement (RBAC/ABAC/PBAC)
+ * - OpenAPI generation
+ * - AI governance
+ * - Audit & lineage tracking
  */
 export interface KernelActionContract<
-  TInSchema extends z.ZodTypeAny = z.ZodTypeAny,
-  TOutSchema extends z.ZodTypeAny = z.ZodTypeAny,
+  TInputSchema extends z.ZodTypeAny = z.ZodTypeAny,
+  TOutputSchema extends z.ZodTypeAny = z.ZodTypeAny
 > {
-  /** Stable action ID: 'accounting.createJournalEntry' */
-  actionId: string;
-  /** Contract version */
-  version: number;
-  /** Zod input schema */
-  inputSchema: TInSchema;
-  /** Zod output schema */
-  outputSchema: TOutSchema;
-  /** Action metadata for governance, UI, AI */
-  metadata?: KernelActionMetadata;
+  /** Unique action ID in format: domain.verb.noun (e.g., accounting.read.journal_entries) */
+  id: string;
+  
+  /** Semantic version (e.g., 1.0.0) */
+  version: string;
+  
+  /** Domain/namespace (e.g., accounting, inventory, workflow) */
+  domain: string;
+  
+  /** Action kind: query (read), command (write), mutation (update/delete) */
+  kind: 'query' | 'command' | 'mutation';
+  
+  /** Short human-readable summary */
+  summary: string;
+  
+  /** Detailed description (markdown supported) */
+  description: string;
+  
+  /** Zod schema for input validation */
+  inputSchema: TInputSchema;
+  
+  /** Zod schema for output validation */
+  outputSchema: TOutputSchema;
+  
+  /** Optional: Data classification for security & compliance */
+  classification?: {
+    /** PII sensitivity level */
+    piiLevel?: 'none' | 'low' | 'medium' | 'high';
+    
+    /** Data sensitivity category */
+    sensitivity?: 'public' | 'internal' | 'confidential' | 'financial' | 'pii';
+    
+    /** Compliance frameworks this action relates to */
+    compliance?: Array<'SOC2' | 'ISO27001' | 'GDPR' | 'HIPAA' | 'PCI-DSS'>;
+  };
+  
+  /** Optional: Tags for discovery, policy, and lineage */
+  tags?: string[];
+  
+  /** Optional: Required permissions (for RBAC) */
+  permissions?: string[];
+  
+  /** Optional: Rate limit configuration */
+  rateLimit?: {
+    /** Max requests per window */
+    max: number;
+    
+    /** Time window in seconds */
+    windowSeconds: number;
+  };
+  
+  /** Optional: Caching configuration */
+  cache?: {
+    /** Cache key strategy */
+    strategy: 'tenant' | 'user' | 'input' | 'custom';
+    
+    /** TTL in seconds */
+    ttl: number;
+    
+    /** Custom cache key generator */
+    keyGenerator?: string;
+  };
 }
 
 /**
- * Alias for use in action definition files
+ * Infer input type from contract
  */
-export type ZActionContract<
-  TInSchema extends z.ZodTypeAny = z.ZodTypeAny,
-  TOutSchema extends z.ZodTypeAny = z.ZodTypeAny,
-> = KernelActionContract<TInSchema, TOutSchema>;
+export type InferInput<T extends KernelActionContract> = 
+  T extends KernelActionContract<infer I, any> 
+    ? z.infer<I> 
+    : never;
 
+/**
+ * Infer output type from contract
+ */
+export type InferOutput<T extends KernelActionContract> = 
+  T extends KernelActionContract<any, infer O> 
+    ? z.infer<O> 
+    : never;

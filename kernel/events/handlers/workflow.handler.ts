@@ -1,30 +1,23 @@
 import { eventBus } from "../event-bus";
-import { log } from "../../utils/logger";
+import { createContextLogger } from "../../observability/logger";
+
+const logger = createContextLogger({ module: "kernel:events:workflow" });
 
 // Workflow trigger handler
-// TODO: Connect to workflow engine when built
+// TODO[KERNEL-WORKFLOW]: Connect to workflow engine when built
 
 eventBus.subscribe("*.created", (event) => {
-  log.info(`🔄 Workflow trigger: ${event.name}`, {
-    tenant: event.tenant,
-    engine: event.engine
-  });
+  logger.info({ event: event.name, tenant: event.tenant, engine: event.engine }, "workflow.trigger.created");
   
-  // TODO: Trigger workflow engine
+  // TODO[KERNEL-WORKFLOW]: Trigger workflow engine
   // await workflowEngine.trigger(event);
 });
 
 eventBus.subscribe("*.updated", (event) => {
-  log.info(`🔄 Workflow trigger: ${event.name}`, {
-    tenant: event.tenant,
-    engine: event.engine
-  });
+  logger.info({ event: event.name, tenant: event.tenant, engine: event.engine }, "workflow.trigger.updated");
 });
 
 eventBus.subscribe("*.deleted", (event) => {
-  log.info(`🔄 Workflow trigger: ${event.name}`, {
-    tenant: event.tenant,
-    engine: event.engine
-  });
+  logger.info({ event: event.name, tenant: event.tenant, engine: event.engine }, "workflow.trigger.deleted");
 });
 

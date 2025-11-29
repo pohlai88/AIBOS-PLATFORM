@@ -28,6 +28,10 @@ export const colorTokens = {
   brandSoft: "var(--color-brand-soft)",
   brandForeground: "var(--color-brand-foreground)",
 
+  brand: "var(--color-brand)",
+  brandSoft: "var(--color-brand-soft)",
+  brandForeground: "var(--color-brand-foreground)",
+
   success: "var(--color-success)",
   successSoft: "var(--color-success-soft)",
   successForeground: "var(--color-success-foreground)",
@@ -43,37 +47,44 @@ export const colorTokens = {
   border: "var(--color-border)",
   borderSubtle: "var(--color-border-subtle)",
   ring: "var(--color-ring)",
+
+  // Accent color
+  accent: "var(--color-accent)",
+  accentGlow: "var(--color-accent-glow)",
 } as const;
 
 // ---------------------------------------------------------------
 // TYPOGRAPHY TOKENS — Fonts + Headings + Displays
 // ---------------------------------------------------------------
 export const typographyTokens = {
-  // Base text sizes
-  xs: "var(--font-xs)",
-  sm: "var(--font-sm)",
-  base: "var(--font-base)",
-  lg: "var(--font-lg)",
+  // Base text sizes (Figma Best Practice: 14px minimum)
+  xs: "var(--font-xs)",      // 14px
+  sm: "var(--font-sm)",      // 16px
+  base: "var(--font-base)",  // 18px
+  lg: "var(--font-lg)",      // 20px
+  xl: "var(--font-xl)",      // 24px
 
-  // Headings
-  h1: "var(--font-h1)",
-  h2: "var(--font-h2)",
-  h3: "var(--font-h3)",
-  h4: "var(--font-h4)",
-  h5: "var(--font-h5)",
-  h6: "var(--font-h6)",
+  // Headings (Perfect Fourth Scale)
+  h1: "var(--font-h1)",      // 49px
+  h2: "var(--font-h2)",      // 39px
+  h3: "var(--font-h3)",      // 31px
+  h4: "var(--font-h4)",      // 25px
+  h5: "var(--font-h5)",      // 20px
+  h6: "var(--font-h6)",      // 16px
 
-  // Display
-  displaySm: "var(--font-display-sm)",
-  displayMd: "var(--font-display-md)",
-  displayLg: "var(--font-display-lg)",
+  // Display sizes (Hero headlines)
+  displaySm: "var(--font-display-sm)",  // 61px
+  displayMd: "var(--font-display-md)",  // 76px
+  displayLg: "var(--font-display-lg)",  // 95px
 
-  // Added for MCP (missing previously)
+  // Line heights
+  lineHeightTight: "var(--line-height-tight)",
   lineHeightNormal: "var(--line-height-normal)",
   lineHeightRelaxed: "var(--line-height-relaxed)",
 
   // Font family
   fontSans: "var(--font-sans)",
+  fontMono: "var(--font-mono)",
 } as const;
 
 // ---------------------------------------------------------------
@@ -91,13 +102,81 @@ export const radiusTokens = {
 } as const;
 
 // ---------------------------------------------------------------
-// SHADOW TOKENS
+// SHADOW TOKENS (Elevation System)
 // ---------------------------------------------------------------
 export const shadowTokens = {
   xs: "var(--shadow-xs)",
   sm: "var(--shadow-sm)",
   md: "var(--shadow-md)",
   lg: "var(--shadow-lg)",
+  xl: "var(--shadow-xl)",
+  "2xl": "var(--shadow-2xl)",
+  glow: "var(--shadow-glow)",
+  inner: "var(--shadow-inner)",
+} as const;
+
+// ---------------------------------------------------------------
+// GRADIENT TOKENS (Cinematic Enhancements)
+// ---------------------------------------------------------------
+export const gradientTokens = {
+  // Linear gradients
+  ember: "var(--gradient-ember)",
+  void: "var(--gradient-void)",
+  glass: "var(--gradient-glass)",
+  metallic: "var(--gradient-metallic)",
+  
+  // Radial gradients
+  intelligence: "var(--gradient-intelligence)",
+  aiGlow: "var(--gradient-ai-glow)",
+  
+  // Conic gradients
+  spinner: "var(--gradient-spinner)",
+} as const;
+
+// ---------------------------------------------------------------
+// INTERACTIVE STATE TOKENS
+// ---------------------------------------------------------------
+export const interactiveTokens = {
+  accentHover: "var(--color-accent-hover)",
+  accentActive: "var(--color-accent-active)",
+  accentFocus: "var(--color-accent-focus)",
+} as const;
+
+// ---------------------------------------------------------------
+// ANIMATION TIMING TOKENS
+// ---------------------------------------------------------------
+export const animationTokens = {
+  // Durations
+  instant: "var(--duration-instant)",
+  fast: "var(--duration-fast)",
+  normal: "var(--duration-normal)",
+  slow: "var(--duration-slow)",
+  slower: "var(--duration-slower)",
+  cinematic: "var(--duration-cinematic)",
+  
+  // Easing functions
+  linear: "var(--easing-linear)",
+  ease: "var(--easing-ease)",
+  in: "var(--easing-in)",
+  out: "var(--easing-out)",
+  inOut: "var(--easing-in-out)",
+  smooth: "var(--easing-smooth)",
+  bounce: "var(--easing-bounce)",
+} as const;
+
+// ---------------------------------------------------------------
+// Z-INDEX SCALE
+// ---------------------------------------------------------------
+export const zIndexTokens = {
+  base: "var(--z-base)",
+  dropdown: "var(--z-dropdown)",
+  sticky: "var(--z-sticky)",
+  fixed: "var(--z-fixed)",
+  modalBackdrop: "var(--z-modal-backdrop)",
+  modal: "var(--z-modal)",
+  popover: "var(--z-popover)",
+  tooltip: "var(--z-tooltip)",
+  toast: "var(--z-toast)",
 } as const;
 
 // ---------------------------------------------------------------
@@ -242,6 +321,51 @@ export const themeTokens = {
   radiusXl: "var(--theme-radius-xl)",
   radius2xl: "var(--theme-radius-2xl)",
   radiusFull: "var(--theme-radius-full)",
+
+  // Gradients
+  gradientEmber: "var(--gradient-ember)",
+  gradientVoid: "var(--gradient-void)",
+  gradientGlass: "var(--gradient-glass)",
+  gradientMetallic: "var(--gradient-metallic)",
+  gradientIntelligence: "var(--gradient-intelligence)",
+  gradientAiGlow: "var(--gradient-ai-glow)",
+  gradientSpinner: "var(--gradient-spinner)",
+
+  // Interactive states
+  accentHover: "var(--color-accent-hover)",
+  accentActive: "var(--color-accent-active)",
+  accentFocus: "var(--color-accent-focus)",
+
+  // Accent
+  accent: "var(--color-accent)",
+  accentGlow: "var(--color-accent-glow)",
+
+  // Animation timing
+  durationInstant: "var(--duration-instant)",
+  durationFast: "var(--duration-fast)",
+  durationNormal: "var(--duration-normal)",
+  durationSlow: "var(--duration-slow)",
+  durationSlower: "var(--duration-slower)",
+  durationCinematic: "var(--duration-cinematic)",
+
+  easingLinear: "var(--easing-linear)",
+  easingEase: "var(--easing-ease)",
+  easingIn: "var(--easing-in)",
+  easingOut: "var(--easing-out)",
+  easingInOut: "var(--easing-in-out)",
+  easingSmooth: "var(--easing-smooth)",
+  easingBounce: "var(--easing-bounce)",
+
+  // Z-Index
+  zBase: "var(--z-base)",
+  zDropdown: "var(--z-dropdown)",
+  zSticky: "var(--z-sticky)",
+  zFixed: "var(--z-fixed)",
+  zModalBackdrop: "var(--z-modal-backdrop)",
+  zModal: "var(--z-modal)",
+  zPopover: "var(--z-popover)",
+  zTooltip: "var(--z-tooltip)",
+  zToast: "var(--z-toast)",
 } as const;
 
 // ---------------------------------------------------------------
@@ -255,3 +379,7 @@ export type TypographyToken = keyof typeof typographyTokens;
 export type ContrastToken = keyof typeof contrastTokens;
 export type SafeModeToken = keyof typeof safeModeTokens;
 export type ThemeToken = keyof typeof themeTokens;
+export type GradientToken = keyof typeof gradientTokens;
+export type InteractiveToken = keyof typeof interactiveTokens;
+export type AnimationToken = keyof typeof animationTokens;
+export type ZIndexToken = keyof typeof zIndexTokens;

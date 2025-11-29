@@ -64,21 +64,26 @@
      --theme-border-subtle: var(--color-border-subtle);
      --theme-ring: var(--color-ring);
    
-     /* --------------------------------------------------------------- */
-     /* SHADOWS */
-     /* --------------------------------------------------------------- */
-     --theme-shadow-xs: var(--shadow-xs);
-     --theme-shadow-sm: var(--shadow-sm);
-     --theme-shadow-md: var(--shadow-md);
-     --theme-shadow-lg: var(--shadow-lg);
+  /* --------------------------------------------------------------- */
+  /* SHADOWS (Elevation System) */
+  /* --------------------------------------------------------------- */
+  --theme-shadow-xs: var(--shadow-xs);
+  --theme-shadow-sm: var(--shadow-sm);
+  --theme-shadow-md: var(--shadow-md);
+  --theme-shadow-lg: var(--shadow-lg);
+  --theme-shadow-xl: var(--shadow-xl);
+  --theme-shadow-2xl: var(--shadow-2xl);
+  --theme-shadow-glow: var(--shadow-glow);
+  --theme-shadow-inner: var(--shadow-inner);
    
-     /* --------------------------------------------------------------- */
-     /* TYPOGRAPHY — BASE TEXT SIZES */
-     /* --------------------------------------------------------------- */
-     --theme-font-xs: var(--font-xs);
-     --theme-font-sm: var(--font-sm);
-     --theme-font-base: var(--font-base);
-     --theme-font-lg: var(--font-lg);
+  /* --------------------------------------------------------------- */
+  /* TYPOGRAPHY — BASE TEXT SIZES (14px minimum) */
+  /* --------------------------------------------------------------- */
+  --theme-font-xs: var(--font-xs);      /* 14px */
+  --theme-font-sm: var(--font-sm);      /* 16px */
+  --theme-font-base: var(--font-base);  /* 18px */
+  --theme-font-lg: var(--font-lg);      /* 20px */
+  --theme-font-xl: var(--font-xl);      /* 24px */
    
      /* --------------------------------------------------------------- */
      /* TYPOGRAPHY — HEADINGS */
@@ -90,39 +95,108 @@
      --theme-font-h5: var(--font-h5);
      --theme-font-h6: var(--font-h6);
    
-     /* --------------------------------------------------------------- */
-     --theme-font-display-sm: var(--font-display-sm);
-     --theme-font-display-md: var(--font-display-md);
-     --theme-font-display-lg: var(--font-display-lg);
+  /* --------------------------------------------------------------- */
+  /* DISPLAY SIZES (Hero Headlines) */
+  /* --------------------------------------------------------------- */
+  --theme-font-display-sm: var(--font-display-sm);  /* 61px */
+  --theme-font-display-md: var(--font-display-md);  /* 76px */
+  --theme-font-display-lg: var(--font-display-lg);  /* 95px */
+
+  /* --------------------------------------------------------------- */
+  /* LINE HEIGHTS */
+  /* --------------------------------------------------------------- */
+  --theme-line-height-tight: var(--line-height-tight);
+  --theme-line-height-normal: var(--line-height-normal);
+  --theme-line-height-relaxed: var(--line-height-relaxed);
+
+  /* --------------------------------------------------------------- */
+  /* FONT FAMILIES */
+  /* --------------------------------------------------------------- */
+  --theme-font-sans: var(--font-sans);
+  --theme-font-mono: var(--font-mono);
    
-     /* Line Heights */
-     --theme-line-height-normal: var(--line-height-normal);
-     --theme-line-height-relaxed: var(--line-height-relaxed);
+  /* --------------------------------------------------------------- */
+  /* SPACING SCALE (4px Grid - Figma Standard) */
+  /* --------------------------------------------------------------- */
+  --theme-spacing-2xs: var(--spacing-2xs);  /* 4px */
+  --theme-spacing-xs: var(--spacing-xs);    /* 8px */
+  --theme-spacing-sm: var(--spacing-sm);    /* 12px */
+  --theme-spacing-md: var(--spacing-md);    /* 16px */
+  --theme-spacing-lg: var(--spacing-lg);    /* 24px */
+  --theme-spacing-xl: var(--spacing-xl);    /* 32px */
+  --theme-spacing-2xl: var(--spacing-2xl);  /* 48px */
+  --theme-spacing-3xl: var(--spacing-3xl);  /* 64px */
+  --theme-spacing-4xl: var(--spacing-4xl);  /* 96px */
+  --theme-spacing-5xl: var(--spacing-5xl);  /* 128px */
+  --theme-spacing-6xl: var(--spacing-6xl);  /* 192px */
+
+  /* --------------------------------------------------------------- */
+  /* LETTER SPACING (Tracking) */
+  /* --------------------------------------------------------------- */
+  --theme-tracking-tight: var(--tracking-tight);
+  --theme-tracking-normal: var(--tracking-normal);
+  --theme-tracking-wide: var(--tracking-wide);
+  --theme-tracking-wider: var(--tracking-wider);
    
-     /* Font Family */
-     --theme-font-sans: var(--font-sans);
-   
-     /* --------------------------------------------------------------- */
-     /* SPACING SCALE */
-     /* --------------------------------------------------------------- */
-     --theme-spacing-2xs: var(--spacing-2xs);
-     --theme-spacing-xs: var(--spacing-xs);
-     --theme-spacing-sm: var(--spacing-sm);
-     --theme-spacing-md: var(--spacing-md);
-     --theme-spacing-lg: var(--spacing-lg);
-     --theme-spacing-xl: var(--spacing-xl);
-     --theme-spacing-2xl: var(--spacing-2xl);
-   
-     /* --------------------------------------------------------------- */
-     /* RADIUS */
-     /* --------------------------------------------------------------- */
-     --theme-radius-xxs: var(--radius-xxs);
-     --theme-radius-xs: var(--radius-xs);
-     --theme-radius-sm: var(--radius-sm);
-     --theme-radius-md: var(--radius-md);
-     --theme-radius-lg: var(--radius-lg);
-     --theme-radius-xl: var(--radius-xl);
-     --theme-radius-2xl: var(--radius-2xl);
-     --theme-radius-full: var(--radius-full);
-   }
+  /* --------------------------------------------------------------- */
+  /* RADIUS (Tighter for ERP/Enterprise) */
+  /* --------------------------------------------------------------- */
+  --theme-radius-xxs: var(--radius-xxs);    /* 2px */
+  --theme-radius-xs: var(--radius-xs);      /* 3px */
+  --theme-radius-sm: var(--radius-sm);      /* 4px */
+  --theme-radius-md: var(--radius-md);      /* 6px */
+  --theme-radius-lg: var(--radius-lg);      /* 8px */
+  --theme-radius-xl: var(--radius-xl);      /* 12px */
+  --theme-radius-2xl: var(--radius-2xl);    /* 16px */
+  --theme-radius-full: var(--radius-full);  /* Pills */
+
+  /* --------------------------------------------------------------- */
+  /* GRADIENTS (Cinematic Layer) */
+  /* --------------------------------------------------------------- */
+  --theme-gradient-ember: var(--gradient-ember);
+  --theme-gradient-void: var(--gradient-void);
+  --theme-gradient-glass: var(--gradient-glass);
+  --theme-gradient-metallic: var(--gradient-metallic);
+  --theme-gradient-intelligence: var(--gradient-intelligence);
+  --theme-gradient-ai-glow: var(--gradient-ai-glow);
+  --theme-gradient-spinner: var(--gradient-spinner);
+
+  /* --------------------------------------------------------------- */
+  /* INTERACTIVE STATES */
+  /* --------------------------------------------------------------- */
+  --theme-accent-hover: var(--color-accent-hover);
+  --theme-accent-active: var(--color-accent-active);
+  --theme-accent-focus: var(--color-accent-focus);
+
+  /* --------------------------------------------------------------- */
+  /* ANIMATION TIMING */
+  /* --------------------------------------------------------------- */
+  --theme-duration-instant: var(--duration-instant);
+  --theme-duration-fast: var(--duration-fast);
+  --theme-duration-normal: var(--duration-normal);
+  --theme-duration-slow: var(--duration-slow);
+  --theme-duration-slower: var(--duration-slower);
+  --theme-duration-cinematic: var(--duration-cinematic);
+
+  --theme-easing-linear: var(--easing-linear);
+  --theme-easing-ease: var(--easing-ease);
+  --theme-easing-in: var(--easing-in);
+  --theme-easing-out: var(--easing-out);
+  --theme-easing-in-out: var(--easing-in-out);
+  --theme-easing-smooth: var(--easing-smooth);
+  --theme-easing-bounce: var(--easing-bounce);
+
+  /* --------------------------------------------------------------- */
+  /* Z-INDEX SCALE */
+  /* --------------------------------------------------------------- */
+  --theme-z-base: var(--z-base);
+  --theme-z-dropdown: var(--z-dropdown);
+  --theme-z-sticky: var(--z-sticky);
+  --theme-z-fixed: var(--z-fixed);
+  --theme-z-modal-backdrop: var(--z-modal-backdrop);
+  --theme-z-modal: var(--z-modal);
+  --theme-z-popover: var(--z-popover);
+  --theme-z-tooltip: var(--z-tooltip);
+  --theme-z-toast: var(--z-toast);
+}
    

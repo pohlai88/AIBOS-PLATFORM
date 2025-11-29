@@ -1,0 +1,384 @@
+/* ---------------------------------------------------------
+   Core Landing Theme — Calm, Rhythmic, Atmospheric
+---------------------------------------------------------- */
+
+body {
+    margin: 0;
+    background: #0a0a0f;
+    font-family: "Inter", system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+  
+  .hero-container {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Atmosphere gradient */
+  .hero-atmosphere {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at center,
+      #13131a 0%,
+      #0a0a0f 70%
+    );
+    opacity: 1;
+    z-index: 1;
+  }
+  
+  /* Wind particles canvas */
+  .wind-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+  
+  /* Floating kite string */
+  .kite-string {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    z-index: 3;
+  }
+  
+  /* Hero content */
+  .hero-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 800px;
+    padding: 0 2rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-title .bold {
+    font-weight: 500;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem;
+    color: #ccccdd;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+  
+  /* CTA buttons */
+  .cta-primary,
+  .cta-secondary {
+    padding: 0.9rem 2rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0 0.5rem;
+    transition: all 0.25s ease;
+  }
+  
+  .cta-primary {
+    background: white;
+    color: #0a0a0f;
+  }
+  
+  .cta-primary:hover {
+    background: #dcdce0;
+    transform: translateY(-3px);
+  }
+  
+  .cta-secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+  }
+  
+  .cta-secondary:hover {
+    border-color: rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.05);
+  }
+  
+  /* Subtle breathing effect */
+  .hero-container {
+    animation: breathe 9s ease-in-out infinite;
+  }
+  
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.01); }
+  }
+  /* Chapter 2 */
+.chapter-container {
+    position: relative;
+    height: 100vh;
+    padding-top: 8rem;
+    background: #0b0b11;
+    color: white;
+  }
+  
+  .chapter-background {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 20%, #111118 0%, #0b0b11 70%);
+    opacity: 0.7;
+    z-index: 1;
+  }
+  
+  /* Floating cards */
+  .cards-cluster {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 60%;
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  .floating-card {
+    position: absolute;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #ccccdd;
+    backdrop-filter: blur(10px);
+    opacity: 0.7;
+    animation: floatNoise 12s infinite linear;
+  }
+  
+  @keyframes floatNoise {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(-20px, 15px) rotate(2deg); }
+    50%  { transform: translate(15px, -10px) rotate(-1deg); }
+    75%  { transform: translate(-10px, -15px) rotate(1deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  
+  /* Chapter content */
+  .chapter-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    margin-top: 12rem;
+  }
+  
+  .chapter-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  
+  .chapter-subtitle {
+    font-size: 1.25rem;
+    color: #ccccdd;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  /* Chapter 3 */
+.chapter3-container {
+    position: relative;
+    height: 110vh;
+    padding-top: 10rem;
+    text-align: center;
+    color: white;
+    overflow: hidden;
+  }
+  
+  .chapter3-background {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, #14141c 0%, #0a0a0f 80%);
+    opacity: 0.8;
+    z-index: 1;
+  }
+  
+  .chapter3-string {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    z-index: 2;
+  }
+  
+  /* MCP nodes */
+  .mcp-nodes {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    height: 200px;
+    width: 100%;
+    z-index: 3;
+    pointer-events: none;
+  }
+  
+  .mcp-node {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: rgba(139,92,246,1);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(139,92,246,0.8);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Text content */
+  .chapter3-content {
+    position: relative;
+    z-index: 5;
+    margin-top: 14rem;
+  }
+  
+  .chapter3-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  
+  .chapter3-subtitle {
+    font-size: 1.3rem;
+    color: #cfcfe0;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  /* Chapter 4 */
+.chapter4-container {
+    position: relative;
+    height: 130vh;
+    color: white;
+    text-align: center;
+    padding-top: 12rem;
+    overflow: hidden;
+  }
+  
+  .chapter4-background {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, #111117 0%, #07070b 80%);
+    opacity: 0.85;
+    z-index: 1;
+  }
+  
+  .ripple-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+  
+  .chapter4-content {
+    position: relative;
+    z-index: 5;
+    margin-top: 6rem;
+  }
+  
+  .chapter4-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  
+  .chapter4-subtitle {
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin: 0 auto;
+    color: #cfcfe0;
+    line-height: 1.7;
+  }
+  
+  .chapter4-subtitle .highlight {
+    color: #b59cff;
+    font-weight: 500;
+  }
+  /* Chapter 5 */
+.chapter5-container {
+    position: relative;
+    height: 140vh;
+    color: white;
+    text-align: center;
+    padding-top: 12rem;
+    overflow: hidden;
+  }
+  
+  .chapter5-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #0c0c12 0%, #06060a 100%);
+    opacity: 0.9;
+    z-index: 1;
+  }
+  
+  .chapter5-ripple {
+    position: absolute;
+    inset: 0;
+    opacity: 0.25;
+    z-index: 2;
+  }
+  
+  /* Human silhouettes */
+  .silhouette {
+    position: absolute;
+    width: 180px;
+    height: 380px;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    filter: blur(30px);
+    z-index: 3;
+  }
+  
+  .silhouette.left {
+    left: 12%;
+    top: 35%;
+  }
+  
+  .silhouette.right {
+    right: 12%;
+    top: 35%;
+  }
+  
+  /* String between silhouettes */
+  .chapter5-string {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    z-index: 4;
+  }
+  
+  .chapter5-content {
+    position: relative;
+    z-index: 5;
+    margin-top: 12rem;
+  }
+  
+  .chapter5-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  
+  .chapter5-subtitle {
+    font-size: 1.3rem;
+    color: #cfcfe0;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  

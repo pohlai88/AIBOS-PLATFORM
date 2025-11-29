@@ -1,15 +1,19 @@
 import { eventBus } from "../event-bus";
-import { log } from "../../utils/logger";
+import { createContextLogger } from "../../observability/logger";
+
+const logger = createContextLogger({ module: "kernel:events:audit" });
 
 // Audit handler - logs all events
 eventBus.subscribe("*", (event) => {
-  log.info(`📋 AUDIT: [${event.tenant}] ${event.name}`, {
+  logger.info({
+    tenant: event.tenant,
+    event: event.name,
     engine: event.engine,
     timestamp: new Date(event.timestamp).toISOString(),
     payload: event.payload
-  });
+  }, "audit.event");
   
-  // TODO: Persist to audit log table
+  // TODO[KERNEL-AUDIT]: Persist to audit log table
   // await db.from("audit_log").insert({ ... });
 });
 

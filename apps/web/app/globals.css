@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@import "@aibos/ui/design/themes/landing.css";
+
 /* ============================================================================
    AI-BOS Safe Mode Fallback CSS v3.3
    Purpose: Ensure platform stability when @aibos/ui or tokens fail.
@@ -6,7 +9,6 @@
    - WCAG AA/AAA
    - Safe Mode (Enterprise Accessibility Lock)
    - Brand = Primary (Option C)
-   - Zero dependencies (no Tailwind, no @theme)
    ============================================================================ */
 
 /* ---------------------------------------------------------------------------

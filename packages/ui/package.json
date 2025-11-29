@@ -101,6 +101,7 @@
       "default": "./src/design/tokens/tokens.ts"
     },
     "./design/globals.css": "./src/design/tokens/globals.css",
+    "./design/themes/landing.css": "./src/design/themes/landing.css",
     "./design/utilities": {
       "types": "./src/design/utilities/index.ts",
       "default": "./src/design/utilities/index.ts"

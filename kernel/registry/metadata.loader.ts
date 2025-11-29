@@ -2,7 +2,9 @@ import * as fs from "fs";
 import * as path from "path";
 import { metadataRegistry } from "./metadata.registry";
 import { validateMetadata } from "../validation/metadata.validator";
-import { log } from "../utils/logger";
+import { createContextLogger } from "../observability/logger";
+
+const logger = createContextLogger({ module: "kernel:registry:metadata" });
 
 export async function loadMetadata(enginePath: string) {
   const dir = path.join(enginePath, "metadata");
@@ -22,7 +24,7 @@ export async function loadMetadata(enginePath: string) {
 
     const validation = validateMetadata(schema);
     if (!validation.ok) {
-      log.error(`❌ Metadata invalid for ${modelName}`, validation.errors);
+      logger.error({ model: modelName, errors: validation.errors }, "metadata.validation.failed");
       continue;
     }
 

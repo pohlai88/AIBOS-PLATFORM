@@ -1,6 +1,6 @@
-import { log } from "../../utils/logger";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootLogger() {
-  log.info("📜 Logger initialized.");
+  baseLogger.info("Logger initialized (pino structured logging)");
 }
 

@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  # Apache Tika Server (Tier 1 OCR - Text Extraction)
+  tika-server:
+    image: apache/tika:latest-full
+    container_name: aibos-tika-server
+    ports:
+      - "9998:9998"
+    environment:
+      - TIKA_CONFIG=/config/tika-config.xml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9998/tika"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - aibos-network
+
+  # Tesseract OCR Server (Tier 2 OCR - Scanned Documents)
+  tesseract-ocr:
+    build:
+      context: ./ocr-service
+      dockerfile: Dockerfile
+    container_name: aibos-tesseract-ocr
+    ports:
+      - "8000:8000"
+    environment:
+      - TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/tessdata
+      - LOG_LEVEL=INFO
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - aibos-network
+
+networks:
+  aibos-network:
+    driver: bridge
+
