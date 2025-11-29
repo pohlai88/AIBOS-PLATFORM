@@ -36,7 +36,7 @@ export class OrchestraConductor {
   private static instance: OrchestraConductor;
   private activeSessions: Map<string, OrchestraCoordinationSession> = new Map();
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): OrchestraConductor {
     if (!OrchestraConductor.instance) {
