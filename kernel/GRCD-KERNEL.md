@@ -435,9 +435,43 @@ graph TB
   │   │   │       └── agents/
   │   │   └── schemas/                   # Orchestra schemas
   │   │       └── orchestra-manifest.schema.ts
+  │   ├── agents/                        # AI Agent Integration (Phase 5)
+  │   │   ├── connector/                # Orchestra connector
+  │   │   ├── examples/                  # Example agents
+  │   │   ├── policy/                    # Agent policy enforcer
+  │   │   ├── registry/                  # Agent registry
+  │   │   └── types.ts                   # Agent types
+  │   ├── distributed/                   # Distributed Features (Phase 5)
+  │   │   ├── policy/                    # Distributed policy engine
+  │   │   ├── realtime/                  # Real-time policy updates
+  │   │   └── regions/                   # Multi-region support
+  │   ├── observability/                 # Observability (Phase 6)
+  │   │   ├── dashboards/                # Grafana dashboards
+  │   │   ├── performance/               # Performance tracking
+  │   │   │   ├── boot-tracker.ts        # Boot time tracking
+  │   │   │   └── memory-tracker.ts      # Memory tracking
+  │   │   └── sla/                       # SLA tracking
+  │   │       └── availability-tracker.ts # Availability tracking
+  │   ├── governance/                     # Governance Features (Phase 6)
+  │   │   └── hitl/                      # Human-in-the-Loop
+  │   │       ├── approval-engine.ts     # Approval workflow
+  │   │       ├── approval-queue.ts      # Approval queue
+  │   │       └── risk-classifier.ts     # Risk classification
+  │   ├── finance/                        # Finance Compliance (Phase 6)
+  │   │   └── compliance/                # Financial compliance
+  │   │       ├── mfrs-ifrs-validator.ts # MFRS/IFRS validator
+  │   │       └── chart-of-accounts.ts   # Chart of accounts
+  │   ├── http/                          # HTTP layer (active implementation)
+  │   │   ├── middleware/                # HTTP middleware
+  │   │   ├── routes/                    # HTTP route handlers
+  │   │   └── router.ts                  # HTTP router
+  │   ├── boot/                          # Configuration loading
+  │   │   ├── kernel.config.ts           # Kernel configuration
+  │   │   └── environment.ts             # Environment config
   │   ├── policy/                        # Policy engine
   │   │   ├── policy-engine.ts
   │   │   ├── precedence.ts              # Legal-first precedence
+  │   │   ├── templates/                 # Policy templates (Phase 4)
   │   │   └── types.ts
   │   ├── registry/                      # Core registries
   │   │   ├── engine.registry.ts
@@ -496,6 +530,16 @@ graph TB
 6. MCP-related files MUST go in `kernel/mcp/` subdirectories.
 7. Orchestra-related files MUST go in `kernel/orchestras/` subdirectories.
 8. Each orchestra MUST have its own directory under `kernel/orchestras/domains/`.
+9. Agent-related files MUST go in `kernel/agents/` subdirectories.
+10. Observability files MUST go in `kernel/observability/` subdirectories.
+11. Governance files (HITL) MUST go in `kernel/governance/` subdirectories.
+12. Finance compliance files MUST go in `kernel/finance/` subdirectories.
+13. Distributed features MUST go in `kernel/distributed/` subdirectories.
+
+**Important Notes:**
+
+* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-JUSTIFICATION.md` for details.
+* **`boot/` vs `bootstrap/`:** `boot/` contains configuration loading (`kernel.config.ts`), while `bootstrap/` contains the boot sequence steps. Both serve different purposes and should be kept separate.
 
 ### 4.3 File Naming Conventions
 
