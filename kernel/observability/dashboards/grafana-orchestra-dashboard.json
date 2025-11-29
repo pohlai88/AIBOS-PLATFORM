@@ -1,0 +1,149 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "aibos-orchestra-dashboard",
+    "title": "AI-BOS Orchestra Coordination Dashboard",
+    "tags": ["ai-bos", "orchestra", "coordination"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "30s",
+    
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Orchestra Actions (Total)",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_orchestra_actions_total[5m]))",
+          "legendFormat": "Actions/sec",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 2,
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Orchestra Actions by Domain",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_orchestra_actions_total[5m])) by (domain)",
+          "legendFormat": "{{domain}}",
+          "refId": "A"
+        }],
+        "legend": { "show": true }
+      },
+      
+      {
+        "id": 3,
+        "gridPos": { "x": 0, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Active Orchestras",
+        "targets": [{
+          "expr": "sum(aibos_kernel_orchestra_active_orchestras_gauge)",
+          "refId": "A"
+        }],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      
+      {
+        "id": 4,
+        "gridPos": { "x": 8, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Active Coordination Sessions",
+        "targets": [{
+          "expr": "sum(aibos_kernel_orchestra_active_coordination_sessions_gauge)",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 5,
+        "gridPos": { "x": 16, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Success Rate (Last Hour)",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_orchestra_actions_total{status=\"success\"}[1h])) / sum(rate(aibos_kernel_orchestra_actions_total[1h])) * 100",
+          "refId": "A"
+        }],
+        "options": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "red" },
+              { "value": 90, "color": "yellow" },
+              { "value": 95, "color": "green" }
+            ]
+          }
+        }
+      },
+      
+      {
+        "id": 6,
+        "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+        "type": "graph",
+        "title": "Orchestra Action Duration (p50, p95, p99)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(aibos_kernel_orchestra_action_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(aibos_kernel_orchestra_action_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(aibos_kernel_orchestra_action_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p99",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [{
+          "format": "s",
+          "label": "Duration"
+        }],
+        "alert": {
+          "name": "Orchestra Action Latency High",
+          "conditions": [{
+            "evaluator": { "params": [0.2], "type": "gt" },
+            "query": { "params": ["C", "5m", "now"] }
+          }],
+          "frequency": "1m",
+          "message": "p99 latency exceeds 200ms target (NF-11)"
+        }
+      },
+      
+      {
+        "id": 7,
+        "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Cross-Orchestra Authorization Checks",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_orchestra_cross_auth_checks_total[5m])) by (allowed)",
+          "legendFormat": "{{allowed}}",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 8,
+        "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+        "type": "heatmap",
+        "title": "Action Duration Heatmap",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_orchestra_action_duration_seconds_bucket[5m])) by (le)",
+          "format": "heatmap",
+          "refId": "A"
+        }]
+      }
+    ]
+  }
+}
+

@@ -1,0 +1,37 @@
+{
+  "_comment": "This is an example of a policy derived from a template using inheritance",
+  "_usage": "Use the POST /policies/from-template endpoint to create policies from templates",
+  
+  "policyId": "tenant-specific-gdpr-policy",
+  "policyName": "Tenant XYZ GDPR Data Protection",
+  "version": "1.0.0",
+  
+  "inheritance": {
+    "templateId": "template-gdpr-data-protection",
+    
+    "overrides": {
+      "scope": {
+        "tenantId": "tenant-xyz",
+        "resource": "data.personal_identifiable_information"
+      }
+    },
+    
+    "extensions": {
+      "additionalRules": [
+        {
+          "condition": "context.dataType === 'financial' && resource.data.encryption === false",
+          "effect": "deny",
+          "details": "Financial data must be encrypted (tenant-specific requirement)"
+        }
+      ],
+      "metadata": {
+        "tenantId": "tenant-xyz",
+        "contactEmail": "compliance@tenantxyz.com",
+        "reviewDate": "2025-12-31"
+      }
+    }
+  },
+  
+  "_result": "This will create a policy that inherits GDPR base rules + adds tenant-specific encryption requirement"
+}
+

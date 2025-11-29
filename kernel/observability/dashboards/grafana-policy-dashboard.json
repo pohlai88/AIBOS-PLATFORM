@@ -1,0 +1,152 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "aibos-policy-dashboard",
+    "title": "AI-BOS Policy Governance Dashboard",
+    "tags": ["ai-bos", "policy", "governance"],
+    "timezone": "browser",
+    "schemaVersion": 16,
+    "version": 0,
+    "refresh": "30s",
+    
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Policy Evaluations (Total)",
+        "targets": [{
+          "expr": "sum(rate(aibos_kernel_policy_evaluations_total[5m]))",
+          "legendFormat": "Evaluations/sec",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 2,
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "type": "graph",
+        "title": "Policy Evaluations by Effect",
+        "targets": [
+          {
+            "expr": "sum(rate(aibos_kernel_policy_evaluations_total{effect=\"allow\"}[5m]))",
+            "legendFormat": "Allowed",
+            "refId": "A"
+          },
+          {
+            "expr": "sum(rate(aibos_kernel_policy_evaluations_total{effect=\"deny\"}[5m]))",
+            "legendFormat": "Denied",
+            "refId": "B"
+          },
+          {
+            "expr": "sum(rate(aibos_kernel_policy_evaluations_total{effect=\"advise\"}[5m]))",
+            "legendFormat": "Advised",
+            "refId": "C"
+          }
+        ]
+      },
+      
+      {
+        "id": 3,
+        "gridPos": { "x": 0, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Active Policies",
+        "targets": [{
+          "expr": "sum(aibos_kernel_policies_active)",
+          "refId": "A"
+        }],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value"
+        }
+      },
+      
+      {
+        "id": 4,
+        "gridPos": { "x": 8, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Policy Violations (Last Hour)",
+        "targets": [{
+          "expr": "sum(increase(aibos_kernel_policy_violations_total[1h]))",
+          "refId": "A"
+        }],
+        "options": {
+          "graphMode": "area",
+          "colorMode": "value",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "value": 0, "color": "green" },
+              { "value": 5, "color": "yellow" },
+              { "value": 10, "color": "red" }
+            ]
+          }
+        }
+      },
+      
+      {
+        "id": 5,
+        "gridPos": { "x": 16, "y": 8, "w": 8, "h": 8 },
+        "type": "stat",
+        "title": "Policy Conflicts Resolved",
+        "targets": [{
+          "expr": "sum(increase(aibos_kernel_policy_conflicts_total[1h]))",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 6,
+        "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+        "type": "graph",
+        "title": "Policy Evaluation Duration (p50, p95, p99)",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(aibos_kernel_policy_evaluation_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p50",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(aibos_kernel_policy_evaluation_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p95",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(aibos_kernel_policy_evaluation_duration_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p99",
+            "refId": "C"
+          }
+        ],
+        "yaxes": [{
+          "format": "s",
+          "label": "Duration"
+        }]
+      },
+      
+      {
+        "id": 7,
+        "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+        "type": "table",
+        "title": "Policies by Precedence",
+        "targets": [{
+          "expr": "count(aibos_kernel_policies_active) by (precedence)",
+          "format": "table",
+          "refId": "A"
+        }]
+      },
+      
+      {
+        "id": 8,
+        "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+        "type": "piechart",
+        "title": "Policy Enforcement Distribution",
+        "targets": [{
+          "expr": "sum(aibos_kernel_policy_enforcements_total) by (finalEffect)",
+          "format": "time_series",
+          "refId": "A"
+        }]
+      }
+    ]
+  }
+}
+
