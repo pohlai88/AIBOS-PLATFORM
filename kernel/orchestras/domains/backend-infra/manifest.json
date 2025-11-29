@@ -1,0 +1,72 @@
+{
+  "name": "Backend Infrastructure Orchestra",
+  "version": "1.0.0",
+  "domain": "backend-infra",
+  "description": "DevOps and infrastructure management orchestra for deployments, scaling, and monitoring.",
+  "agents": [
+    {
+      "id": "devops-agent",
+      "name": "DevOps Agent",
+      "role": "Manages infrastructure and deployments",
+      "capabilities": ["deploy", "scale", "monitor", "rollback"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "deploy_service",
+      "name": "Deploy Service",
+      "description": "Deploy a service to target environment",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string" },
+          "version": { "type": "string" },
+          "environment": { "type": "string", "enum": ["dev", "staging", "production"] }
+        },
+        "required": ["service", "version"]
+      }
+    },
+    {
+      "id": "scale_resources",
+      "name": "Scale Resources",
+      "description": "Scale service resources (replicas, CPU, memory)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string" },
+          "replicas": { "type": "number" },
+          "cpu": { "type": "string" },
+          "memory": { "type": "string" }
+        },
+        "required": ["service"]
+      }
+    },
+    {
+      "id": "health_check",
+      "name": "Health Check",
+      "description": "Check service health status",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string" }
+        },
+        "required": ["service"]
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "production-deployment-approval",
+      "name": "Production Deployment Requires Approval",
+      "description": "All production deployments must be manually approved"
+    }
+  ],
+  "dependencies": ["observability"],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["devops", "infrastructure", "deployment", "scaling"],
+    "priority": "critical"
+  }
+}
+

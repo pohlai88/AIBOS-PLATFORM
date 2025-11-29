@@ -28,7 +28,7 @@ export class PolicyRegistry {
   private static instance: PolicyRegistry;
   private registry: Map<string, PolicyRegistryEntry> = new Map();
 
-  private constructor() {}
+  private constructor() { }
 
   /**
    * Get singleton instance
@@ -170,7 +170,7 @@ export class PolicyRegistry {
       const scope = entry.manifest.scope;
 
       // If scope is empty, policy applies to all
-      const isGlobalPolicy = 
+      const isGlobalPolicy =
         !scope.orchestras?.length &&
         !scope.tenants?.length &&
         !scope.roles?.length &&

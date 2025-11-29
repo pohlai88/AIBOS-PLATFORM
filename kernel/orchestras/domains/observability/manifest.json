@@ -1,0 +1,72 @@
+{
+  "name": "Observability Orchestra",
+  "version": "1.0.0",
+  "domain": "observability",
+  "description": "Monitoring and observability orchestra for dashboards, alerts, metrics, traces, and log analysis.",
+  "agents": [
+    {
+      "id": "observability-agent",
+      "name": "Observability Agent",
+      "role": "Manages monitoring, alerts, and telemetry",
+      "capabilities": ["dashboard_creation", "alerting", "metric_analysis", "distributed_tracing", "log_aggregation"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "create_dashboard",
+      "name": "Create Dashboard",
+      "description": "Create monitoring dashboard with specified metrics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "metrics": { "type": "array", "items": { "type": "string" } },
+          "layout": { "type": "string", "enum": ["grid", "list", "custom"] }
+        },
+        "required": ["name"]
+      }
+    },
+    {
+      "id": "set_alert",
+      "name": "Set Alert Rule",
+      "description": "Configure alert for metric threshold",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "metric": { "type": "string" },
+          "threshold": { "type": "number" },
+          "condition": { "type": "string", "enum": ["above", "below", "equal"] },
+          "notification": { "type": "string", "enum": ["email", "slack", "pagerduty"] }
+        },
+        "required": ["metric", "threshold"]
+      }
+    },
+    {
+      "id": "trace_request",
+      "name": "Trace Request",
+      "description": "Trace distributed request through services",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "traceId": { "type": "string" }
+        },
+        "required": ["traceId"]
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "alert-fatigue-prevention",
+      "name": "Alert Fatigue Prevention",
+      "description": "Prevent excessive alerting by implementing rate limits and deduplication"
+    }
+  ],
+  "dependencies": [],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["monitoring", "observability", "metrics", "tracing", "alerts"],
+    "priority": "high"
+  }
+}
+

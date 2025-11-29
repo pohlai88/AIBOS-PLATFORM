@@ -8,6 +8,12 @@
 import type { OrchestrationDomain, OrchestraActionRequest, OrchestraActionResult } from "../types";
 import { databaseOrchestra } from "./database-orchestra";
 import { uxUiOrchestra } from "./ux-ui-orchestra";
+import { bffApiOrchestra } from "./bff-api-orchestra";
+import { backendInfraOrchestra } from "./backend-infra-orchestra";
+import { complianceOrchestra } from "./compliance-orchestra";
+import { observabilityOrchestra } from "./observability-orchestra";
+import { financeOrchestra } from "./finance-orchestra";
+import { devexOrchestra } from "./devex-orchestra";
 import { baseLogger as logger } from "../../observability/logger";
 
 /**
@@ -42,23 +48,19 @@ export class OrchestraImplementationRegistry {
    * Register all available orchestra implementations
    */
   private registerImplementations(): void {
-    // Database Orchestra (implemented)
+    // All 8 orchestras now implemented! ✅
     this.implementations.set("db", databaseOrchestra);
-
-    // UX/UI Orchestra (implemented)
     this.implementations.set("ux-ui", uxUiOrchestra);
-
-    // TODO: Implement other orchestras
-    // this.implementations.set("bff-api", bffApiOrchestra);
-    // this.implementations.set("backend-infra", backendInfraOrchestra);
-    // this.implementations.set("compliance", complianceOrchestra);
-    // this.implementations.set("observability", observabilityOrchestra);
-    // this.implementations.set("finance", financeOrchestra);
-    // this.implementations.set("devex", devexOrchestra);
+    this.implementations.set("bff-api", bffApiOrchestra);
+    this.implementations.set("backend-infra", backendInfraOrchestra);
+    this.implementations.set("compliance", complianceOrchestra);
+    this.implementations.set("observability", observabilityOrchestra);
+    this.implementations.set("finance", financeOrchestra);
+    this.implementations.set("devex", devexOrchestra);
 
     logger.info(
-      { implementedCount: this.implementations.size },
-      "[OrchestraImplementationRegistry] Implementations registered"
+      { implementedCount: this.implementations.size, domains: Array.from(this.implementations.keys()) },
+      "[OrchestraImplementationRegistry] ✅ All 8 orchestra implementations registered!"
     );
   }
 

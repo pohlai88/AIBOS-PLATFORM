@@ -1,0 +1,91 @@
+{
+  "name": "DevEx (Developer Experience) Orchestra",
+  "version": "1.0.0",
+  "domain": "devex",
+  "description": "Developer experience orchestra for code generation, linting, formatting, documentation, and tooling.",
+  "agents": [
+    {
+      "id": "devex-agent",
+      "name": "DevEx Agent",
+      "role": "Enhances developer productivity and code quality",
+      "capabilities": ["code_generation", "linting", "formatting", "documentation", "dependency_analysis"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "generate_boilerplate",
+      "name": "Generate Boilerplate",
+      "description": "Generate boilerplate code from templates",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "template": { "type": "string", "enum": ["api-service", "react-component", "database-model", "test-suite"] },
+          "name": { "type": "string" }
+        },
+        "required": ["template", "name"]
+      }
+    },
+    {
+      "id": "run_linter",
+      "name": "Run Linter",
+      "description": "Execute linter on codebase",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "fix": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "id": "format_code",
+      "name": "Format Code",
+      "description": "Auto-format code using configured formatter",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "formatter": { "type": "string", "enum": ["Prettier", "ESLint", "Black"] }
+        }
+      }
+    },
+    {
+      "id": "generate_docs",
+      "name": "Generate Documentation",
+      "description": "Auto-generate documentation from code",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": { "type": "string" },
+          "format": { "type": "string", "enum": ["markdown", "html", "pdf"] }
+        }
+      }
+    },
+    {
+      "id": "analyze_dependencies",
+      "name": "Analyze Dependencies",
+      "description": "Analyze and optimize project dependencies",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "packageFile": { "type": "string" }
+        }
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "code-quality-gates",
+      "name": "Code Quality Gates",
+      "description": "Enforce minimum code quality standards before deployment"
+    }
+  ],
+  "dependencies": [],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["devex", "developer-experience", "code-quality", "linting", "documentation"],
+    "priority": "medium"
+  }
+}
+

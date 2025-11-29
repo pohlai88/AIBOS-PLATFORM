@@ -6,8 +6,8 @@
  */
 
 import type {
-  OrchestraActionRequest,
-  OrchestraActionResult,
+    OrchestraActionRequest,
+    OrchestraActionResult,
 } from "../../orchestras/types";
 import { policyEngine } from "../engine/policy-engine";
 import { baseLogger as logger } from "../../observability/logger";
@@ -18,102 +18,102 @@ import { baseLogger as logger } from "../../observability/logger";
  * Middleware for orchestra actions to enforce policies
  */
 export class OrchestraPolicyEnforcer {
-  private static instance: OrchestraPolicyEnforcer;
+    private static instance: OrchestraPolicyEnforcer;
 
-  private constructor() {}
+    private constructor() { }
 
-  public static getInstance(): OrchestraPolicyEnforcer {
-    if (!OrchestraPolicyEnforcer.instance) {
-      OrchestraPolicyEnforcer.instance = new OrchestraPolicyEnforcer();
-    }
-    return OrchestraPolicyEnforcer.instance;
-  }
-
-  /**
-   * Enforce policies before orchestra action execution
-   * 
-   * @param request - Orchestra action request
-   * @returns true if allowed, false if denied
-   */
-  public async enforceBeforeAction(
-    request: OrchestraActionRequest
-  ): Promise<{
-    allowed: boolean;
-    reason?: string;
-    policyResult?: any;
-  }> {
-    logger.debug({
-      domain: request.domain,
-      action: request.action,
-      tenantId: request.context.tenantId,
-    }, "[OrchestraPolicyEnforcer] Enforcing policies");
-
-    // Evaluate policies
-    const policyResult = await policyEngine.evaluate({
-      orchestra: request.domain,
-      action: request.action,
-      tenantId: request.context.tenantId,
-      userId: request.context.userId,
-      roles: request.context.roles,
-      resource: `orchestra://${request.domain}/${request.action}`,
-      context: {
-        ...request.context,
-        arguments: request.arguments,
-      },
-      traceId: request.context.traceId,
-    });
-
-    if (!policyResult.allowed) {
-      logger.warn({
-        domain: request.domain,
-        action: request.action,
-        reason: policyResult.reason,
-        winningPolicy: policyResult.winningPolicy,
-      }, "[OrchestraPolicyEnforcer] Action DENIED by policy");
-
-      return {
-        allowed: false,
-        reason: policyResult.reason,
-        policyResult,
-      };
+    public static getInstance(): OrchestraPolicyEnforcer {
+        if (!OrchestraPolicyEnforcer.instance) {
+            OrchestraPolicyEnforcer.instance = new OrchestraPolicyEnforcer();
+        }
+        return OrchestraPolicyEnforcer.instance;
     }
 
-    logger.debug({
-      domain: request.domain,
-      action: request.action,
-    }, "[OrchestraPolicyEnforcer] Action ALLOWED by policy");
+    /**
+     * Enforce policies before orchestra action execution
+     * 
+     * @param request - Orchestra action request
+     * @returns true if allowed, false if denied
+     */
+    public async enforceBeforeAction(
+        request: OrchestraActionRequest
+    ): Promise<{
+        allowed: boolean;
+        reason?: string;
+        policyResult?: any;
+    }> {
+        logger.debug({
+            domain: request.domain,
+            action: request.action,
+            tenantId: request.context.tenantId,
+        }, "[OrchestraPolicyEnforcer] Enforcing policies");
 
-    return {
-      allowed: true,
-      policyResult,
-    };
-  }
+        // Evaluate policies
+        const policyResult = await policyEngine.evaluate({
+            orchestra: request.domain,
+            action: request.action,
+            tenantId: request.context.tenantId,
+            userId: request.context.userId,
+            roles: request.context.roles,
+            resource: `orchestra://${request.domain}/${request.action}`,
+            context: {
+                ...request.context,
+                arguments: request.arguments,
+            },
+            traceId: request.context.traceId,
+        });
 
-  /**
-   * Create policy denial result
-   */
-  public createDenialResult(
-    request: OrchestraActionRequest,
-    reason: string
-  ): OrchestraActionResult {
-    return {
-      success: false,
-      domain: request.domain,
-      action: request.action,
-      error: {
-        code: "POLICY_DENIED",
-        message: `Action denied by policy: ${reason}`,
-        details: {
-          domain: request.domain,
-          action: request.action,
-          reason,
-        },
-      },
-      metadata: {
-        executionTimeMs: 0,
-      },
-    };
-  }
+        if (!policyResult.allowed) {
+            logger.warn({
+                domain: request.domain,
+                action: request.action,
+                reason: policyResult.reason,
+                winningPolicy: policyResult.winningPolicy,
+            }, "[OrchestraPolicyEnforcer] Action DENIED by policy");
+
+            return {
+                allowed: false,
+                reason: policyResult.reason,
+                policyResult,
+            };
+        }
+
+        logger.debug({
+            domain: request.domain,
+            action: request.action,
+        }, "[OrchestraPolicyEnforcer] Action ALLOWED by policy");
+
+        return {
+            allowed: true,
+            policyResult,
+        };
+    }
+
+    /**
+     * Create policy denial result
+     */
+    public createDenialResult(
+        request: OrchestraActionRequest,
+        reason: string
+    ): OrchestraActionResult {
+        return {
+            success: false,
+            domain: request.domain,
+            action: request.action,
+            error: {
+                code: "POLICY_DENIED",
+                message: `Action denied by policy: ${reason}`,
+                details: {
+                    domain: request.domain,
+                    action: request.action,
+                    reason,
+                },
+            },
+            metadata: {
+                executionTimeMs: 0,
+            },
+        };
+    }
 }
 
 /**

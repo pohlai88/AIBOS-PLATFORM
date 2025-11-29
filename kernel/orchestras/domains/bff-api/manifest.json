@@ -1,0 +1,84 @@
+{
+  "name": "BFF/API Orchestra",
+  "version": "1.0.0",
+  "domain": "bff-api",
+  "description": "Backend-for-Frontend and API management orchestra for endpoint creation, data transformation, and caching strategies.",
+  "agents": [
+    {
+      "id": "api-orchestrator",
+      "name": "API Orchestrator Agent",
+      "role": "Manages API endpoints and data flows",
+      "capabilities": ["endpoint_design", "data_transformation", "cache_strategy"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "create_endpoint",
+      "name": "Create API Endpoint",
+      "description": "Create a new REST API endpoint with middleware",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"] },
+          "handler": { "type": "string" }
+        },
+        "required": ["path", "method"]
+      }
+    },
+    {
+      "id": "query_data",
+      "name": "Query Data",
+      "description": "Query backend data with transformation",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "endpoint": { "type": "string" },
+          "params": { "type": "object" }
+        },
+        "required": ["endpoint"]
+      }
+    },
+    {
+      "id": "transform_response",
+      "name": "Transform Response",
+      "description": "Transform API response data to desired format",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data": { "type": "object" },
+          "format": { "type": "string", "enum": ["json", "xml", "csv"] }
+        },
+        "required": ["data"]
+      }
+    },
+    {
+      "id": "manage_cache",
+      "name": "Manage Cache",
+      "description": "Manage API response caching",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": { "type": "string", "enum": ["get", "set", "delete", "clear"] },
+          "key": { "type": "string" }
+        },
+        "required": ["action", "key"]
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "rate-limit-enforcement",
+      "name": "API Rate Limiting",
+      "description": "Enforce rate limits on API endpoints"
+    }
+  ],
+  "dependencies": ["db", "observability"],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["api", "bff", "rest", "graphql"],
+    "priority": "high"
+  }
+}
+

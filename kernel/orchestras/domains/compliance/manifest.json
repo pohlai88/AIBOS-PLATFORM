@@ -1,0 +1,66 @@
+{
+  "name": "Compliance Orchestra",
+  "version": "1.0.0",
+  "domain": "compliance",
+  "description": "Legal and compliance management orchestra for audits, reports, and evidence collection.",
+  "agents": [
+    {
+      "id": "compliance-agent",
+      "name": "Compliance Agent",
+      "role": "Manages compliance audits and reports",
+      "capabilities": ["audit", "report", "evidence_collection", "violation_tracking"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "generate_report",
+      "name": "Generate Compliance Report",
+      "description": "Generate compliance report for specified framework",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "framework": { "type": "string", "enum": ["GDPR", "SOC2", "HIPAA", "PCI-DSS"] },
+          "period": { "type": "string", "enum": ["daily", "weekly", "monthly", "quarterly", "annual"] }
+        }
+      }
+    },
+    {
+      "id": "run_audit",
+      "name": "Run Audit",
+      "description": "Execute compliance audit",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "scope": { "type": "string", "enum": ["full", "partial", "targeted"] },
+          "auditor": { "type": "string", "enum": ["internal", "external"] }
+        }
+      }
+    },
+    {
+      "id": "track_violations",
+      "name": "Track Policy Violations",
+      "description": "Track and report policy violations",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "since": { "type": "string" }
+        }
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "audit-retention",
+      "name": "Audit Log Retention",
+      "description": "Retain audit logs for 7 years (legal requirement)"
+    }
+  ],
+  "dependencies": ["observability"],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["compliance", "audit", "legal", "gdpr", "soc2"],
+    "priority": "critical"
+  }
+}
+

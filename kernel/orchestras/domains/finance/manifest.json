@@ -1,0 +1,80 @@
+{
+  "name": "Finance Orchestra",
+  "version": "1.0.0",
+  "domain": "finance",
+  "description": "Financial management orchestra for billing, costs, budgets, forecasts, and optimization.",
+  "agents": [
+    {
+      "id": "finance-agent",
+      "name": "Finance Agent",
+      "role": "Manages financial operations and cost optimization",
+      "capabilities": ["cost_calculation", "budget_tracking", "forecasting", "resource_optimization", "invoice_generation"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "calculate_costs",
+      "name": "Calculate Costs",
+      "description": "Calculate infrastructure and service costs",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "service": { "type": "string" },
+          "period": { "type": "string", "enum": ["daily", "weekly", "monthly", "quarterly", "annual"] }
+        },
+        "required": ["service"]
+      }
+    },
+    {
+      "id": "generate_invoice",
+      "name": "Generate Invoice",
+      "description": "Generate customer invoice for usage",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer": { "type": "string" },
+          "period": { "type": "string" }
+        },
+        "required": ["customer", "period"]
+      }
+    },
+    {
+      "id": "forecast_spend",
+      "name": "Forecast Spend",
+      "description": "Forecast future spending based on trends",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "horizon": { "type": "string", "enum": ["1m", "3m", "6m", "1y"] },
+          "basedOn": { "type": "string", "enum": ["historical", "projected"] }
+        }
+      }
+    },
+    {
+      "id": "optimize_resources",
+      "name": "Optimize Resources",
+      "description": "Analyze and recommend resource optimizations for cost savings",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": { "type": "string", "enum": ["cost", "performance", "balanced"] }
+        }
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "budget-overspend-alert",
+      "name": "Budget Overspend Alert",
+      "description": "Alert when department is approaching or exceeding budget"
+    }
+  ],
+  "dependencies": ["observability"],
+  "mcpServers": [],
+  "metadata": {
+    "author": "AI-BOS Platform",
+    "tags": ["finance", "billing", "cost-optimization", "budgets", "forecasting"],
+    "priority": "high"
+  }
+}
+

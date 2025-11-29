@@ -25,7 +25,7 @@ import { recordPolicyEvaluation, recordPolicyConflict } from "../telemetry/polic
 export class PolicyEngine {
   private static instance: PolicyEngine;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): PolicyEngine {
     if (!PolicyEngine.instance) {
@@ -89,7 +89,7 @@ export class PolicyEngine {
 
     for (const entry of applicablePolicies) {
       const policyEffect = this.evaluatePolicy(entry.manifest, request);
-      
+
       if (policyEffect) {
         evaluatedPolicies.push({
           policy: entry.manifest,
@@ -185,7 +185,7 @@ export class PolicyEngine {
     // Evaluate all rules in the policy
     for (const rule of policy.rules) {
       const ruleMatches = this.evaluateRule(rule, request);
-      
+
       if (ruleMatches) {
         logger.debug({
           policyId: policy.id,
@@ -238,28 +238,28 @@ export class PolicyEngine {
     switch (condition.operator) {
       case "eq":
         return fieldValue === condition.value;
-      
+
       case "ne":
         return fieldValue !== condition.value;
-      
+
       case "gt":
         return typeof fieldValue === "number" && fieldValue > condition.value;
-      
+
       case "lt":
         return typeof fieldValue === "number" && fieldValue < condition.value;
-      
+
       case "gte":
         return typeof fieldValue === "number" && fieldValue >= condition.value;
-      
+
       case "lte":
         return typeof fieldValue === "number" && fieldValue <= condition.value;
-      
+
       case "in":
         return Array.isArray(condition.value) && condition.value.includes(fieldValue);
-      
+
       case "nin":
         return Array.isArray(condition.value) && !condition.value.includes(fieldValue);
-      
+
       case "contains":
         if (typeof fieldValue === "string") {
           return fieldValue.includes(condition.value);
@@ -268,14 +268,14 @@ export class PolicyEngine {
           return fieldValue.includes(condition.value);
         }
         return false;
-      
+
       case "regex":
         if (typeof fieldValue === "string") {
           const regex = new RegExp(condition.value);
           return regex.test(fieldValue);
         }
         return false;
-      
+
       default:
         logger.warn({ operator: condition.operator }, "[PolicyEngine] Unknown operator");
         return false;
