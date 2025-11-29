@@ -492,7 +492,7 @@ graph TB
   │   │   ├── integration/
   │   │   └── conformance/
   │   ├── GRCD-KERNEL.md                 # This document (SSOT)
-  │   ├── AIBOS-KERNEL-WHITEPAPER.md     # Whitepaper reference
+  │   ├── AIBOS-KERNEL-WHITEPAPER-V2.md  # Whitepaper reference
   │   ├── AIBOS-AI-ORCHESTRA.md          # AI-Orchestra strategy
   │   ├── index.ts                       # Main entry point
   │   └── package.json
@@ -538,7 +538,7 @@ graph TB
 
 **Important Notes:**
 
-* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-JUSTIFICATION.md` for details.
+* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-WORK-COMPLETE.md` for details.
 * **`boot/` vs `bootstrap/`:** `boot/` contains configuration loading (`kernel.config.ts`), while `bootstrap/` contains the boot sequence steps. Both serve different purposes and should be kept separate.
 * **`routes/` (deprecated):** The standalone `routes/` directory was removed in Phase 2 (November 2025) as it was unused. All route handlers are now in `kernel/http/routes/` or `kernel/api/routes/`.
 
@@ -669,7 +669,7 @@ graph TB
     "MUST respect orchestra domain boundaries"
   ],
   "input_sources": [
-    "AI-BOS Nexus Whitepaper – Zero Drift Governance Framework (kernel/AIBOS-KERNEL-WHITEPAPER.md)",
+    "AI-BOS Nexus Whitepaper – Zero Drift Governance Framework (kernel/AIBOS-KERNEL-WHITEPAPER-V2.md)",
     "AI-BOS AI Orchestra Ecosystem (kernel/AIBOS-AI-ORCHESTRA.md)",
     "GRCD-KERNEL.md (kernel/GRCD-KERNEL.md)",
     "codebase (kernel/)",
@@ -723,7 +723,7 @@ graph TB
 1. **Load MCP:** Read `/mcp/kernel.mcp.json` at session start.
 2. **Validate MCP:** Check hash matches audit log (if available).
 3. **Load GRCD:** Read `kernel/GRCD-KERNEL.md` for canonical specifications.
-4. **Load Whitepaper:** Reference `kernel/AIBOS-KERNEL-WHITEPAPER.md` for architectural principles.
+4. **Load Whitepaper:** Reference `kernel/AIBOS-KERNEL-WHITEPAPER-V2.md` for architectural principles.
 5. **Load AI-Orchestra:** Reference `kernel/AIBOS-AI-ORCHESTRA.md` for orchestra patterns.
 6. **Load MCP Spec:** Reference official MCP specification for protocol details.
 7. **Check Directory:** Verify file locations against GRCD Section 4.
@@ -1182,7 +1182,7 @@ export const orchestraManifestSchema = z.object({
 
 **References:**
 
-- AI-BOS Nexus Whitepaper – Zero Drift Governance Framework (`kernel/AIBOS-KERNEL-WHITEPAPER.md`)
+- AI-BOS Nexus Whitepaper – Zero Drift Governance Framework (`kernel/AIBOS-KERNEL-WHITEPAPER-V2.md`)
 - AI-BOS AI Orchestra Ecosystem – 4W1H Master Strategy (`kernel/AIBOS-AI-ORCHESTRA.md`)
 - GRCD Template v4 (Kernel-Compatible) (`kernel/grcd_template_v_4_kernel_compatible.md`)
 - Model Context Protocol Specification (modelcontextprotocol.io)

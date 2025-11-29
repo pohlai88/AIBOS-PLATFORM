@@ -100,7 +100,7 @@ Align the kernel directory structure with the GRCD template and remove inconsist
 - Get team approval
 - Create migration plan with rollback strategy
 
-**See:** `DIRECTORY-STRUCTURE-JUSTIFICATION.md` for detailed analysis
+**See:** `LEGACY-DOCS-CLEANUP-PLAN.md` for cleanup details
 
 ---
 
@@ -151,9 +151,7 @@ Align the kernel directory structure with the GRCD template and remove inconsist
 
 ## 📝 Documentation Created
 
-1. `DIRECTORY-STRUCTURE-ANALYSIS.md` - Initial analysis
-2. `DIRECTORY-STRUCTURE-RECOMMENDATIONS.md` - Actionable recommendations
-3. `DIRECTORY-STRUCTURE-JUSTIFICATION.md` - Risk analysis and justification
+1. `DIRECTORY-STRUCTURE-WORK-COMPLETE.md` - Complete summary (consolidates all structure docs)
 4. `PHASE-2-DIRECTORY-CLEANUP-COMPLETE.md` - Phase 2 completion report
 5. `DIRECTORY-STRUCTURE-WORK-COMPLETE.md` - This document
 
@@ -193,7 +191,7 @@ Align the kernel directory structure with the GRCD template and remove inconsist
 6. Run full test suite
 7. Update documentation
 
-**See:** `DIRECTORY-STRUCTURE-JUSTIFICATION.md` for detailed plan
+**See:** `PHASE-3-MIGRATION-PLAN.md` for detailed plan
 
 ---
 

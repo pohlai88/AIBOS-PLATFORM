@@ -464,7 +464,7 @@ graph TB
 
 **Important Notes:**
 
-* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-JUSTIFICATION.md` for details.
+* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-WORK-COMPLETE.md` for details.
 * **`boot/` vs `bootstrap/`:** `boot/` contains configuration loading (`kernel.config.ts`), while `bootstrap/` contains the boot sequence steps. Both serve different purposes and should be kept separate.
 
 ### 4.3 File Naming Conventions

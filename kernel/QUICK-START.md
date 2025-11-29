@@ -17,6 +17,7 @@ A **complete, production-ready** vertical slice for:
 ## 📁 Files Created (10 Total)
 
 ### Core Infrastructure (5 files)
+
 1. ✅ `contracts/contract.types.ts` — Type definitions (`KernelActionContract`)
 2. ✅ `types/engine.types.ts` — Engine, action, context types
 3. ✅ `registry/engine.loader.ts` — Engine registry + discovery
@@ -24,12 +25,14 @@ A **complete, production-ready** vertical slice for:
 5. ✅ `http/routes/actions.ts` — HTTP routes (Hono-based)
 
 ### Accounting Vertical Slice (4 files)
+
 6. ✅ `contracts/schemas/journal-entry.schema.ts` — Zod schemas
 7. ✅ `contracts/examples/accounting.read.journal_entries.action.ts` — Contract
 8. ✅ `engines/accounting/read-journal-entries.action.ts` — Business logic
 9. ✅ `engines/accounting/index.ts` — Engine manifest + auto-registration
 
 ### Documentation (3 files)
+
 10. ✅ `VERTICAL-SLICE-GUIDE.md` — How to build slices
 11. ✅ `INTEGRATION-GUIDE.md` — How to wire everything up
 12. ✅ `IMPLEMENTATION-STATUS.md` — Progress tracking
@@ -88,15 +91,15 @@ pnpm add hono zod
 Create `kernel/index.ts`:
 
 ```typescript
-import './engines/accounting'; // Auto-registers engine
-import { Hono } from 'hono';
-import { registerActionRoutes } from './http/routes/actions';
+import "./engines/accounting"; // Auto-registers engine
+import { Hono } from "hono";
+import { registerActionRoutes } from "./http/routes/actions";
 
 const app = new Hono();
 
 registerActionRoutes(app);
 
-app.get('/health', (c) => c.json({ status: 'ok' }));
+app.get("/health", (c) => c.json({ status: "ok" }));
 
 export default app;
 ```
@@ -104,7 +107,7 @@ export default app;
 Create `server.ts`:
 
 ```typescript
-import app from './kernel/index';
+import app from "./kernel/index";
 
 export default {
   port: 3000,
@@ -118,7 +121,7 @@ Update `http/routes/actions.ts` to use actual database connection:
 
 ```typescript
 // Replace placeholder with actual pg pool
-import { Pool } from 'pg';
+import { Pool } from "pg";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -210,6 +213,7 @@ curl -X POST http://localhost:3000/actions/accounting/read.journal_entries \
 9. **Response** → JSON returned to client
 
 All with:
+
 - ✅ Type safety (TypeScript + Zod)
 - ✅ Multi-tenant isolation (tenant ID in WHERE clause)
 - ✅ SQL injection protection (parameterized queries)
@@ -223,6 +227,7 @@ All with:
 ### Option 1: Build Your Next Action (30 min)
 
 Follow `VERTICAL-SLICE-GUIDE.md` to create:
+
 - `accounting.create.journal_entry` (Command)
 - `inventory.read.stock_levels` (Query)
 
@@ -235,20 +240,21 @@ npm install -D vitest @vitest/ui
 Create `engines/accounting/__tests__/read-journal-entries.test.ts`:
 
 ```typescript
-import { describe, it, expect, vi } from 'vitest';
-import { readJournalEntriesAction } from '../read-journal-entries.action';
+import { describe, it, expect, vi } from "vitest";
+import { readJournalEntriesAction } from "../read-journal-entries.action";
 
-describe('readJournalEntriesAction', () => {
-  it('should fetch journal entries', async () => {
+describe("readJournalEntriesAction", () => {
+  it("should fetch journal entries", async () => {
     const mockDb = {
-      query: vi.fn()
-        .mockResolvedValueOnce([{ id: 'je-1', journalNo: 'JE-001' }])
+      query: vi
+        .fn()
+        .mockResolvedValueOnce([{ id: "je-1", journalNo: "JE-001" }])
         .mockResolvedValueOnce([{ count: 1 }]),
     };
 
     const ctx = {
       input: { page: 1, pageSize: 50 },
-      tenant: 'tenant-123',
+      tenant: "tenant-123",
       user: {},
       db: mockDb,
       cache: {},
@@ -284,14 +290,14 @@ Generate OpenAPI spec from contracts and serve Swagger UI.
 
 ## 📚 Documentation Index
 
-| Document | Purpose | When to Use |
-|----------|---------|-------------|
-| `QUICK-START.md` (this) | Get started in 10 min | **Start here** |
-| `VERTICAL-SLICE-GUIDE.md` | Learn vertical slice architecture | Building new actions |
-| `INTEGRATION-GUIDE.md` | Wire up infrastructure | Setting up servers |
-| `IMPLEMENTATION-STATUS.md` | Track progress | Project management |
-| `AIBOS-KERNEL-README.md` | Architecture overview | Understanding design |
-| `AIBOS-INNOVATION-ROADMAP.md` | Future features | Strategic planning |
+| Document                      | Purpose                           | When to Use          |
+| ----------------------------- | --------------------------------- | -------------------- |
+| `QUICK-START.md` (this)       | Get started in 10 min             | **Start here**       |
+| `VERTICAL-SLICE-GUIDE.md`     | Learn vertical slice architecture | Building new actions |
+| `INTEGRATION-GUIDE.md`        | Wire up infrastructure            | Setting up servers   |
+| `IMPLEMENTATION-STATUS.md`    | Track progress                    | Project management   |
+| `AIBOS-KERNEL-README.md`      | Architecture overview             | Understanding design |
+| `AIBOS-INNOVATION-ROADMAP.md` | Future features                   | Strategic planning   |
 
 ---
 
@@ -345,6 +351,7 @@ You now have a **production-grade kernel** with:
 8. ✅ **Testability** (dependency injection)
 
 This is **better than**:
+
 - ❌ Odoo (no contracts, no type safety)
 - ❌ SAP (proprietary, not extensible)
 - ❌ Salesforce (vendor lock-in)
@@ -356,4 +363,3 @@ This is **better than**:
 
 **Document Updated**: 2025-11-27  
 **Questions?** See `INTEGRATION-GUIDE.md` or ask in discussions.
-
