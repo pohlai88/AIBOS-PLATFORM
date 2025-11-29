@@ -15,6 +15,9 @@ import type {
 import { policyRegistry } from "../registry/policy-registry";
 import { policyPrecedenceResolver } from "./precedence-resolver";
 import { baseLogger as logger } from "../../observability/logger";
+import { policyAuditLogger } from "../audit/policy-audit";
+import { policyEventEmitter } from "../events/policy-events";
+import { recordPolicyEvaluation, recordPolicyConflict } from "../telemetry/policy-metrics";
 
 /**
  * Policy Evaluation Engine
@@ -123,7 +126,7 @@ export class PolicyEngine {
       conflictDetected: !!resolution.conflict,
     }, `[PolicyEngine] Request ${allowed ? "ALLOWED" : "DENIED"}`);
 
-    return {
+    const result: PolicyEvaluationResult = {
       allowed,
       evaluatedPolicies: evaluatedPolicies.map((p) => ({
         policyId: p.policy.id,
@@ -141,6 +144,31 @@ export class PolicyEngine {
         conflictsResolved: resolution.conflict ? 1 : 0,
       },
     };
+
+    // Emit audit, events, metrics
+    await policyAuditLogger.auditPolicyEvaluation(request, result);
+    await policyEventEmitter.emitPolicyEvaluated(request, result);
+
+    if (!allowed) {
+      await policyAuditLogger.auditPolicyViolation(request, result);
+      await policyEventEmitter.emitPolicyViolated(request, result);
+    }
+
+    if (resolution.conflict) {
+      await policyAuditLogger.auditConflictResolution(request, result);
+      await policyEventEmitter.emitConflictResolved(request, result);
+      recordPolicyConflict(resolution.winningPolicy.precedence);
+    }
+
+    recordPolicyEvaluation(
+      allowed,
+      result.metadata.evaluationTimeMs,
+      resolution.winningPolicy.precedence,
+      request.orchestra,
+      applicablePolicies.length
+    );
+
+    return result;
   }
 
   /**

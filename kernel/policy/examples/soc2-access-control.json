@@ -1,0 +1,62 @@
+{
+  "id": "soc2-access-control",
+  "name": "SOC 2 Access Control Policy",
+  "version": "1.0.0",
+  "description": "SOC 2 Type II access control requirements",
+  "precedence": 2,
+  "status": "active",
+  "enforcementMode": "enforce",
+  "scope": {
+    "orchestras": ["db", "backend-infra", "finance"],
+    "roles": ["user", "developer", "admin"]
+  },
+  "rules": [
+    {
+      "id": "soc2-01-production-access",
+      "description": "Production database access requires admin role",
+      "conditions": [
+        {
+          "field": "orchestra",
+          "operator": "eq",
+          "value": "db"
+        },
+        {
+          "field": "context.environment",
+          "operator": "eq",
+          "value": "production"
+        },
+        {
+          "field": "roles",
+          "operator": "nin",
+          "value": ["admin", "dba"]
+        }
+      ],
+      "effect": "deny"
+    },
+    {
+      "id": "soc2-02-multi-factor-auth",
+      "description": "Sensitive operations require MFA",
+      "conditions": [
+        {
+          "field": "action",
+          "operator": "in",
+          "value": ["delete", "export", "backup"]
+        },
+        {
+          "field": "context.mfaVerified",
+          "operator": "ne",
+          "value": true
+        }
+      ],
+      "effect": "deny"
+    }
+  ],
+  "owner": "security-team",
+  "tags": ["soc2", "security", "industry", "access-control"],
+  "metadata": {
+    "source": "SOC 2 Type II CC6.1, CC6.2",
+    "referenceUrl": "https://us.aicpa.org/soc2",
+    "complianceFramework": "SOC2"
+  }
+}
+

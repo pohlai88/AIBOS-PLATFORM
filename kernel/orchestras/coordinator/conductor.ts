@@ -24,6 +24,7 @@ import {
   recordOrchestraError,
 } from "../telemetry/orchestra-metrics";
 import { orchestraImplementationRegistry } from "../implementations";
+import { orchestraPolicyEnforcer } from "../../policy/integration/orchestra-policy-enforcer";
 
 /**
  * Orchestra Conductor - Coordinates all domain orchestras
@@ -99,6 +100,12 @@ export class OrchestraConductor {
           `Missing dependencies for ${request.domain}: ${deps.join(", ")}`,
           startTime
         );
+      }
+
+      // 2.5. Enforce policies (NEW - C-6 requirement)
+      const policyCheck = await orchestraPolicyEnforcer.enforceBeforeAction(request);
+      if (!policyCheck.allowed) {
+        return orchestraPolicyEnforcer.createDenialResult(request, policyCheck.reason || "Policy denied");
       }
 
       // 3. Create coordination session

@@ -1,0 +1,58 @@
+{
+  "id": "gdpr-data-protection",
+  "name": "GDPR Data Protection Policy",
+  "version": "1.0.0",
+  "description": "EU GDPR data protection requirements - Personal data access control",
+  "precedence": 3,
+  "status": "active",
+  "enforcementMode": "enforce",
+  "scope": {
+    "orchestras": ["db", "bff-api", "ux-ui"],
+    "actions": ["read", "write", "delete", "export"]
+  },
+  "rules": [
+    {
+      "id": "gdpr-01-consent-required",
+      "description": "User must have given explicit consent for data processing",
+      "conditions": [
+        {
+          "field": "context.dataType",
+          "operator": "in",
+          "value": ["personal", "sensitive", "biometric"]
+        },
+        {
+          "field": "context.userConsent",
+          "operator": "ne",
+          "value": true
+        }
+      ],
+      "effect": "deny"
+    },
+    {
+      "id": "gdpr-02-right-to-be-forgotten",
+      "description": "Allow user data deletion requests (right to be forgotten)",
+      "conditions": [
+        {
+          "field": "action",
+          "operator": "eq",
+          "value": "delete"
+        },
+        {
+          "field": "context.requestType",
+          "operator": "eq",
+          "value": "user-deletion"
+        }
+      ],
+      "effect": "allow"
+    }
+  ],
+  "effectiveDate": "2024-01-01T00:00:00Z",
+  "owner": "legal-team",
+  "tags": ["gdpr", "privacy", "legal", "eu"],
+  "metadata": {
+    "source": "GDPR Article 6, Article 17",
+    "referenceUrl": "https://gdpr.eu/",
+    "complianceFramework": "GDPR"
+  }
+}
+

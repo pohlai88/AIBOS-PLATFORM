@@ -1,0 +1,46 @@
+{
+  "id": "internal-rate-limiting",
+  "name": "Internal API Rate Limiting Policy",
+  "version": "1.0.0",
+  "description": "Internal policy for API rate limiting and fair usage",
+  "precedence": 1,
+  "status": "active",
+  "enforcementMode": "warn",
+  "scope": {
+    "orchestras": ["bff-api", "ux-ui"],
+    "tenants": []
+  },
+  "rules": [
+    {
+      "id": "rate-01-high-frequency",
+      "description": "Deny requests exceeding rate limit",
+      "conditions": [
+        {
+          "field": "context.requestsInLastMinute",
+          "operator": "gt",
+          "value": 100
+        }
+      ],
+      "effect": "deny"
+    },
+    {
+      "id": "rate-02-burst-protection",
+      "description": "Deny burst traffic patterns",
+      "conditions": [
+        {
+          "field": "context.requestsInLastSecond",
+          "operator": "gt",
+          "value": 50
+        }
+      ],
+      "effect": "deny"
+    }
+  ],
+  "owner": "platform-team",
+  "tags": ["rate-limiting", "internal", "performance"],
+  "metadata": {
+    "source": "Internal Platform Guidelines v2.0",
+    "complianceFramework": "Internal"
+  }
+}
+

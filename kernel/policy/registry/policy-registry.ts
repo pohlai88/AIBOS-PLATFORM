@@ -14,6 +14,12 @@ import type {
 import { validatePolicyManifest } from "../schemas/policy-manifest.schema";
 import { createHash } from "crypto";
 import { baseLogger as logger } from "../../observability/logger";
+import { policyAuditLogger } from "../audit/policy-audit";
+import { policyEventEmitter } from "../events/policy-events";
+import {
+  recordPolicyRegistration,
+  updateActivePolicyCount,
+} from "../telemetry/policy-metrics";
 
 /**
  * Policy Registry - Singleton pattern
@@ -90,6 +96,17 @@ export class PolicyRegistry {
       // 6. Store in registry
       this.registry.set(validatedManifest.id, entry);
 
+      // 7. Emit audit, events, metrics
+      await policyAuditLogger.auditPolicyRegistered(validatedManifest, manifestHash);
+      await policyEventEmitter.emitPolicyRegistered(validatedManifest, manifestHash);
+      recordPolicyRegistration(validatedManifest.precedence, true);
+
+      // Update active policy count
+      const counts = this.getCountByPrecedence();
+      for (const [precedence, count] of Object.entries(counts)) {
+        updateActivePolicyCount(Number(precedence) as PolicyPrecedence, count);
+      }
+
       logger.info({
         policyId: validatedManifest.id,
         policyName: validatedManifest.name,
@@ -102,6 +119,11 @@ export class PolicyRegistry {
         manifestHash,
       };
     } catch (error) {
+      // Record failed registration
+      if ((manifest as any)?.precedence) {
+        recordPolicyRegistration((manifest as any).precedence, false);
+      }
+
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -194,6 +216,10 @@ export class PolicyRegistry {
     entry.status = "disabled";
     entry.errorMessage = reason;
     entry.updatedAt = new Date();
+
+    // Audit and emit event
+    await policyAuditLogger.auditPolicyDisabled(policyId, reason);
+    await policyEventEmitter.emitPolicyDisabled(policyId, reason);
 
     logger.info({
       policyId,
