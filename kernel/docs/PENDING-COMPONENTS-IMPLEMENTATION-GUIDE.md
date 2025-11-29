@@ -1,908 +1,341 @@
-# 🚧 Pending Components — Implementation Guide
+# 🚧 Pending Components Implementation Guide
 
-> **Development blueprint** for completing the 6 pending kernel components with zero-drift guardrails.
-> **Updated with industry-standard libraries** to avoid reinventing the wheel.
-
-**Version**: 1.1.0  
-**Status**: Implementation Ready  
-**Last Updated**: 2025-11-27
+**Version:** 1.0.0  
+**Date:** 2025-11-29  
+**Status:** Phase 1 In Progress  
+**GRCD-KERNEL Alignment:** v4.0.0
 
 ---
 
-## 📑 Table of Contents
+## Overview
 
-1. [BFF Layer](#1-bff-layer)
-2. [OpenAPI Generator](#2-openapi-generator) ⚡ Uses `@hono/zod-openapi`
-3. [Developer SDK](#3-developer-sdk) ⚡ Auto-generated from OpenAPI
-4. [WebSocket Support](#4-websocket-support) ⚡ Uses `ws` + reconnection
-5. [CORS Middleware](#5-cors-middleware) ⚡ Uses Hono built-in
-6. [Cluster Scaling](#6-cluster-scaling) — Deferred to Phase 2
-7. [Definition of Done (DoD)](#7-definition-of-done-dod)
+This document tracks the implementation status of all pending components required for **GRCD-KERNEL v4.0.0 compliance**. It provides implementation guides, code templates, and integration patterns for each component.
 
 ---
 
-## 🎯 Implementation Strategy
+## Phase 1: MCP Governance Layer (Current) ✅ 40% Complete
 
-| Component         | Build vs Buy | Library                    | Effort |
-| ----------------- | ------------ | -------------------------- | ------ |
-| BFF Layer         | Build        | Custom + API versioning    | 4h     |
-| OpenAPI Generator | **Buy**      | `@hono/zod-openapi`        | 2h     |
-| Developer SDK     | **Buy**      | `openapi-zod-client`       | 4h     |
-| WebSocket         | Hybrid       | `ws` + custom reconnection | 6h     |
-| CORS Middleware   | **Buy**      | `hono/cors`                | 30m    |
-| Cluster Scaling   | Defer        | Phase 2                    | 0h     |
+### ✅ Completed Components
 
-**Total Effort**: ~16h (down from 77h)
+#### 1. MCP Type Definitions
+- **File:** `kernel/mcp/types.ts`
+- **Status:** ✅ Complete
+- **Coverage:** All MCP types defined per GRCD Section 7.2
+
+#### 2. MCP Manifest Schema
+- **File:** `kernel/mcp/schemas/mcp-manifest.schema.ts`
+- **Status:** ✅ Complete
+- **Coverage:** Zod schema for manifest validation
+
+#### 3. MCP Registry
+- **File:** `kernel/mcp/registry/mcp-registry.ts`
+- **Status:** ✅ Complete
+- **Coverage:** Manifest storage, versioning, and lookup
+
+#### 4. MCP Manifest Validator
+- **File:** `kernel/mcp/validator/manifest.validator.ts`
+- **Status:** ✅ Complete
+- **Coverage:** Schema validation, uniqueness checks
+
+#### 5. MCP Tool Validator
+- **File:** `kernel/mcp/validator/tool.validator.ts`
+- **Status:** ✅ Complete (placeholder for JSON Schema conversion)
+- **Coverage:** Tool invocation validation
+
+#### 6. MCP Tool Executor
+- **File:** `kernel/mcp/executor/tool.executor.ts`
+- **Status:** ✅ Complete (placeholder for actual MCP communication)
+- **Coverage:** Tool execution orchestration
+
+#### 7. MCP Bootstrap Step
+- **File:** `kernel/bootstrap/steps/03-mcp-registry.ts`
+- **Status:** ✅ Complete (placeholder for manifest loading)
+- **Coverage:** Boot-time manifest loading and validation
 
 ---
 
-## 1. BFF Layer
+### 🚧 Pending Components
 
-**Priority**: High | **Effort**: 4h | **Layer**: Kernel Coordination
-
-### 1.1 Purpose
-
-Backend-For-Frontend adapter with **API versioning** and client-specific transforms.
-
-### 1.2 Directory Structure
-
-```
-kernel/
-└── bff/
-    ├── index.ts                    # Public exports
-    ├── bff.types.ts                # Type definitions
-    ├── bff-router.ts               # Client-type routing
-    ├── versioning/
-    │   ├── index.ts
-    │   ├── v1/                     # API v1
-    │   └── v2/                     # API v2 (future)
-    ├── transformers/
-    │   ├── index.ts
-    │   ├── web.transformer.ts
-    │   ├── mobile.transformer.ts
-    │   ├── cli.transformer.ts
-    │   └── mcp.transformer.ts
-    └── middleware/
-        ├── index.ts
-        ├── client-detection.ts
-        └── version-negotiation.ts  # NEW: API version handling
-```
-
-### 1.3 Core Types
+#### 8. MCP Resource Handler
+- **File:** `kernel/mcp/executor/resource.handler.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Handle MCP resource requests
+- **Dependencies:** MCP SDK integration
+- **Template:**
 
 ```typescript
-// bff.types.ts
-export type BffClientType = "web" | "mobile" | "cli" | "mcp";
-export type ApiVersion = "v1" | "v2";
+/**
+ * MCP Resource Handler
+ * 
+ * GRCD-KERNEL v4.0.0 F-9: Validate MCP resource requests
+ */
 
-export interface BffContext {
-  clientType: BffClientType;
-  clientVersion: string;
-  apiVersion: ApiVersion; // NEW
-  tenantId: string;
-  userId: string;
-  locale: string;
-  timezone: string;
+import type { MCPResource } from "../types";
+
+export class MCPResourceHandler {
+  public async getResource(
+    serverName: string,
+    uri: string
+  ): Promise<any> {
+    // 1. Validate server exists
+    // 2. Validate resource exists in manifest
+    // 3. Fetch resource from MCP server
+    // 4. Return resource content
+    throw new Error("Not implemented");
+  }
 }
 
-export interface BffRequest<T = unknown> {
-  context: BffContext;
-  payload: T;
-  metadata?: Record<string, unknown>;
-}
-
-export interface BffResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: BffError;
-  meta: BffResponseMeta;
-}
-
-export interface BffError {
-  code: string;
-  message: string;
-  details?: Record<string, unknown>;
-  recoverable: boolean;
-  retryAfter?: number; // NEW: Rate limit hint
-}
-
-export interface BffResponseMeta {
-  requestId: string;
-  duration: number;
-  timestamp: string;
-  apiVersion: ApiVersion; // NEW
-  deprecation?: string; // NEW: Deprecation warning
-  pagination?: BffPagination;
-  cacheControl?: string; // NEW: Cache hints
-}
-
-export interface BffPagination {
-  page: number;
-  pageSize: number;
-  total: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-  cursor?: string; // NEW: Cursor-based pagination
-}
+export const mcpResourceHandler = new MCPResourceHandler();
 ```
 
-### 1.4 Version Negotiation Middleware
+#### 9. MCP Session Manager
+- **File:** `kernel/mcp/executor/session.manager.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Manage MCP server sessions and connections
+- **Dependencies:** MCP SDK integration
+
+#### 10. MCP Audit Integration
+- **File:** `kernel/mcp/audit/mcp-audit.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Audit all MCP interactions per GRCD F-10
+- **Dependencies:** Existing audit system integration
+
+**Template:**
 
 ```typescript
-// middleware/version-negotiation.ts
-import { Context, Next } from "hono";
-import { ApiVersion } from "../bff.types";
+/**
+ * MCP Audit Logger
+ * 
+ * GRCD-KERNEL v4.0.0 F-10: Audit all MCP server interactions
+ */
 
-const SUPPORTED_VERSIONS: ApiVersion[] = ["v1", "v2"];
-const DEFAULT_VERSION: ApiVersion = "v1";
-const LATEST_VERSION: ApiVersion = "v1";
+import { auditLogger } from "../../audit/audit-logger";
+import type { MCPToolInvocation, MCPToolResult } from "../types";
 
-export function versionNegotiation() {
-  return async (c: Context, next: Next) => {
-    // Check header first, then path, then default
-    const headerVersion = c.req.header("X-API-Version") as ApiVersion;
-    const pathVersion = c.req.path.match(/^\/api\/(v\d+)/)?.[1] as ApiVersion;
-
-    const requestedVersion = headerVersion || pathVersion || DEFAULT_VERSION;
-
-    if (!SUPPORTED_VERSIONS.includes(requestedVersion)) {
-      return c.json(
-        {
-          success: false,
-          error: {
-            code: "UNSUPPORTED_API_VERSION",
-            message: `API version ${requestedVersion} is not supported`,
-            details: { supported: SUPPORTED_VERSIONS },
-            recoverable: true,
-          },
-        },
-        400
-      );
-    }
-
-    // Set version in context
-    c.set("apiVersion", requestedVersion);
-
-    // Add deprecation warning for old versions
-    if (requestedVersion !== LATEST_VERSION) {
-      c.header(
-        "X-API-Deprecation",
-        `Version ${requestedVersion} will be deprecated. Migrate to ${LATEST_VERSION}`
-      );
-    }
-
-    c.header("X-API-Version", requestedVersion);
-    return next();
-  };
-}
-```
-
-### 1.5 Dependencies
-
-| Depends On   | Relied By     | Isolation |
-| ------------ | ------------- | --------- |
-| `http/`      | Apps, Engines | ✅ Full   |
-| `telemetry/` | -             | ✅ Full   |
-| `auth/`      | -             | ✅ Full   |
-
-### 1.6 DoD Checklist
-
-- [ ] All 4 transformers implemented (web, mobile, cli, mcp)
-- [ ] API versioning (v1, v2) working
-- [ ] Version negotiation middleware
-- [ ] Client detection middleware
-- [ ] Cursor-based pagination
-- [ ] Cache-Control headers
-- [ ] Deprecation warnings
-- [ ] Unit tests: 90% coverage
-- [ ] No upward layer imports
-
----
-
-## 2. OpenAPI Generator
-
-**Priority**: High | **Effort**: 2h | **Layer**: Resource & Integration
-
-### ⚡ USE EXISTING LIBRARY
-
-**Do NOT build from scratch.** Use [`@hono/zod-openapi`](https://github.com/honojs/middleware/tree/main/packages/zod-openapi) (production-ready, 1000+ stars).
-
-### 2.1 Installation
-
-```bash
-pnpm install @hono/zod-openapi
-```
-
-### 2.2 Directory Structure
-
-```
-kernel/
-└── openapi/
-    ├── index.ts                    # Re-exports from @hono/zod-openapi
-    ├── openapi.config.ts           # AI-BOS specific config
-    ├── schemas/                    # Shared Zod schemas
-    │   ├── index.ts
-    │   ├── common.schema.ts
-    │   ├── tenant.schema.ts
-    │   └── action.schema.ts
-    └── routes/                     # OpenAPI route definitions
-        ├── index.ts
-        ├── health.route.ts
-        ├── engines.route.ts
-        └── actions.route.ts
-```
-
-### 2.3 Implementation
-
-```typescript
-// openapi/index.ts
-export { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-export * from "./openapi.config";
-export * from "./schemas";
-
-// openapi/openapi.config.ts
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { swaggerUI } from "@hono/swagger-ui";
-
-export function createOpenAPIApp() {
-  const app = new OpenAPIHono();
-
-  // OpenAPI documentation endpoint
-  app.doc("/api/openapi.json", {
-    openapi: "3.1.0",
-    info: {
-      title: "AI-BOS Kernel API",
-      version: "1.0.0",
-      description: "Self-healing, AI-governed Business Operating System",
+export async function auditMCPInvocation(
+  invocation: MCPToolInvocation,
+  result: MCPToolResult
+): Promise<void> {
+  await auditLogger.log({
+    category: "mcp.tool.invocation",
+    action: invocation.tool,
+    actor: invocation.metadata?.userId || "system",
+    tenantId: invocation.metadata?.tenantId,
+    metadata: {
+      tool: invocation.tool,
+      arguments: invocation.arguments,
+      success: result.success,
+      executionTimeMs: result.metadata?.executionTimeMs,
     },
-    servers: [
-      { url: "http://localhost:3000", description: "Development" },
-      { url: "https://api.aibos.io", description: "Production" },
-    ],
-    tags: [
-      { name: "Health", description: "Health check endpoints" },
-      { name: "Engines", description: "Engine management" },
-      { name: "Actions", description: "Action execution" },
-      { name: "Metadata", description: "Metadata operations" },
-    ],
+    timestamp: new Date(),
   });
-
-  // Swagger UI
-  app.get("/api/docs", swaggerUI({ url: "/api/openapi.json" }));
-
-  return app;
 }
+```
 
-// openapi/routes/health.route.ts
-import { createRoute, z, OpenAPIHono } from "@hono/zod-openapi";
+#### 11. MCP API Routes
+- **File:** `kernel/api/routes/mcp.routes.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** HTTP endpoints for MCP operations
+- **Dependencies:** Hono router integration
 
-const healthRoute = createRoute({
-  method: "get",
-  path: "/health",
-  tags: ["Health"],
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            status: z.enum(["healthy", "degraded", "unhealthy"]),
-            version: z.string(),
-            uptime: z.number(),
-            checks: z.record(
-              z.object({
-                status: z.enum(["pass", "fail"]),
-                duration: z.number(),
-              })
-            ),
-          }),
-        },
-      },
-      description: "Health check response",
-    },
-  },
+**Template:**
+
+```typescript
+/**
+ * MCP API Routes
+ * 
+ * GRCD-KERNEL v4.0.0 F-1: Universal API gateway
+ */
+
+import { Hono } from "hono";
+import { mcpRegistry, mcpToolExecutor } from "../../mcp";
+
+const mcp = new Hono();
+
+// GET /mcp/servers - List all registered MCP servers
+mcp.get("/servers", async (c) => {
+  const servers = mcpRegistry.listActive();
+  return c.json(servers);
 });
 
-export function registerHealthRoutes(app: OpenAPIHono) {
-  app.openapi(healthRoute, async (c) => {
-    return c.json({
-      status: "healthy",
-      version: "1.0.0",
-      uptime: process.uptime(),
-      checks: {
-        database: { status: "pass", duration: 5 },
-        redis: { status: "pass", duration: 2 },
-      },
-    });
-  });
-}
+// POST /mcp/invoke - Invoke MCP tool
+mcp.post("/invoke", async (c) => {
+  const { server, invocation } = await c.req.json();
+  const result = await mcpToolExecutor.execute(server, invocation);
+  return c.json(result);
+});
+
+export default mcp;
 ```
 
-### 2.4 Dependencies
+#### 12. MCP SDK Integration
+- **File:** `kernel/mcp/sdk/mcp-client.ts`
+- **Status:** ⏳ Pending (requires @modelcontextprotocol/sdk)
+- **Purpose:** Actual communication with MCP servers
+- **Dependencies:** `@modelcontextprotocol/sdk` package
 
-| Depends On          | Relied By     | Isolation |
-| ------------------- | ------------- | --------- |
-| `@hono/zod-openapi` | SDK Generator | ✅ Full   |
-| `validation/`       | -             | ✅ Full   |
-
-### 2.5 DoD Checklist
-
-- [ ] `@hono/zod-openapi` installed
-- [ ] All routes converted to OpenAPI format
-- [ ] Swagger UI at `/api/docs`
-- [ ] JSON spec at `/api/openapi.json`
-- [ ] All schemas registered
-- [ ] Security schemes defined
-- [ ] No custom Zod→OpenAPI conversion code
+#### 13. MCP Manifest Loader
+- **File:** `kernel/mcp/registry/manifest.loader.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Load manifests from file system, environment, or remote
+- **Template:** See below
 
 ---
 
-## 3. Developer SDK
+## Phase 2: Orchestra Coordination Layer ⏳ Not Started
 
-**Priority**: Medium | **Effort**: 4h | **Layer**: Resource & Integration
+### Required Components
 
-### ⚡ AUTO-GENERATE FROM OPENAPI
+#### 1. Orchestra Types
+- **File:** `kernel/orchestras/types.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** TypeScript types for orchestras
 
-**Do NOT build manually.** Use [`openapi-zod-client`](https://github.com/astahmer/openapi-zod-client) (1,085 stars) to generate SDK from OpenAPI spec.
+#### 2. Orchestra Manifest Schema
+- **File:** `kernel/orchestras/schemas/orchestra-manifest.schema.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Zod schema for orchestra manifests
 
-### 3.1 Installation
+#### 3. Orchestra Registry
+- **File:** `kernel/orchestras/registry/orchestra-registry.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Central registry for all orchestras
 
-```bash
-npm install -D openapi-zod-client
-```
+#### 4. Orchestra Conductor
+- **File:** `kernel/orchestras/coordinator/conductor.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Conductor-of-conductors pattern implementation
 
-### 3.2 Generation Script
+#### 5. Cross-Orchestra Authorization
+- **File:** `kernel/orchestras/coordinator/cross-orchestra.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Inter-orchestra permission checking
 
-```typescript
-// scripts/generate-sdk.ts
-import { generateZodClientFromOpenAPI } from "openapi-zod-client";
-import { readFileSync, writeFileSync } from "fs";
+#### 6. Domain Orchestra Stubs (8 domains)
+- **Files:** `kernel/orchestras/domains/{db,ux-ui,bff-api,backend-infra,compliance,observability,finance,devex}/`
+- **Status:** ⏳ Pending
+- **Purpose:** Domain-specific orchestra implementations
 
-async function generateSdk() {
-  const openApiSpec = JSON.parse(readFileSync("./dist/openapi.json", "utf-8"));
-
-  const result = await generateZodClientFromOpenAPI({
-    openApiDoc: openApiSpec,
-    distPath: "./sdk/generated",
-    templatePath: "./sdk/templates/client.hbs", // Optional custom template
-    options: {
-      withAlias: true,
-      baseUrl: "https://api.aibos.io",
-      withDescription: true,
-    },
-  });
-
-  console.log("✅ SDK generated successfully");
-}
-
-generateSdk();
-```
-
-### 3.3 Directory Structure
-
-```
-kernel/
-└── sdk/
-    ├── index.ts                    # Public exports
-    ├── generated/                  # Auto-generated (DO NOT EDIT)
-    │   ├── client.ts               # Generated API client
-    │   └── schemas.ts              # Generated Zod schemas
-    ├── extensions/                 # Manual extensions
-    │   ├── index.ts
-    │   ├── kernel-client.ts        # Enhanced client wrapper
-    │   └── retry-policy.ts         # Retry logic
-    ├── builders/                   # Manual builders (keep)
-    │   ├── engine.builder.ts
-    │   └── action.builder.ts
-    └── testing/
-        ├── mock-kernel.ts
-        └── test-helpers.ts
-```
-
-### 3.4 Enhanced Client Wrapper
-
-```typescript
-// sdk/extensions/kernel-client.ts
-import { createApiClient } from "../generated/client";
-
-export interface KernelClientConfig {
-  baseUrl: string;
-  apiKey?: string;
-  token?: string;
-  timeout?: number;
-  retries?: number;
-  onError?: (error: Error) => void;
-}
-
-export class KernelClient {
-  private client: ReturnType<typeof createApiClient>;
-  private config: KernelClientConfig;
-
-  constructor(config: KernelClientConfig) {
-    this.config = config;
-    this.client = createApiClient(config.baseUrl, {
-      axiosConfig: {
-        timeout: config.timeout || 30000,
-        headers: {
-          ...(config.apiKey && { "X-API-Key": config.apiKey }),
-          ...(config.token && { Authorization: `Bearer ${config.token}` }),
-        },
-      },
-    });
-  }
-
-  // Proxy all generated methods
-  get api() {
-    return this.client;
-  }
-
-  // Convenience methods
-  async healthCheck() {
-    return this.client.getHealth();
-  }
-
-  async executeAction<TIn, TOut>(
-    action: string,
-    input: TIn,
-    options?: { tenantId?: string }
-  ): Promise<TOut> {
-    return this.client.postActionsExecute({
-      action,
-      input,
-      tenantId: options?.tenantId,
-    }) as Promise<TOut>;
-  }
-}
-
-// Usage:
-// const kernel = new KernelClient({ baseUrl: 'https://api.aibos.io', apiKey: 'xxx' });
-// const health = await kernel.healthCheck();
-// const result = await kernel.executeAction('createInvoice', { amount: 100 });
-```
-
-### 3.5 Package.json Script
-
-```json
-{
-  "scripts": {
-    "sdk:generate": "ts-node scripts/generate-sdk.ts",
-    "sdk:build": "npm run sdk:generate && tsc -p sdk/tsconfig.json",
-    "sdk:publish": "npm run sdk:build && npm publish ./sdk/dist"
-  }
-}
-```
-
-### 3.6 Dependencies
-
-| Depends On           | Relied By     | Isolation |
-| -------------------- | ------------- | --------- |
-| `openapi/` (spec)    | Engines, Apps | ✅ Full   |
-| `openapi-zod-client` | -             | ✅ Full   |
-
-### 3.7 DoD Checklist
-
-- [ ] `openapi-zod-client` configured
-- [ ] Generation script working
-- [ ] Enhanced client wrapper
-- [ ] Retry policy implemented
-- [ ] TypeScript types exported
-- [ ] Mock kernel for testing
-- [ ] README with usage examples
-- [ ] Published to npm (optional)
+#### 7. Orchestra Bootstrap
+- **File:** `kernel/bootstrap/steps/12-orchestras.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Initialize orchestra framework at boot
 
 ---
 
-## 4. WebSocket Support
+## Phase 3: Policy Precedence Engine ⏳ Not Started
 
-**Priority**: Medium | **Effort**: 6h | **Layer**: Kernel Coordination
+### Required Components
 
-### ⚡ USE `ws` WITH RECONNECTION
+#### 1. Policy Precedence Types
+- **File:** `kernel/policy/precedence.ts`
+- **Status:** ⏳ Pending
+- **Purpose:** Legal > Industry > Internal hierarchy
 
-Use [`ws`](https://github.com/websockets/ws) (21k stars) with custom reconnection logic.
+#### 2. Policy Engine Upgrade
+- **File:** `kernel/policy/policy-engine.ts`
+- **Status:** 🔧 Needs Upgrade
+- **Purpose:** Add precedence evaluation
 
-### 4.1 Installation
+#### 3. Legal Policies Directory
+- **File:** `kernel/policy/legal-policies/`
+- **Status:** ⏳ Pending
+- **Purpose:** GDPR, CCPA, etc.
 
-```bash
-npm install ws
-npm install -D @types/ws
-```
-
-### 4.2 Directory Structure
-
-```
-kernel/
-└── websocket/
-    ├── index.ts
-    ├── ws.types.ts
-    ├── ws-server.ts
-    ├── ws-client.ts                # NEW: Client with reconnection
-    ├── channels/
-    │   ├── channel.manager.ts
-    │   └── presence.manager.ts     # NEW: Who's online
-    └── middleware/
-        ├── ws-auth.middleware.ts
-        └── ws-rate-limit.ts
-```
-
-### 4.3 Client with Reconnection (for SDK)
-
-```typescript
-// ws-client.ts
-import WebSocket from "ws";
-import { EventEmitter } from "events";
-
-export interface WsClientConfig {
-  url: string;
-  token: string;
-  reconnect?: boolean;
-  reconnectInterval?: number;
-  maxReconnectAttempts?: number;
-}
-
-export class WsClient extends EventEmitter {
-  private ws: WebSocket | null = null;
-  private reconnectAttempts = 0;
-  private messageQueue: string[] = [];
-  private isConnected = false;
-
-  constructor(private config: WsClientConfig) {
-    super();
-    this.config.reconnect = config.reconnect ?? true;
-    this.config.reconnectInterval = config.reconnectInterval ?? 1000;
-    this.config.maxReconnectAttempts = config.maxReconnectAttempts ?? 10;
-  }
-
-  connect(): void {
-    this.ws = new WebSocket(this.config.url, {
-      headers: { Authorization: `Bearer ${this.config.token}` },
-    });
-
-    this.ws.on("open", () => {
-      this.isConnected = true;
-      this.reconnectAttempts = 0;
-      this.emit("connected");
-      this.flushMessageQueue();
-    });
-
-    this.ws.on("message", (data) => {
-      try {
-        const message = JSON.parse(data.toString());
-        this.emit("message", message);
-        this.emit(message.type, message.payload);
-      } catch (e) {
-        this.emit("error", new Error("Invalid message format"));
-      }
-    });
-
-    this.ws.on("close", () => {
-      this.isConnected = false;
-      this.emit("disconnected");
-      this.attemptReconnect();
-    });
-
-    this.ws.on("error", (error) => {
-      this.emit("error", error);
-    });
-  }
-
-  private attemptReconnect(): void {
-    if (!this.config.reconnect) return;
-    if (this.reconnectAttempts >= this.config.maxReconnectAttempts!) {
-      this.emit("max_reconnect_attempts");
-      return;
-    }
-
-    this.reconnectAttempts++;
-    const delay =
-      this.config.reconnectInterval! * Math.pow(2, this.reconnectAttempts - 1);
-
-    this.emit("reconnecting", { attempt: this.reconnectAttempts, delay });
-
-    setTimeout(() => this.connect(), delay);
-  }
-
-  send(type: string, payload: unknown): void {
-    const message = JSON.stringify({
-      type,
-      payload,
-      messageId: crypto.randomUUID(),
-      timestamp: new Date().toISOString(),
-    });
-
-    if (this.isConnected && this.ws?.readyState === WebSocket.OPEN) {
-      this.ws.send(message);
-    } else {
-      // Queue message for later
-      this.messageQueue.push(message);
-    }
-  }
-
-  private flushMessageQueue(): void {
-    while (this.messageQueue.length > 0) {
-      const message = this.messageQueue.shift()!;
-      this.ws?.send(message);
-    }
-  }
-
-  subscribe(channel: string): void {
-    this.send("subscribe", { channel });
-  }
-
-  unsubscribe(channel: string): void {
-    this.send("unsubscribe", { channel });
-  }
-
-  disconnect(): void {
-    this.config.reconnect = false;
-    this.ws?.close();
-  }
-}
-```
-
-### 4.4 Presence Manager
-
-```typescript
-// channels/presence.manager.ts
-export interface PresenceUser {
-  userId: string;
-  tenantId: string;
-  connectionId: string;
-  status: "online" | "away" | "busy";
-  lastSeen: number;
-  metadata?: Record<string, unknown>;
-}
-
-export class PresenceManager {
-  private presence: Map<string, PresenceUser> = new Map();
-
-  join(user: PresenceUser): void {
-    this.presence.set(user.connectionId, user);
-  }
-
-  leave(connectionId: string): PresenceUser | undefined {
-    const user = this.presence.get(connectionId);
-    this.presence.delete(connectionId);
-    return user;
-  }
-
-  updateStatus(connectionId: string, status: PresenceUser["status"]): void {
-    const user = this.presence.get(connectionId);
-    if (user) {
-      user.status = status;
-      user.lastSeen = Date.now();
-    }
-  }
-
-  getOnlineUsers(tenantId: string): PresenceUser[] {
-    return Array.from(this.presence.values()).filter(
-      (u) => u.tenantId === tenantId && u.status === "online"
-    );
-  }
-
-  getPresence(userId: string): PresenceUser | undefined {
-    return Array.from(this.presence.values()).find((u) => u.userId === userId);
-  }
-}
-```
-
-### 4.5 Dependencies
-
-| Depends On | Relied By      | Isolation |
-| ---------- | -------------- | --------- |
-| `ws`       | Apps, BFF, SDK | ✅ Full   |
-| `auth/`    | -              | ✅ Full   |
-| `tenancy/` | -              | ✅ Full   |
-
-### 4.6 DoD Checklist
-
-- [ ] WebSocket server with `ws`
-- [ ] Client with exponential backoff reconnection
-- [ ] Message queuing during disconnect
-- [ ] Presence system (who's online)
-- [ ] Channel management
-- [ ] Tenant isolation
-- [ ] Authentication middleware
-- [ ] Rate limiting
-- [ ] Unit tests: 85% coverage
+#### 4. Industry Policies Directory
+- **File:** `kernel/policy/industry-policies/`
+- **Status:** ⏳ Pending
+- **Purpose:** PCI-DSS, HIPAA, etc.
 
 ---
 
-## 5. CORS Middleware
+## Integration Checklist
 
-**Priority**: High | **Effort**: 30m | **Layer**: Kernel Coordination
+### MCP Integration Points
 
-### ⚡ USE HONO BUILT-IN
+- [ ] **Event Bus:** Emit MCP events for all tool invocations
+- [ ] **Audit System:** Log all MCP interactions with hash chain
+- [ ] **Auth System:** Integrate MCP with RBAC/ABAC
+- [ ] **Sandbox:** Execute MCP tools in isolated zones
+- [ ] **Telemetry:** Add MCP-specific metrics (latency, success rate)
+- [ ] **Bootstrap:** Load MCP registry before API routes
 
-Hono has built-in CORS middleware. **Do NOT build custom.**
+### Orchestra Integration Points
 
-### 5.1 Installation
+- [ ] **Event Bus:** Route orchestra coordination events
+- [ ] **Auth System:** Cross-orchestra authorization
+- [ ] **MCP Layer:** Orchestras as MCP servers
+- [ ] **Telemetry:** Orchestra-specific metrics
+- [ ] **API Routes:** Orchestra coordination endpoints
 
-Already included with Hono.
+### Policy Integration Points
 
-### 5.2 Implementation
-
-```typescript
-// http/middleware/cors.middleware.ts
-import { cors } from "hono/cors";
-
-export function createCorsMiddleware(env: string) {
-  const origins = {
-    development: ["http://localhost:3000", "http://localhost:5173"],
-    staging: ["https://*.staging.aibos.io"],
-    production: ["https://*.aibos.io", "https://app.aibos.io"],
-  };
-
-  return cors({
-    origin: origins[env] || origins.development,
-    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: [
-      "Content-Type",
-      "Authorization",
-      "X-Request-ID",
-      "X-Tenant-ID",
-      "X-API-Key",
-      "X-API-Version",
-    ],
-    exposeHeaders: ["X-Request-ID", "X-RateLimit-Remaining", "X-API-Version"],
-    credentials: true,
-    maxAge: 86400,
-  });
-}
-
-// Usage in http/router.ts:
-// import { createCorsMiddleware } from './middleware/cors.middleware';
-// app.use('*', createCorsMiddleware(process.env.NODE_ENV || 'development'));
-```
-
-### 5.3 DoD Checklist
-
-- [ ] Using `hono/cors` (not custom)
-- [ ] Environment-based origins
-- [ ] All required headers allowed
-- [ ] Credentials enabled
-- [ ] Preflight caching (maxAge)
-- [ ] Security review passed
+- [ ] **Auth System:** Policy-driven authorization
+- [ ] **Audit System:** Policy evaluation audit trail
+- [ ] **MCP Layer:** Policy validation before tool invocation
+- [ ] **Orchestra Layer:** Policy enforcement across orchestras
 
 ---
 
-## 6. Cluster Scaling
+## Implementation Priority
 
-**Priority**: Low | **Effort**: 40h | **Status**: DEFERRED TO PHASE 2
+### Week 1-2 (Current)
+1. ✅ MCP types, schemas, registry, validators
+2. ⏳ MCP audit integration
+3. ⏳ MCP API routes
+4. ⏳ MCP manifest loader
+5. ⏳ MCP SDK integration
 
-### 6.1 Rationale for Deferral
-
-- Not required for MVP
-- Complex to implement correctly
-- Requires infrastructure (Consul/etcd/K8s)
-- Can use external load balancer initially
-- Will implement when scaling beyond single node
-
-### 6.2 Phase 2 Plan
-
-When needed:
-
-1. Use Redis for session/state sharing
-2. Use Kubernetes for orchestration
-3. Implement leader election with Redis Redlock
-4. Add consistent hashing for tenant routing
-
-### 6.3 Interim Solution
-
-```typescript
-// Use Redis for cross-instance state
-import Redis from "ioredis";
-
-const redis = new Redis(process.env.REDIS_URL);
-
-// Shared state
-await redis.set("kernel:state", JSON.stringify(state));
-
-// Pub/Sub for events
-redis.publish("kernel:events", JSON.stringify(event));
-```
+### Week 3-4
+1. ⏳ MCP resource handler
+2. ⏳ MCP session manager
+3. ⏳ Event bus integration
+4. ⏳ Telemetry integration
+5. ⏳ End-to-end MCP flow testing
 
 ---
 
-## 7. Definition of Done (DoD)
+## Testing Strategy
 
-### 7.1 Universal DoD Checklist
+### Unit Tests (Per Component)
+- MCP Registry: Manifest CRUD operations
+- MCP Validators: Schema validation edge cases
+- MCP Executor: Tool invocation flow
 
-Every pending component **MUST** pass all items before merge:
+### Integration Tests
+- MCP + Audit: Verify all invocations are logged
+- MCP + Auth: Verify RBAC enforcement
+- MCP + Event Bus: Verify event emission
 
-#### Code Quality
-
-- [ ] TypeScript strict mode passes
-- [ ] No `any` types (except justified exceptions)
-- [ ] ESLint passes with zero warnings
-- [ ] Prettier formatting applied
-
-#### Architecture
-
-- [ ] Uses existing libraries where available
-- [ ] Resides in exactly one layer
-- [ ] No upward layer imports
-- [ ] No circular dependencies
-- [ ] Index file exports all public APIs
-
-#### Testing
-
-- [ ] Unit tests: minimum 80% coverage
-- [ ] Integration tests: minimum 3 scenarios
-- [ ] Edge cases documented and tested
-
-#### Observability
-
-- [ ] Telemetry hooks integrated
-- [ ] Structured logging implemented
-
-#### Security
-
-- [ ] No secrets in code
-- [ ] Input validation on all public APIs
-- [ ] Tenant isolation enforced
-
-#### Documentation
-
-- [ ] JSDoc on all public functions
-- [ ] README with usage examples
-
-### 7.2 Updated Component Summary
-
-| Component         | Library Used         | Effort | Status  |
-| ----------------- | -------------------- | ------ | ------- |
-| BFF Layer         | Custom + versioning  | 4h     | Ready   |
-| OpenAPI Generator | `@hono/zod-openapi`  | 2h     | Ready   |
-| Developer SDK     | `openapi-zod-client` | 4h     | Ready   |
-| WebSocket         | `ws` + reconnection  | 6h     | Ready   |
-| CORS Middleware   | `hono/cors`          | 30m    | Ready   |
-| Cluster Scaling   | Deferred             | 0h     | Phase 2 |
-
-**Total: ~16.5h to complete kernel**
-
-### 7.3 Merge Gate
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     MERGE GATE                              │
-├─────────────────────────────────────────────────────────────┤
-│  1. All DoD items checked                                   │
-│  2. Using recommended libraries (no reinventing)            │
-│  3. DriftShield semantic diff: GREEN                        │
-│  4. CI/CD pipeline: PASSED                                  │
-│  5. Code review: 1+ approvals                               │
-│  6. No breaking changes (or migration provided)             │
-└─────────────────────────────────────────────────────────────┘
-```
+### E2E Tests
+- Register MCP server → Validate → Invoke tool → Audit → Verify
 
 ---
 
-## 📦 NPM Dependencies to Add
+## Success Criteria
 
-```bash
-# Required
-npm install @hono/zod-openapi @hono/swagger-ui ws
+### Phase 1 Complete When:
+- [ ] All MCP components implemented
+- [ ] 100% unit test coverage for MCP module
+- [ ] Integration tests passing
+- [ ] F-2, F-5, F-9, F-10 at 90%+ compliance
+- [ ] Performance: <50ms MCP validation latency (NF-9)
 
-# Dev dependencies
-npm install -D openapi-zod-client @types/ws
-```
+### Phase 2 Complete When:
+- [ ] All Orchestra components implemented
+- [ ] 8 domain orchestras registered
+- [ ] Cross-orchestra auth working
+- [ ] F-15, F-16, F-17 at 80%+ compliance
+- [ ] Performance: <200ms orchestra coordination (NF-11)
 
----
-
-## 🚀 Implementation Order
-
-1. **CORS** (30m) — Immediate, unblocks frontend
-2. **OpenAPI** (2h) — Foundation for SDK
-3. **SDK** (4h) — Auto-generate from OpenAPI
-4. **BFF** (4h) — API versioning
-5. **WebSocket** (6h) — Real-time features
-
-After these 5 components (~16h), kernel is **complete** and ready for UI.
-
----
-
-## 📄 License
-
-Proprietary — AI-BOS Platform
+### Phase 3 Complete When:
+- [ ] Policy precedence implemented
+- [ ] Legal > Industry > Internal enforced
+- [ ] F-19, C-6 at 95%+ compliance
+- [ ] Performance: <10ms policy evaluation (NF-12)
 
 ---
 
-_Implementation Guide v1.1 — Updated with industry-standard libraries_
+**Last Updated:** 2025-11-29 (Phase 1 initial implementation)  
+**Next Review:** Weekly during active development  
+**Owner:** Kernel Refactoring Team
