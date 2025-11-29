@@ -132,6 +132,20 @@ export interface AgentExecutionContext {
     source?: string;
     timestamp: Date;
   };
+  memory?: {
+    context: Record<string, any>;
+    recentHistory?: Array<{
+      actionId: string;
+      actionType: string;
+      timestamp: Date;
+      success: boolean;
+    }>;
+    policyContext?: Array<{
+      policyId: string;
+      decision: "allow" | "deny";
+      timestamp: Date;
+    }>;
+  };
 }
 
 /**

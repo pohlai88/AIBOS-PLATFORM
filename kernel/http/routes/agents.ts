@@ -1,143 +1,130 @@
 /**
- * AI Agents HTTP API Routes
+ * Agent Management Routes
  * 
- * AI-BOS Kernel v6.0.0 Phase 5: Agent Management API
+ * REST API for agent memory and management
  */
 
 import type { Hono } from "hono";
 import { z } from "zod";
-import { validateJsonBody, validateParams, getValidBody, getValidParams } from "../zod-middleware";
-import { agentRegistry } from "../../agents/registry/agent-registry";
-import { createTraceLogger } from "../../observability/logger";
+import { validateParams, validateJsonBody, getValidParams } from "../middleware/validation";
+import { agentMemoryManager } from "../agents/memory";
+import { agentRegistry } from "../agents/registry/agent-registry";
 
-const logger = createTraceLogger("agent-routes");
+const AgentSessionParams = z.object({
+  agentId: z.string().min(1),
+  sessionId: z.string().min(1),
+});
 
+/**
+ * Register agent management routes
+ */
 export function registerAgentRoutes(app: Hono) {
-  // --- Agent Discovery ---
+  // GET /agents/:agentId/memory/:sessionId - Get agent memory
+  app.get(
+    "/agents/:agentId/memory/:sessionId",
+    validateParams(AgentSessionParams),
+    async (c) => {
+      const { agentId, sessionId } = getValidParams<z.infer<typeof AgentSessionParams>>(c);
 
-  // GET /agents - List all registered agents
-  app.get("/agents", async (c) => {
-    const agents = agentRegistry.listAgents();
-    return c.json({ agents, count: agents.length });
-  });
+      const memory = await agentMemoryManager.getMemory(agentId, sessionId, false);
 
-  // GET /agents/:id - Get agent details
-  const GetAgentParams = z.object({
-    id: z.string().min(1),
-  });
-  app.get("/agents/:id", validateParams(GetAgentParams), async (c) => {
-    const { id } = getValidParams(c);
-    const entry = agentRegistry.getAgentEntry(id);
-    
-    if (!entry) {
-      return c.json({ error: `Agent '${id}' not found` }, 404);
-    }
+      if (!memory) {
+        return c.json({ error: "Memory not found" }, 404);
+      }
 
-    return c.json(entry);
-  });
-
-  // GET /agents/:id/health - Get agent health status
-  app.get("/agents/:id/health", validateParams(GetAgentParams), async (c) => {
-    const { id } = getValidParams(c);
-    const agent = agentRegistry.getAgent(id);
-    
-    if (!agent) {
-      return c.json({ error: `Agent '${id}' not found` }, 404);
-    }
-
-    try {
-      const health = await agent.getHealth();
-      return c.json(health);
-    } catch (error) {
-      logger.error({ error, agentId: id }, "Failed to get agent health");
-      return c.json({ error: "Failed to get agent health" }, 500);
-    }
-  });
-
-  // --- Agent Lifecycle Management ---
-
-  // POST /agents/:id/pause - Pause an agent
-  app.post("/agents/:id/pause", validateParams(GetAgentParams), async (c) => {
-    const { id } = getValidParams(c);
-    
-    try {
-      await agentRegistry.pauseAgent(id);
-      return c.json({ success: true, message: `Agent '${id}' paused` });
-    } catch (error) {
-      logger.error({ error, agentId: id }, "Failed to pause agent");
-      return c.json({ error: error instanceof Error ? error.message : "Failed to pause agent" }, 400);
-    }
-  });
-
-  // POST /agents/:id/resume - Resume an agent
-  app.post("/agents/:id/resume", validateParams(GetAgentParams), async (c) => {
-    const { id } = getValidParams(c);
-    
-    try {
-      await agentRegistry.resumeAgent(id);
-      return c.json({ success: true, message: `Agent '${id}' resumed` });
-    } catch (error) {
-      logger.error({ error, agentId: id }, "Failed to resume agent");
-      return c.json({ error: error instanceof Error ? error.message : "Failed to resume agent" }, 400);
-    }
-  });
-
-  // POST /agents/:id/stop - Stop an agent
-  app.post("/agents/:id/stop", validateParams(GetAgentParams), async (c) => {
-    const { id } = getValidParams(c);
-    
-    try {
-      await agentRegistry.stopAgent(id);
-      return c.json({ success: true, message: `Agent '${id}' stopped` });
-    } catch (error) {
-      logger.error({ error, agentId: id }, "Failed to stop agent");
-      return c.json({ error: error instanceof Error ? error.message : "Failed to stop agent" }, 400);
-    }
-  });
-
-  // --- Agent Discovery by Capability/Domain ---
-
-  // GET /agents/by-capability/:capability - Find agents by capability
-  const GetByCapabilityParams = z.object({
-    capability: z.string().min(1),
-  });
-  app.get("/agents/by-capability/:capability", validateParams(GetByCapabilityParams), async (c) => {
-    const { capability } = getValidParams(c);
-    const agents = agentRegistry.findAgentsByCapability(capability);
-    return c.json({ capability, agents, count: agents.length });
-  });
-
-  // GET /agents/by-domain/:domain - Find agents by orchestra domain
-  const GetByDomainParams = z.object({
-    domain: z.string().min(1),
-  });
-  app.get("/agents/by-domain/:domain", validateParams(GetByDomainParams), async (c) => {
-    const { domain } = getValidParams(c);
-    const agents = agentRegistry.findAgentsByDomain(domain);
-    return c.json({ domain, agents, count: agents.length });
-  });
-
-  // --- Agent Health Dashboard ---
-
-  // GET /agents/health - Get health status for all agents
-  app.get("/agents/health", async (c) => {
-    try {
-      const healthStatuses = await agentRegistry.getHealthStatuses();
-      const healthArray = Array.from(healthStatuses.values());
-      
       return c.json({
-        agents: healthArray,
-        totalAgents: healthArray.length,
-        healthy: healthArray.filter(h => h.status === "running").length,
-        paused: healthArray.filter(h => h.status === "paused").length,
-        errors: healthArray.filter(h => h.status === "error").length,
+        agentId: memory.agentId,
+        sessionId: memory.sessionId,
+        context: memory.context,
+        historyCount: memory.history.length,
+        recentHistory: memory.history.slice(-10), // Last 10 actions
+        metadata: {
+          createdAt: memory.metadata.createdAt.toISOString(),
+          lastAccessed: memory.metadata.lastAccessed.toISOString(),
+          lastUpdated: memory.metadata.lastUpdated.toISOString(),
+          accessCount: memory.metadata.accessCount,
+        },
       });
-    } catch (error) {
-      logger.error({ error }, "Failed to get all agent health statuses");
-      return c.json({ error: "Failed to get agent health statuses" }, 500);
     }
-  });
+  );
 
-  logger.info("Agent routes registered");
+  // PUT /agents/:agentId/memory/:sessionId/context - Update agent context
+  app.put(
+    "/agents/:agentId/memory/:sessionId/context",
+    validateParams(AgentSessionParams),
+    validateJsonBody(z.record(z.any())),
+    async (c) => {
+      const { agentId, sessionId } = getValidParams<z.infer<typeof AgentSessionParams>>(c);
+      const updates = await c.req.json<Record<string, any>>();
+
+      await agentMemoryManager.updateContext(agentId, sessionId, updates);
+
+      return c.json({
+        success: true,
+        message: "Context updated",
+      });
+    }
+  );
+
+  // POST /agents/:agentId/memory/:sessionId/snapshot - Create memory snapshot
+  app.post(
+    "/agents/:agentId/memory/:sessionId/snapshot",
+    validateParams(AgentSessionParams),
+    async (c) => {
+      const { agentId, sessionId } = getValidParams<z.infer<typeof AgentSessionParams>>(c);
+
+      const snapshot = await agentMemoryManager.createSnapshot(agentId, sessionId);
+
+      if (!snapshot) {
+        return c.json({ error: "Memory not found" }, 404);
+      }
+
+      return c.json({
+        success: true,
+        snapshot: {
+          agentId: snapshot.agentId,
+          sessionId: snapshot.sessionId,
+          context: snapshot.context,
+          historyCount: snapshot.history.length,
+          metadata: {
+            createdAt: snapshot.metadata.createdAt.toISOString(),
+            lastUpdated: snapshot.metadata.lastUpdated.toISOString(),
+          },
+        },
+      });
+    }
+  );
+
+  // GET /agents/:agentId/sessions - List all sessions for an agent
+  app.get(
+    "/agents/:agentId/sessions",
+    validateParams(z.object({ agentId: z.string().min(1) })),
+    async (c) => {
+      const { agentId } = getValidParams<z.infer<typeof z.object({ agentId: z.string().min(1) })>>(c);
+
+      const sessions = await agentMemoryManager.listSessions(agentId);
+
+      return c.json({
+        agentId,
+        sessions,
+        count: sessions.length,
+      });
+    }
+  );
+
+  // DELETE /agents/:agentId/memory/:sessionId - Delete agent memory
+  app.delete(
+    "/agents/:agentId/memory/:sessionId",
+    validateParams(AgentSessionParams),
+    async (c) => {
+      const { agentId, sessionId } = getValidParams<z.infer<typeof AgentSessionParams>>(c);
+
+      await agentMemoryManager.deleteMemory(agentId, sessionId);
+
+      return c.json({
+        success: true,
+        message: "Memory deleted",
+      });
+    }
+  );
 }
-

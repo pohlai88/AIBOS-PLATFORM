@@ -32,6 +32,8 @@ export class AgentOrchestraConnector {
   /**
    * Execute orchestra action on behalf of an agent
    * Applies policy enforcement before execution
+   * 
+   * Enhanced with memory management - automatically loads and updates agent memory
    */
   public async executeOrchestraAction(
     agent: Agent,
@@ -61,21 +63,37 @@ export class AgentOrchestraConnector {
       };
     }
 
-    // 2. Build orchestra request
+    // 2. Load agent memory context (if available)
+    const { agentMemoryManager } = await import("../memory");
+    const sessionId = context.sessionId || `session-${Date.now()}`;
+    const memory = await agentMemoryManager.getMemory(agentId, sessionId, false);
+    
+    // Enrich context with memory if available
+    const enrichedContext = { ...context };
+    if (memory) {
+      enrichedContext.memory = {
+        context: memory.context,
+        recentHistory: memory.history.slice(-10), // Last 10 actions
+        policyContext: memory.policyContext,
+      };
+    }
+
+    // 2.5. Build orchestra request
     const request: OrchestraActionRequest = {
       domain,
       action,
       arguments,
       context: {
-        tenantId: context.tenantId,
-        userId: context.userId,
-        sessionId: context.sessionId,
-        traceId: context.traceId,
+        tenantId: enrichedContext.tenantId,
+        userId: enrichedContext.userId,
+        sessionId: enrichedContext.sessionId || sessionId,
+        traceId: enrichedContext.traceId,
         orchestrationId: `agent-${agentId}-${Date.now()}`,
         metadata: {
           agentId,
           agentName: agent.manifest.name,
-          trigger: context.trigger,
+          trigger: enrichedContext.trigger,
+          memory: enrichedContext.memory,
         },
       },
     };
@@ -100,8 +118,44 @@ export class AgentOrchestraConnector {
     }
 
     // 4. Execute orchestra action
+    const actionStartTime = Date.now();
     logger.debug({ agentId, domain, action }, "Executing orchestra action for agent");
     const result = await orchestraConductor.coordinateAction(request);
+    const actionDurationMs = Date.now() - actionStartTime;
+
+    // 5. Save action to agent memory history
+    if (result.success) {
+      try {
+        await agentMemoryManager.addActionToHistory(agentId, sessionId, {
+          actionId: request.context.orchestrationId || `action-${Date.now()}`,
+          actionType: `${domain}.${action}`,
+          arguments,
+          result: {
+            success: result.success,
+            agentId,
+            actionType: `${domain}.${action}`,
+            data: result.data,
+            metadata: {
+              executionTimeMs: actionDurationMs,
+            },
+          },
+          timestamp: new Date(),
+          durationMs: actionDurationMs,
+          success: result.success,
+        });
+
+        // Update context if result contains context updates
+        if (result.contextUpdates) {
+          await agentMemoryManager.updateContext(agentId, sessionId, result.contextUpdates);
+        }
+      } catch (memoryError) {
+        // Log but don't fail the request if memory update fails
+        logger.warn(
+          { agentId, sessionId, error: memoryError },
+          "[AgentOrchestraConnector] Failed to update agent memory"
+        );
+      }
+    }
 
     logger.info({ agentId, domain, action, success: result.success }, "Agent orchestra action completed");
 
