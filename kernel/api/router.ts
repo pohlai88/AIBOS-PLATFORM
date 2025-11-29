@@ -15,6 +15,7 @@ import { auditRoute } from "./routes/audit";
 import { registerActionRoutes as registerNewActionRoutes } from "../http/routes/actions";
 import { registerEngineRoutes as registerNewEngineRoutes } from "../http/routes/engines";
 import { registerMetricsRoutes } from "../http/routes/metrics";
+import { registerSecretRoutes } from "../http/routes/secrets";
 
 export const createApiRouter = () => {
   const app = new Hono();
@@ -36,6 +37,7 @@ export const createApiRouter = () => {
   app.use("/api/*", authMiddleware);
   registerNewActionRoutes(app);
   registerNewEngineRoutes(app);
+  registerSecretRoutes(app);
 
   // Legacy routes (with optional auth for backward compat)
   app.use("/metadata/*", optionalAuthMiddleware);

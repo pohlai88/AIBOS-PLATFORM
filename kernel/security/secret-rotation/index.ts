@@ -6,6 +6,8 @@
 
 export { SecretManager, secretManager } from './secret.manager';
 export { RotationScheduler, rotationScheduler } from './rotation.scheduler';
+export { AutoRotationService } from './auto-rotation.service';
+export { ExpirationMonitor } from './expiration-monitor';
 export {
     secrets,
     verifySecret,
@@ -21,5 +23,11 @@ export type {
     RotationResult,
     RotationPolicy,
 } from './types';
+export type {
+    RotationSchedule,
+    ExpirationAlert,
+    ExpirationMonitorConfig,
+    SecretExpirationInfo,
+} from './auto-rotation.service';
 export { DEFAULT_ROTATION_POLICIES } from './types';
 
