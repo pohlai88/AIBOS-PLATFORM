@@ -89,6 +89,46 @@ export function registerMcpRoutes(app: Hono) {
     }
   );
 
+  // GET /mcp/servers/:serverName/health - Get MCP server health status
+  app.get(
+    "/mcp/servers/:serverName/health",
+    validateParams(MCPServerNameParams),
+    async (c) => {
+      const { serverName } = getValidParams<z.infer<typeof MCPServerNameParams>>(c);
+      
+      const { mcpHealthMonitor } = await import("../../mcp/health");
+      const healthCheck = await mcpHealthMonitor.checkHealth(serverName);
+      const metrics = mcpHealthMonitor.getMetrics(serverName);
+
+      return c.json({
+        ...healthCheck,
+        metrics: metrics || null,
+      });
+    }
+  );
+
+  // GET /mcp/health - Get health status of all MCP servers
+  app.get("/mcp/health", async (c) => {
+    const { mcpHealthMonitor } = await import("../../mcp/health");
+    const healthChecks = await mcpHealthMonitor.checkAllHealth();
+    const allMetrics = mcpHealthMonitor.getAllMetrics();
+
+    const summary = {
+      total: healthChecks.length,
+      healthy: healthChecks.filter((h) => h.status === "healthy").length,
+      degraded: healthChecks.filter((h) => h.status === "degraded").length,
+      unhealthy: healthChecks.filter((h) => h.status === "unhealthy").length,
+      unknown: healthChecks.filter((h) => h.status === "unknown").length,
+    };
+
+    return c.json({
+      summary,
+      servers: healthChecks,
+      metrics: Object.fromEntries(allMetrics),
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   // POST /mcp/servers/:serverName/invoke - Invoke MCP tool
   app.post(
     "/mcp/servers/:serverName/invoke",
