@@ -21,7 +21,7 @@ import { baseLogger } from "../observability/logger";
 // Types
 // ═══════════════════════════════════════════════════════════
 
-export type HealingAction = 
+export type HealingAction =
   | "clear_cache"
   | "clear_tenant_cache"
   | "reset_patterns"
@@ -101,7 +101,7 @@ export class SelfHealingEngine {
 
     if (events.length > 0) {
       this.lastHealTime = Date.now();
-      
+
       eventBus.publish({
         type: "selfhealer.actions",
         actions: events.map(e => e.action),
@@ -190,7 +190,7 @@ export class SelfHealingEngine {
    */
   static emergencyReset(): HealingEvent[] {
     baseLogger.warn("🚨 Self-Heal: EMERGENCY RESET");
-    
+
     return [
       this.heal("clear_cache", "Emergency"),
       this.heal("clear_queue", "Emergency"),

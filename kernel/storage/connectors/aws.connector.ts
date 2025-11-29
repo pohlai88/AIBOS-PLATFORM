@@ -53,8 +53,8 @@ export class AWSRDSConnector implements StorageContract {
       idleTimeoutMillis: config.idleTimeoutMs || 30000,
       connectionTimeoutMillis: config.connectionTimeoutMs || 2000,
       ssl: config.ssl !== false ? (
-        typeof config.ssl === "object" 
-          ? config.ssl 
+        typeof config.ssl === "object"
+          ? config.ssl
           : { rejectUnauthorized: true }
       ) : undefined,
     });
@@ -91,7 +91,7 @@ export class AWSRDSConnector implements StorageContract {
       const client = await this.pool.connect();
       await client.query("SELECT NOW()");
       client.release();
-      
+
       baseLogger.info(
         { host: this.config.host, port: this.config.port, database: this.config.database },
         "[AWS RDS] Connected to %s:%d/%s",
@@ -99,7 +99,7 @@ export class AWSRDSConnector implements StorageContract {
         this.config.port,
         this.config.database
       );
-      
+
       await eventBus.publish("storage.connected", {
         type: "storage.connected",
         provider: "aws",
@@ -116,9 +116,9 @@ export class AWSRDSConnector implements StorageContract {
   async disconnect(): Promise<void> {
     await this.pool.end();
     await Promise.all(this.readPools.map(pool => pool.end()));
-    
+
     baseLogger.info("[AWS RDS] Disconnected");
-    
+
     await eventBus.publish("storage.disconnected", {
       type: "storage.disconnected",
       provider: "aws",
@@ -143,7 +143,7 @@ export class AWSRDSConnector implements StorageContract {
     options?: QueryOptions
   ): Promise<T[]> {
     const pool = this.selectPool(options?.readOnly);
-    
+
     try {
       const result: QueryResult = await pool.query(sql, params);
       return result.rows as T[];

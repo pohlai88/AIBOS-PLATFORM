@@ -59,7 +59,7 @@ export class ConsciousLoop {
       this.cycle();
     }, this.CYCLE_INTERVAL_MS);
 
-    console.log("🧠 Conscious Loop activated — Kernel is now self-aware");
+    baseLogger.info("🧠 Conscious Loop activated — Kernel is now self-aware");
 
     eventBus.publish({
       type: "conscious.started",
@@ -83,7 +83,7 @@ export class ConsciousLoop {
     AutonomousTuner.stop();
     ResourceThrottler.stopMonitoring();
 
-    console.log("🧠 Conscious Loop deactivated");
+    baseLogger.info("🧠 Conscious Loop deactivated");
 
     eventBus.publish({
       type: "conscious.stopped",

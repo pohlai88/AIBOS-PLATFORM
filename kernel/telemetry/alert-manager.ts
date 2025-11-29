@@ -91,7 +91,9 @@ export class AlertManager {
         }
       } catch (error) {
         // Rule evaluation failed, skip
-        console.warn(`Alert rule ${ruleId} evaluation failed:`, error);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../observability/logger");
+        baseLogger.warn({ ruleId, error }, "Alert rule %s evaluation failed", ruleId);
       }
     }
 

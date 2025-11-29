@@ -270,7 +270,7 @@ export class AzureSQLConnector implements StorageContract {
       const ctx: TransactionContext = {
         query: async <R = any>(sql: string, params?: any[]) => {
           const request = new Request(transaction);
-          
+
           if (params && params.length > 0) {
             params.forEach((param, index) => {
               request.input(`param${index}`, param);
@@ -283,7 +283,7 @@ export class AzureSQLConnector implements StorageContract {
         },
         execute: async (sql: string, params?: any[]) => {
           const request = new Request(transaction);
-          
+
           if (params && params.length > 0) {
             params.forEach((param, index) => {
               request.input(`param${index}`, param);

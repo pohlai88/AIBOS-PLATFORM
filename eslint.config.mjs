@@ -52,6 +52,37 @@ export default defineConfig([
       "no-console": "warn",
     },
   },
+  // Kernel production code - strict no-console rule
+  {
+    files: ["kernel/**/*.{js,jsx,ts,tsx}"],
+    ignores: [
+      "**/tests/**",
+      "**/test/**",
+      "**/__tests__/**",
+      "**/*.test.{js,jsx,ts,tsx}",
+      "**/*.spec.{js,jsx,ts,tsx}",
+      "**/examples/**",
+      "**/DEMO.ts",
+      "**/scripts/**",
+      "**/cli/**",
+      "**/utils/logger.ts", // Logger utility itself
+      "**/security/manifest-signer.ts", // CLI tool
+    ],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    rules: {
+      "no-console": ["error", { 
+        allow: [] // No console methods allowed in production code
+      }],
+    },
+  },
   // Global ignores for all files
   globalIgnores([
     "node_modules/**",

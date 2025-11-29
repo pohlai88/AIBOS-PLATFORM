@@ -64,7 +64,9 @@ export class WatchdogDaemon {
    */
   static start(config?: Partial<WatchdogConfig>): void {
     if (this.interval) {
-      console.warn("Watchdog already running");
+      // Import logger dynamically to avoid circular dependency
+      const { baseLogger } = await import("../observability/logger");
+      baseLogger.warn("Watchdog already running");
       return;
     }
 
@@ -87,7 +89,7 @@ export class WatchdogDaemon {
       timestamp: new Date().toISOString(),
     } as any);
 
-    console.log("🐕 Watchdog Daemon started");
+    baseLogger.info("🐕 Watchdog Daemon started");
   }
 
   /**
@@ -105,7 +107,7 @@ export class WatchdogDaemon {
         timestamp: new Date().toISOString(),
       } as any);
 
-      console.log("🐕 Watchdog Daemon stopped");
+      baseLogger.info("🐕 Watchdog Daemon stopped");
     }
   }
 
@@ -144,7 +146,7 @@ export class WatchdogDaemon {
       }
 
     } catch (error: any) {
-      console.error("Watchdog cycle error:", error.message);
+      baseLogger.error({ error }, "Watchdog cycle error: %s", error.message);
       eventBus.publish({
         type: "watchdog.error",
         error: error.message,

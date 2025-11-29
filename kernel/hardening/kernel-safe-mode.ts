@@ -154,7 +154,7 @@ export class KernelSafeMode {
 
       case "cautious":
         // Block high-risk operations
-        return !["delete", "truncate", "drop"].some(op => 
+        return !["delete", "truncate", "drop"].some(op =>
           operation.toLowerCase().includes(op)
         );
 

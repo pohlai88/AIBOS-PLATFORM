@@ -22,18 +22,18 @@ export interface GCPCloudSQLConfig {
   // Connection via Cloud SQL Proxy
   instanceConnectionName?: string; // Format: project:region:instance
   socketPath?: string; // Unix socket path for Cloud SQL Proxy
-  
+
   // Or direct connection
   host?: string;
   port?: number;
-  
+
   database: string;
   user: string;
   password?: string;
-  
+
   // IAM authentication
   useIAM?: boolean;
-  
+
   // SSL configuration
   ssl?: boolean | {
     rejectUnauthorized: boolean;
@@ -41,12 +41,12 @@ export interface GCPCloudSQLConfig {
     cert?: string;
     key?: string;
   };
-  
+
   // Pool configuration
   maxConnections?: number;
   idleTimeoutMs?: number;
   connectionTimeoutMs?: number;
-  
+
   // Read replicas for load distribution
   readReplicaInstances?: string[];
 }
@@ -93,7 +93,7 @@ export class GCPCloudSQLConnector implements StorageContract {
     // Cloud SQL Proxy connection (recommended for GCP)
     if (config.instanceConnectionName) {
       const socketPath = config.socketPath || `/cloudsql/${config.instanceConnectionName}`;
-      
+
       return {
         host: socketPath,
         database: config.database,
@@ -129,7 +129,7 @@ export class GCPCloudSQLConnector implements StorageContract {
       await client.query("SELECT NOW()");
       client.release();
 
-      const connectionInfo = this.config.instanceConnectionName 
+      const connectionInfo = this.config.instanceConnectionName
         ? `Cloud SQL: ${this.config.instanceConnectionName}`
         : `Direct: ${this.config.host}:${this.config.port}`;
 

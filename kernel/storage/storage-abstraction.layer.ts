@@ -37,6 +37,7 @@ import type {
     TableSchema,
     MigrationConfig,
 } from './types';
+import { baseLogger } from '../observability/logger';
 
 export class StorageAbstractionLayer {
     private providers = new Map<string, StorageProvider>();
@@ -47,7 +48,7 @@ export class StorageAbstractionLayer {
      */
     registerProvider(name: string, provider: StorageProvider): void {
         this.providers.set(name, provider);
-        console.info(`[SAL] Registered provider: ${name}`);
+        baseLogger.info({ name }, "[SAL] Registered provider: %s", name);
     }
 
     /**
@@ -69,7 +70,12 @@ export class StorageAbstractionLayer {
         // Store configuration
         this.tenantConfigs.set(tenantId, config);
 
-        console.info(`[SAL] Configured ${config.provider} for tenant: ${tenantId}`);
+        baseLogger.info(
+            { provider: config.provider, tenantId },
+            "[SAL] Configured %s for tenant: %s",
+            config.provider,
+            tenantId
+        );
     }
 
     /**
@@ -201,7 +207,7 @@ export class StorageAbstractionLayer {
         durationMs: number;
         errors?: string[];
     }> {
-        console.info(`[SAL] Starting migration for tenant: ${tenantId}`);
+        baseLogger.info({ tenantId }, "[SAL] Starting migration for tenant: %s", tenantId);
         const startTime = Date.now();
 
         const sourceConfig = this.tenantConfigs.get(tenantId);
@@ -229,7 +235,7 @@ export class StorageAbstractionLayer {
 
             for (const tableName of tables) {
                 try {
-                    console.info(`[SAL] Migrating table: ${tableName}`);
+                    baseLogger.info({ tableName, tenantId }, "[SAL] Migrating table: %s", tableName);
 
                     // Get schema
                     const schema = await sourceProvider.getTableSchema(tableName, sourceConfig);
@@ -273,11 +279,16 @@ export class StorageAbstractionLayer {
                     }
 
                     migratedTables++;
-                    console.info(`[SAL] ✅ Migrated table: ${tableName} (${migratedRows} rows)`);
+                    baseLogger.info(
+                        { tableName, migratedRows, tenantId },
+                        "[SAL] ✅ Migrated table: %s (%d rows)",
+                        tableName,
+                        migratedRows
+                    );
                 } catch (err) {
                     const error = `Failed to migrate table ${tableName}: ${err instanceof Error ? err.message : String(err)}`;
                     errors.push(error);
-                    console.error(`[SAL] ❌ ${error}`);
+                    baseLogger.error({ error, tableName, tenantId }, "[SAL] ❌ %s", error);
 
                     if (!options.continueOnError) {
                         throw err;
@@ -289,7 +300,11 @@ export class StorageAbstractionLayer {
             this.tenantConfigs.set(tenantId, targetConfig);
 
             const durationMs = Date.now() - startTime;
-            console.info(`[SAL] ✅ Migration complete in ${durationMs}ms`);
+            baseLogger.info(
+                { tenantId, durationMs, migratedTables, migratedRows },
+                "[SAL] ✅ Migration complete in %dms",
+                durationMs
+            );
 
             return {
                 success: errors.length === 0,
@@ -299,7 +314,7 @@ export class StorageAbstractionLayer {
                 errors: errors.length > 0 ? errors : undefined,
             };
         } catch (err) {
-            console.error(`[SAL] ❌ Migration failed:`, err);
+            baseLogger.error({ err, tenantId }, "[SAL] ❌ Migration failed");
             throw err;
         }
     }
