@@ -21,7 +21,7 @@ A **complete, production-ready** vertical slice for:
 2. ✅ `types/engine.types.ts` — Engine, action, context types
 3. ✅ `registry/engine.loader.ts` — Engine registry + discovery
 4. ✅ `dispatcher/action.dispatcher.ts` — Action validator + executor
-5. ✅ `routes/actions.route.ts` — HTTP routes (Hono-based)
+5. ✅ `http/routes/actions.ts` — HTTP routes (Hono-based)
 
 ### Accounting Vertical Slice (4 files)
 6. ✅ `contracts/schemas/journal-entry.schema.ts` — Zod schemas
@@ -90,11 +90,11 @@ Create `kernel/index.ts`:
 ```typescript
 import './engines/accounting'; // Auto-registers engine
 import { Hono } from 'hono';
-import { actionsRouter } from './routes/actions.route';
+import { registerActionRoutes } from './http/routes/actions';
 
 const app = new Hono();
 
-app.route('/actions', actionsRouter);
+registerActionRoutes(app);
 
 app.get('/health', (c) => c.json({ status: 'ok' }));
 
@@ -114,7 +114,7 @@ export default {
 
 ### Step 5: Wire Database Proxy (2 min)
 
-Update `routes/actions.route.ts` line 39:
+Update `http/routes/actions.ts` to use actual database connection:
 
 ```typescript
 // Replace placeholder with actual pg pool
@@ -200,7 +200,7 @@ curl -X POST http://localhost:3000/actions/accounting/read.journal_entries \
 ## 🎓 What Just Happened?
 
 1. **HTTP Request** → `POST /actions/accounting/read.journal_entries`
-2. **Route Handler** → `routes/actions.route.ts` receives request
+2. **Route Handler** → `http/routes/actions.ts` receives request
 3. **Dispatcher** → `dispatcher/action.dispatcher.ts` validates input
 4. **Registry** → `registry/engine.loader.ts` finds action handler
 5. **Validator** → Zod schema validates input against contract
@@ -310,7 +310,7 @@ Generate OpenAPI spec from contracts and serve Swagger UI.
 ### Issue: "Database connection failed"
 
 **Cause**: Database proxy not configured  
-**Fix**: Update `routes/actions.route.ts` with actual pg pool
+**Fix**: Update `http/routes/actions.ts` with actual database connection
 
 ### Issue: "Tenant isolation not working"
 

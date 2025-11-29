@@ -154,16 +154,14 @@ These directories were added during development but are not documented in the GR
      - `http/` contains the newer, complete implementation
      - `api/index.ts` is the server entry point
      - **Recommendation:** Consolidate into single `api/` directory
-   
    - `api/routes/` vs `http/routes/` vs `routes/` - Three route directories
      - `api/routes/` - Legacy routes (deprecated, marked with `@deprecated`)
      - `http/routes/` - New routes (active, used by `api/router.ts`)
      - `routes/` - Contains only `actions.route.ts`, appears unused
      - **Recommendation:** Remove `routes/` directory if confirmed unused
-   
    - `boot/` vs `bootstrap/` - **NOT DUPLICATES** (different purposes)
      - `boot/` - Configuration loading (`kernel.config.ts`)
-     - `bootstrap/` - Boot sequence steps (00-config.ts → 18-*.ts)
+     - `bootstrap/` - Boot sequence steps (00-config.ts → 18-\*.ts)
      - **Status:** Both are used and serve different purposes
      - **Recommendation:** Keep both, but consider renaming `boot/` to `config/` for clarity
 
@@ -206,6 +204,7 @@ Update `grcd_template_v_4_kernel_compatible.md` and `GRCD-KERNEL.md` to include 
 ### Option C: Create Directory Mapping Document
 
 Create a mapping document that shows:
+
 - Proposed structure → Actual structure
 - Purpose of each directory
 - When it was added (Phase)
@@ -238,4 +237,3 @@ Create a mapping document that shows:
 ---
 
 **Status:** ⚠️ **ACTION REQUIRED** - Structure discrepancies need resolution
-
