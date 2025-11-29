@@ -40,3 +40,6 @@ export * from "./telemetry/mcp-metrics";
 // SDK Client
 export { MCPClient, MCPClientPool, mcpClientPool } from "./sdk/mcp-client";
 export type { MCPClientConfig, MCPClientState } from "./sdk/mcp-client";
+
+// Cryptography (F-11: MCP Manifest Signatures)
+export * from "./crypto";
