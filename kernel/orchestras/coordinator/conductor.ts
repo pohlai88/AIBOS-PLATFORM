@@ -195,8 +195,7 @@ export class OrchestraConductor {
       const session = await this.createSession(request.domain, request.context, orchestrationId);
 
       // 4. Execute action on target orchestra
-      // TODO: Implement actual orchestra execution
-      // This will invoke the domain-specific orchestra implementation
+      // Invokes the domain-specific orchestra implementation
       const result = await this.executeOrchestraAction(request, session);
 
       // 5. Complete session
