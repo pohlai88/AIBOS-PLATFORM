@@ -8,6 +8,7 @@
         "build": "tsc",
         "dev": "tsx watch index.ts",
         "lint": "eslint . --config ../eslint.config.mjs",
+        "lint:dir": "tsx scripts/dir-lint.ts",
         "start": "node dist/index.js",
         "typecheck": "tsc --noEmit",
         "db:migrate": "tsx scripts/migrate.ts up",
