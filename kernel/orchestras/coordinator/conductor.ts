@@ -14,6 +14,16 @@ import type {
 import { orchestraRegistry } from "../registry/orchestra-registry";
 import { baseLogger as logger } from "../../observability/logger";
 import { randomUUID } from "crypto";
+import { orchestraAuditLogger } from "../audit/orchestra-audit";
+import { orchestraEventEmitter } from "../events/orchestra-events";
+import {
+  recordOrchestraAction,
+  recordCoordination,
+  recordCoordinationStarted,
+  recordCoordinationEnded,
+  recordOrchestraError,
+} from "../telemetry/orchestra-metrics";
+import { orchestraImplementationRegistry } from "../implementations";
 
 /**
  * Orchestra Conductor - Coordinates all domain orchestras
@@ -50,11 +60,14 @@ export class OrchestraConductor {
     const orchestrationId = request.context.orchestrationId || randomUUID();
 
     try {
-      logger.info(`🎼 Conducting action: ${request.domain}.${request.action}`, {
+      logger.info({
         orchestrationId,
         domain: request.domain,
         action: request.action,
-      });
+      }, `🎼 Conducting action: ${request.domain}.${request.action}`);
+
+      // Emit action started event
+      await orchestraEventEmitter.emitActionStarted(request);
 
       // 1. Verify orchestra exists and is active
       const entry = orchestraRegistry.getByDomain(request.domain);
@@ -89,7 +102,7 @@ export class OrchestraConductor {
       }
 
       // 3. Create coordination session
-      const session = this.createSession(request.domain, request.context, orchestrationId);
+      const session = await this.createSession(request.domain, request.context, orchestrationId);
 
       // 4. Execute action on target orchestra
       // TODO: Implement actual orchestra execution
@@ -99,11 +112,28 @@ export class OrchestraConductor {
       // 5. Complete session
       this.completeSession(orchestrationId, result.success);
 
-      logger.info(`✅ Action completed: ${request.domain}.${request.action}`, {
+      // 6. Emit audit, events, metrics
+      const executionTimeMs = Date.now() - startTime;
+      await orchestraAuditLogger.auditAction(request, result);
+
+      if (result.success) {
+        await orchestraEventEmitter.emitActionCompleted(request, result);
+        recordOrchestraAction(request.domain, request.action, "success", executionTimeMs);
+      } else {
+        await orchestraEventEmitter.emitActionFailed(request, result);
+        recordOrchestraAction(request.domain, request.action, "failed", executionTimeMs);
+        recordOrchestraError(
+          request.domain,
+          result.error?.code || "UNKNOWN",
+          "coordinateAction"
+        );
+      }
+
+      logger.info({
         orchestrationId,
         success: result.success,
-        executionTimeMs: Date.now() - startTime,
-      });
+        executionTimeMs,
+      }, `✅ Action completed: ${request.domain}.${request.action}`);
 
       return result;
     } catch (error) {
@@ -113,10 +143,10 @@ export class OrchestraConductor {
         session.status = "failed";
       }
 
-      logger.error(`❌ Action failed: ${request.domain}.${request.action}`, {
+      logger.error({
         orchestrationId,
         error,
-      });
+      }, `❌ Action failed: ${request.domain}.${request.action}`);
 
       return this.buildErrorResult(
         request,
@@ -140,13 +170,17 @@ export class OrchestraConductor {
     requests: OrchestraActionRequest[],
     parallel: boolean = false
   ): Promise<OrchestraActionResult[]> {
+    const startTime = Date.now();
     const orchestrationId = randomUUID();
 
-    logger.info(`🎭 Cross-orchestra coordination started`, {
+    logger.info({
       orchestrationId,
       domains: requests.map((r) => r.domain),
       parallel,
-    });
+    }, `🎭 Cross-orchestra coordination started`);
+
+    // Record coordination started
+    recordCoordinationStarted();
 
     // Add orchestration ID to all requests
     const enrichedRequests = requests.map((req) => ({
@@ -157,14 +191,16 @@ export class OrchestraConductor {
       },
     }));
 
+    let results: OrchestraActionResult[];
+
     if (parallel) {
       // Execute all in parallel
-      return await Promise.all(
+      results = await Promise.all(
         enrichedRequests.map((req) => this.coordinateAction(req))
       );
     } else {
       // Execute in sequence
-      const results: OrchestraActionResult[] = [];
+      results = [];
       for (const req of enrichedRequests) {
         const result = await this.coordinateAction(req);
         results.push(result);
@@ -175,8 +211,22 @@ export class OrchestraConductor {
           break;
         }
       }
-      return results;
     }
+
+    // Record coordination completed
+    const allSucceeded = results.every((r) => r.success);
+    const executionTimeMs = Date.now() - startTime;
+
+    recordCoordination(
+      requests[0].domain,
+      allSucceeded ? "success" : "failed",
+      requests.length,
+      executionTimeMs,
+      parallel
+    );
+    recordCoordinationEnded();
+
+    return results;
   }
 
   /**
@@ -198,11 +248,11 @@ export class OrchestraConductor {
   /**
    * Create coordination session
    */
-  private createSession(
+  private async createSession(
     domain: OrchestrationDomain,
     context: OrchestraActionRequest["context"],
     orchestrationId: string
-  ): OrchestraCoordinationSession {
+  ): Promise<OrchestraCoordinationSession> {
     const session: OrchestraCoordinationSession = {
       orchestrationId,
       initiatingDomain: domain,
@@ -213,50 +263,43 @@ export class OrchestraConductor {
     };
 
     this.activeSessions.set(orchestrationId, session);
+
+    // Emit coordination started event
+    await orchestraEventEmitter.emitCoordinationStarted(session);
+
     return session;
   }
 
   /**
    * Complete coordination session
    */
-  private completeSession(orchestrationId: string, success: boolean): void {
+  private async completeSession(orchestrationId: string, success: boolean): Promise<void> {
     const session = this.activeSessions.get(orchestrationId);
     if (session) {
       session.status = success ? "completed" : "failed";
+
+      // Emit coordination completed event
+      await orchestraEventEmitter.emitCoordinationCompleted(session);
+
+      // Audit the coordination
+      await orchestraAuditLogger.auditCoordination(
+        success ? "completed" : "failed",
+        session
+      );
     }
   }
 
   /**
-   * Execute action on target orchestra (placeholder)
+   * Execute action on target orchestra
    * 
-   * TODO: Implement actual orchestra execution
-   * This will route to the appropriate domain-specific orchestra implementation
+   * Routes the action to the appropriate domain-specific orchestra implementation.
    */
   private async executeOrchestraAction(
     request: OrchestraActionRequest,
     session: OrchestraCoordinationSession
   ): Promise<OrchestraActionResult> {
-    const startTime = Date.now();
-
-    // Placeholder implementation
-    // In production, this will:
-    // 1. Load the domain-specific orchestra
-    // 2. Validate the action is supported
-    // 3. Execute the action with the orchestra's agents and tools
-    // 4. Return the result
-
-    // For now, return mock success
-    return {
-      success: true,
-      domain: request.domain,
-      action: request.action,
-      data: { mock: true, message: "Orchestra execution not yet implemented" },
-      metadata: {
-        executionTimeMs: Date.now() - startTime,
-        agentsInvolved: [],
-        toolsUsed: [],
-      },
-    };
+    // Use the implementation registry to execute the action
+    return await orchestraImplementationRegistry.executeAction(request);
   }
 
   /**

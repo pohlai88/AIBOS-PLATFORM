@@ -18,3 +18,8 @@ export { OrchestraRegistry, orchestraRegistry } from "./registry/orchestra-regis
 export { OrchestraConductor, orchestraConductor } from "./coordinator/conductor";
 export { CrossOrchestraAuth, crossOrchestraAuth } from "./coordinator/cross-orchestra";
 
+// Audit, Events, Telemetry
+export { OrchestraAuditLogger, orchestraAuditLogger } from "./audit/orchestra-audit";
+export { OrchestraEventEmitter, orchestraEventEmitter } from "./events/orchestra-events";
+export * from "./telemetry/orchestra-metrics";
+

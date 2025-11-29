@@ -13,6 +13,12 @@ import type {
 import { validateOrchestraManifest } from "../schemas/orchestra-manifest.schema";
 import { createHash } from "crypto";
 import { baseLogger as logger } from "../../observability/logger";
+import { orchestraAuditLogger } from "../audit/orchestra-audit";
+import { orchestraEventEmitter } from "../events/orchestra-events";
+import {
+  recordOrchestraRegistration,
+  updateAgentCount,
+} from "../telemetry/orchestra-metrics";
 
 /**
  * Orchestra Registry - Singleton pattern
@@ -83,6 +89,18 @@ export class OrchestraRegistry {
       // 6. Store in registry
       this.registry.set(validatedManifest.domain, entry);
 
+      // 7. Emit audit, events, and metrics
+      await orchestraAuditLogger.auditManifestRegistered(
+        validatedManifest,
+        manifestHash
+      );
+      await orchestraEventEmitter.emitManifestRegistered(
+        validatedManifest,
+        manifestHash
+      );
+      recordOrchestraRegistration(validatedManifest.domain, true);
+      updateAgentCount(validatedManifest.domain, validatedManifest.agents.length);
+
       logger.info(`✅ Orchestra registered: ${validatedManifest.domain}`, {
         manifestHash: manifestHash.substring(0, 8),
         agents: validatedManifest.agents.length,
@@ -94,6 +112,12 @@ export class OrchestraRegistry {
         manifestHash,
       };
     } catch (error) {
+      // Record failed registration
+      recordOrchestraRegistration(
+        (manifest as any)?.domain || "unknown",
+        false
+      );
+
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -127,7 +151,7 @@ export class OrchestraRegistry {
   /**
    * Disable orchestra for domain
    */
-  public disable(domain: OrchestrationDomain, reason?: string): boolean {
+  public async disable(domain: OrchestrationDomain, reason?: string): Promise<boolean> {
     const entry = this.registry.get(domain);
     if (!entry) {
       return false;
@@ -135,6 +159,9 @@ export class OrchestraRegistry {
 
     entry.status = "disabled";
     entry.errorMessage = reason;
+
+    // Audit the disable event
+    await orchestraAuditLogger.auditManifestDisabled(domain, reason);
 
     logger.info(`Orchestra disabled: ${domain}`, { reason });
     return true;

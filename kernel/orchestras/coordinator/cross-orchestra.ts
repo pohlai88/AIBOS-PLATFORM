@@ -13,6 +13,9 @@ import type {
 } from "../types";
 import { orchestraRegistry } from "../registry/orchestra-registry";
 import { baseLogger as logger } from "../../observability/logger";
+import { orchestraAuditLogger } from "../audit/orchestra-audit";
+import { orchestraEventEmitter } from "../events/orchestra-events";
+import { recordCrossAuthCheck } from "../telemetry/orchestra-metrics";
 
 /**
  * Cross-Orchestra Authorization Rules
@@ -119,41 +122,63 @@ export class CrossOrchestraAuth {
 
     // 1. Verify both orchestras exist
     if (!orchestraRegistry.isActive(request.sourceDomain)) {
-      return {
+      const result = {
         allowed: false,
         reason: `Source orchestra not active: ${request.sourceDomain}`,
       };
+
+      // Record denial
+      await this.recordAuthResult(request, result);
+
+      return result;
     }
 
     if (!orchestraRegistry.isActive(request.targetDomain)) {
-      return {
+      const result = {
         allowed: false,
         reason: `Target orchestra not active: ${request.targetDomain}`,
       };
+
+      // Record denial
+      await this.recordAuthResult(request, result);
+
+      return result;
     }
 
     // 2. Check cross-orchestra rules
     const rules = CROSS_ORCHESTRA_RULES[request.sourceDomain];
     if (!rules) {
-      return {
+      const result = {
         allowed: false,
         reason: `No rules defined for source domain: ${request.sourceDomain}`,
       };
+
+      await this.recordAuthResult(request, result);
+
+      return result;
     }
 
     if (!rules.canCallDomains.includes(request.targetDomain)) {
-      return {
+      const result = {
         allowed: false,
         reason: `${request.sourceDomain} is not authorized to call ${request.targetDomain}`,
       };
+
+      await this.recordAuthResult(request, result);
+
+      return result;
     }
 
     // 3. Check restricted actions
     if (rules.restrictedActions && rules.restrictedActions.includes(request.action)) {
-      return {
+      const result = {
         allowed: false,
         reason: `Action ${request.action} is restricted for ${request.sourceDomain}`,
       };
+
+      await this.recordAuthResult(request, result);
+
+      return result;
     }
 
     // 4. Check context-based permissions
@@ -164,15 +189,54 @@ export class CrossOrchestraAuth {
     );
 
     if (!permissionCheck.allowed) {
+      await this.recordAuthResult(request, permissionCheck);
+
       return permissionCheck;
     }
 
     // All checks passed
     logger.info(`✅ Cross-orchestra auth granted: ${request.sourceDomain} → ${request.targetDomain}`);
 
-    return {
+    const result = {
       allowed: true,
     };
+
+    await this.recordAuthResult(request, result);
+
+    return result;
+  }
+
+  /**
+   * Record authorization result (audit, events, metrics)
+   */
+  private async recordAuthResult(
+    request: CrossOrchestraAuthRequest,
+    result: CrossOrchestraAuthResult
+  ): Promise<void> {
+    // Audit
+    await orchestraAuditLogger.auditCrossAuth(
+      request.sourceDomain,
+      request.targetDomain,
+      request.action,
+      result.allowed,
+      result.reason,
+      {
+        tenantId: request.context.tenantId,
+        userId: request.context.userId,
+        traceId: request.context.traceId,
+      }
+    );
+
+    // Events
+    await orchestraEventEmitter.emitCrossAuth(
+      request.sourceDomain,
+      request.targetDomain,
+      request.action,
+      result.allowed
+    );
+
+    // Metrics
+    recordCrossAuthCheck(request.sourceDomain, request.targetDomain, result.allowed);
   }
 
   /**
