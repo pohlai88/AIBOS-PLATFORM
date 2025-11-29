@@ -135,25 +135,25 @@ Each orchestra operates with domain autonomy **within constitutional boundaries*
 | F-8 | Kernel MUST support contract versioning with backward compatibility   | MUST                       | ✅                 | SemVer enforcement                           |
 | F-9 | Kernel MUST validate all MCP tool invocations against schemas         | MUST                       | ✅                 | Runtime MCP schema validation                |
 | F-10| Kernel MUST audit all MCP server interactions                         | MUST                       | ✅                 | Immutable audit logs for MCP operations      |
-| F-11| Kernel MUST enforce MCP manifest signatures                           | MUST                       | ⚪                 | Cryptographic signature validation           |
-| F-12| Kernel SHOULD support MCP resource discovery                          | SHOULD                     | ⚪                 | MCP resource enumeration                     |
-| F-13| Kernel SHOULD support MCP prompt templates                            | SHOULD                     | ⚪                 | Optional prompt template management          |
-| F-14| Kernel MAY provide GraphQL endpoint for advanced queries              | MAY                        | ⚪                 | Optional GraphQL layer                       |
-| F-15| Kernel MUST coordinate multiple AI orchestras (DB, UX, BFF, etc.)     | MUST                       | ⚪                 | AI-Orchestra conductor-of-conductors          |
-| F-16| Kernel MUST provide orchestra manifest validation                     | MUST                       | ⚪                 | Validate orchestra.*.manifest.json files     |
-| F-17| Kernel MUST enforce cross-orchestra authorization                     | MUST                       | ⚪                 | DB orchestra cannot bypass Compliance rules  |
-| F-18| Kernel MUST support orchestra-specific tool registries                | MUST                       | ⚪                 | Each orchestra has domain-specific tools     |
-| F-19| Kernel MUST enforce legal-first policy precedence                     | MUST                       | ⚪                 | Law > Industry > Internal policies           |
-| F-20| Kernel MUST support human-in-the-loop orchestration flows             | MUST                       | ⚪                 | HITL approval gates for high-risk actions    |
+| F-11| Kernel MUST enforce MCP manifest signatures                           | MUST                       | ✅                 | Cryptographic signature validation (integrated in manifest validator) |
+| F-12| Kernel SHOULD support MCP resource discovery                          | SHOULD                     | ✅                 | MCP resource enumeration (HTTP API implemented) |
+| F-13| Kernel SHOULD support MCP prompt templates                            | SHOULD                     | ✅                 | Prompt template management (HTTP API implemented) |
+| F-14| Kernel MAY provide GraphQL endpoint for advanced queries              | MAY                        | ⚪                 | Optional GraphQL layer (not implemented - acceptable) |
+| F-15| Kernel MUST coordinate multiple AI orchestras (DB, UX, BFF, etc.)     | MUST                       | ✅                 | AI-Orchestra conductor-of-conductors (8 orchestras implemented) |
+| F-16| Kernel MUST provide orchestra manifest validation                     | MUST                       | ✅                 | Validate orchestra.*.manifest.json files (Zod schema validation) |
+| F-17| Kernel MUST enforce cross-orchestra authorization                     | MUST                       | ✅                 | DB orchestra cannot bypass Compliance rules (cross-orchestra.ts) |
+| F-18| Kernel MUST support orchestra-specific tool registries                | MUST                       | ✅                 | Each orchestra has domain-specific tools (8 orchestras with tools) |
+| F-19| Kernel MUST enforce legal-first policy precedence                     | MUST                       | ✅                 | Law > Industry > Internal policies (precedence-resolver.ts) |
+| F-20| Kernel MUST support human-in-the-loop orchestration flows             | MUST                       | ⚠️                 | HITL approval engine exists but NOT integrated into orchestra conductor |
 
 ### 2.2 Non-Functional Requirements
 
 | ID   | Requirement              | Target                                       | Measurement Source                                         | Status |
 | ---- | ------------------------ | -------------------------------------------- | ---------------------------------------------------------- | ------ |
 | NF-1 | Latency                  | <100ms per request (95th percentile)         | Prometheus histogram `kernel_http_request_duration_seconds`| ✅     |
-| NF-2 | Availability             | ≥99.9% uptime                                | Health check monitoring `/healthz`, `/readyz`              | ✅     |
-| NF-3 | Boot time                | <5 seconds                                   | Bootstrap timer in `kernelState`                           | ✅     |
-| NF-4 | Memory footprint         | <512MB baseline                              | Process metrics `process.memoryUsage()`                    | ✅     |
+| NF-2 | Availability             | ≥99.9% uptime                                | Health check monitoring `/healthz`, `/readyz`              | ⚠️     | Availability tracker exists but NOT integrated into health checks |
+| NF-3 | Boot time                | <5 seconds                                   | Bootstrap timer in `kernelState`                           | ⚠️     | Boot tracker exists but NOT called in bootstrap sequence |
+| NF-4 | Memory footprint         | <512MB baseline                              | Process metrics `process.memoryUsage()`                    | ⚠️     | Memory tracker exists but NOT called during runtime |
 | NF-5 | Throughput               | 200 req/sec cluster-wide                     | Rate limiter metrics                                       | ✅     |
 | NF-6 | Multi-tenant isolation   | Zero cross-tenant data leakage               | Isolation verifier tests                                   | ✅     |
 | NF-7 | Secrets management       | KMS with automatic rotation                  | Audit log verification                                     | ✅     |
@@ -173,9 +173,9 @@ Each orchestra operates with domain autonomy **within constitutional boundaries*
 | C-4 | Kernel MUST support backward compatibility with SemVer enforcement  | API Governance                    | Version validation tests               | ✅     |
 | C-5 | Kernel MUST support audit trail queryability                        | SOC2, ISO 27001                  | Audit API endpoint `/auditz`           | ✅     |
 | C-6 | Kernel MUST align with legal-first priority (law > industry > internal)| EU AI Act, ISO 42001          | Policy pack validation                 | ✅     |
-| C-7 | Kernel MUST enforce MCP manifest compliance                         | ISO 42001, AI Governance         | MCP manifest validation logs           | ⚪     |
-| C-8 | Kernel MUST support human-in-the-loop for critical AI decisions     | EU AI Act, ISO 42001             | Human approval audit logs              | ⚪     |
-| C-9 | Kernel MUST enforce MFRS/IFRS financial reporting standards         | MFRS, IFRS, SOX                  | Finance Orchestra validation           | ⚪     |
+| C-7 | Kernel MUST enforce MCP manifest compliance                         | ISO 42001, AI Governance         | MCP manifest validation logs           | ✅     | ISO 42001 validator integrated in manifest validator |
+| C-8 | Kernel MUST support human-in-the-loop for critical AI decisions     | EU AI Act, ISO 42001             | Human approval audit logs              | ⚠️     | HITL engine exists but NOT integrated into orchestra conductor |
+| C-9 | Kernel MUST enforce MFRS/IFRS financial reporting standards         | MFRS, IFRS, SOX                  | Finance Orchestra validation           | ⚠️     | MFRS/IFRS validators exist but NOT integrated into Finance Orchestra |
 | C-10| Kernel MUST support multi-region data residency                    | GDPR, PDPA                       | Tenant config validation               | ⚪     |
 
 ---
