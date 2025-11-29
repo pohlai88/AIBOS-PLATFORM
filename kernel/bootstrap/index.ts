@@ -18,35 +18,95 @@ import { bootAI } from "./steps/09-ai";
 import { bootSelfTest } from "./steps/10-selftest";
 import { bootAPI } from "./steps/11-api";
 import { bootReady } from "./steps/12-ready";
+import { bootTracker } from "../observability/performance/boot-tracker";
+import { availabilityTracker } from "../observability/sla/availability-tracker";
+import { memoryTracker } from "../observability/performance/memory-tracker";
 
 export async function bootstrapKernel() {
+  // NF-3: Start boot tracking
+  bootTracker.startBoot();
+  bootTracker.startStage("bootstrap-init");
+
   console.log("🔵 Booting AI-BOS Kernel...");
   console.log("═".repeat(50));
 
   // Phase 1: Core Infrastructure
+  bootTracker.startStage("core-config");
   await bootConfig();
+  bootTracker.endStage("core-config");
+
+  bootTracker.startStage("core-logger");
   await bootLogger();
+  bootTracker.endStage("core-logger");
+
+  bootTracker.startStage("core-eventbus");
   await bootEventBus();
+  bootTracker.endStage("core-eventbus");
 
   // Phase 2: Engine Loading & Validation
+  bootTracker.startStage("engines-load");
   const engines = await bootEngines();
+  bootTracker.endStage("engines-load");
+
+  bootTracker.startStage("engines-contracts");
   await bootContracts(engines);
+  bootTracker.endStage("engines-contracts");
 
   // Phase 3: Registry Initialization
+  bootTracker.startStage("registry-metadata");
   await bootMetadata(engines);
+  bootTracker.endStage("registry-metadata");
+
+  bootTracker.startStage("registry-ui");
   await bootUI(engines);
+  bootTracker.endStage("registry-ui");
 
   // Phase 4: Runtime Services
+  bootTracker.startStage("runtime-tenants");
   await bootTenants();
+  bootTracker.endStage("runtime-tenants");
+
+  bootTracker.startStage("runtime-storage");
   await bootStorage();
+  bootTracker.endStage("runtime-storage");
+
+  bootTracker.startStage("runtime-ai");
   await bootAI();
+  bootTracker.endStage("runtime-ai");
 
   // Phase 5: Verification & Startup
+  bootTracker.startStage("verification-selftest");
   await bootSelfTest();
+  bootTracker.endStage("verification-selftest");
+
+  bootTracker.startStage("verification-api");
   await bootAPI();
+  bootTracker.endStage("verification-api");
+
+  bootTracker.startStage("verification-ready");
   await bootReady();
+  bootTracker.endStage("verification-ready");
+
+  // NF-3: End boot tracking
+  bootTracker.endStage("bootstrap-init");
+  const bootTime = bootTracker.endBoot();
+  const bootReport = bootTracker.getBootReport();
+
+  // NF-2: Mark system as available
+  availabilityTracker.markUp("kernel-boot-complete", "Kernel bootstrap completed successfully");
+
+  // NF-4: Initialize memory tracking
+  memoryTracker.initialize();
 
   console.log("═".repeat(50));
   console.log("🟢 AI-BOS Kernel fully loaded.");
+  console.log(`⏱️  Boot time: ${bootTime}ms (SLA: <5000ms, ${bootReport.compliant ? "✅ Compliant" : "❌ Non-compliant"})`);
+  
+  if (!bootReport.compliant) {
+    const slowestStage = bootTracker.getSlowestStage();
+    if (slowestStage) {
+      console.log(`⚠️  Slowest stage: ${slowestStage.name} (${slowestStage.duration}ms)`);
+    }
+  }
 }
 

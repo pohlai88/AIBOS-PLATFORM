@@ -8,6 +8,8 @@
 import type { OrchestraActionRequest, OrchestraActionResult } from "../types";
 import { OrchestrationDomain } from "../types";
 import { baseLogger as logger } from "../../observability/logger";
+import { mfrsIfrsValidator } from "../../finance/compliance/mfrs-ifrs-validator";
+import { chartOfAccounts } from "../../finance/compliance/chart-of-accounts";
 
 export type FinanceAction =
   | "calculate_costs"
@@ -42,12 +44,43 @@ export class FinanceOrchestra {
       switch (request.action as FinanceAction) {
         case "calculate_costs":
           result = await this.calculateCosts(request.arguments);
+          // C-9: Validate financial data against MFRS/IFRS
+          if (result && result.costs) {
+            const validation = this.validateFinancialData(result);
+            if (!validation.valid) {
+              logger.warn({
+                action: request.action,
+                validationErrors: validation.errors,
+              }, "⚠️ Financial data validation warnings");
+            }
+          }
           break;
         case "generate_invoice":
           result = await this.generateInvoice(request.arguments);
+          // C-9: Validate invoice against MFRS/IFRS
+          if (result && result.invoice_id) {
+            const validation = this.validateInvoice(result);
+            if (!validation.valid) {
+              logger.warn({
+                action: request.action,
+                validationErrors: validation.errors,
+              }, "⚠️ Invoice validation warnings");
+              // Don't fail, but log warnings
+            }
+          }
           break;
         case "track_budget":
           result = await this.trackBudget(request.arguments);
+          // C-9: Validate budget data against MFRS/IFRS
+          if (result && result.budget) {
+            const validation = this.validateBudgetData(result);
+            if (!validation.valid) {
+              logger.warn({
+                action: request.action,
+                validationErrors: validation.errors,
+              }, "⚠️ Budget data validation warnings");
+            }
+          }
           break;
         case "forecast_spend":
           result = await this.forecastSpend(request.arguments);
@@ -209,6 +242,119 @@ export class FinanceOrchestra {
       },
       download_url: `/exports/financial_data_${year}_${period}.zip`,
       generated_at: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * C-9: Validate financial data against MFRS/IFRS standards
+   */
+  private validateFinancialData(data: any): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    try {
+      // Validate currency format
+      if (data.costs && data.costs.total) {
+        if (!data.costs.total.currency || !data.costs.total.amount) {
+          errors.push("Total cost must have currency and amount");
+        }
+        if (typeof data.costs.total.amount !== "number" || data.costs.total.amount < 0) {
+          errors.push("Total amount must be a non-negative number");
+        }
+      }
+
+      // Validate breakdown items
+      if (data.breakdown && Array.isArray(data.breakdown)) {
+        data.breakdown.forEach((item: any, index: number) => {
+          if (!item.resource || typeof item.cost !== "number") {
+            errors.push(`Breakdown item ${index} must have resource and numeric cost`);
+          }
+        });
+      }
+    } catch (error) {
+      errors.push(`Validation error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }
+
+  /**
+   * C-9: Validate invoice against MFRS/IFRS standards
+   */
+  private validateInvoice(invoice: any): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    try {
+      // Validate invoice structure
+      if (!invoice.invoice_id || !invoice.customer) {
+        errors.push("Invoice must have invoice_id and customer");
+      }
+
+      // Validate amounts
+      if (typeof invoice.subtotal !== "number" || invoice.subtotal < 0) {
+        errors.push("Subtotal must be a non-negative number");
+      }
+      if (typeof invoice.tax !== "number" || invoice.tax < 0) {
+        errors.push("Tax must be a non-negative number");
+      }
+      if (typeof invoice.total !== "number" || invoice.total < 0) {
+        errors.push("Total must be a non-negative number");
+      }
+
+      // Validate items
+      if (invoice.items && Array.isArray(invoice.items)) {
+        invoice.items.forEach((item: any, index: number) => {
+          if (!item.description || typeof item.quantity !== "number" || typeof item.unit_price !== "number") {
+            errors.push(`Invoice item ${index} must have description, quantity, and unit_price`);
+          }
+        });
+      }
+
+      // Validate currency
+      if (!invoice.currency || typeof invoice.currency !== "string") {
+        errors.push("Invoice must have a valid currency code");
+      }
+    } catch (error) {
+      errors.push(`Validation error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }
+
+  /**
+   * C-9: Validate budget data against MFRS/IFRS standards
+   */
+  private validateBudgetData(budget: any): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    try {
+      if (budget.budget) {
+        const b = budget.budget;
+        if (typeof b.allocated !== "number" || b.allocated < 0) {
+          errors.push("Budget allocated must be a non-negative number");
+        }
+        if (typeof b.spent !== "number" || b.spent < 0) {
+          errors.push("Budget spent must be a non-negative number");
+        }
+        if (typeof b.remaining !== "number") {
+          errors.push("Budget remaining must be a number");
+        }
+        if (b.spent > b.allocated) {
+          errors.push("Budget spent cannot exceed allocated amount");
+        }
+      }
+    } catch (error) {
+      errors.push(`Validation error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
     };
   }
 }

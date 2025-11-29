@@ -25,6 +25,7 @@ import {
 } from "../telemetry/orchestra-metrics";
 import { orchestraImplementationRegistry } from "../implementations";
 import { orchestraPolicyEnforcer } from "../../policy/integration/orchestra-policy-enforcer";
+import { hitlApprovalEngine, riskClassifier } from "../../governance/hitl";
 
 /**
  * Orchestra Conductor - Coordinates all domain orchestras
@@ -102,10 +103,92 @@ export class OrchestraConductor {
         );
       }
 
-      // 2.5. Enforce policies (NEW - C-6 requirement)
+      // 2.5. Enforce policies (C-6 requirement)
       const policyCheck = await orchestraPolicyEnforcer.enforceBeforeAction(request);
       if (!policyCheck.allowed) {
         return orchestraPolicyEnforcer.createDenialResult(request, policyCheck.reason || "Policy denied");
+      }
+
+      // 2.6. Human-in-the-Loop approval for high-risk actions (F-20 / C-8 requirement)
+      const actionType = `${request.domain}.${request.action}`;
+      const riskLevel = riskClassifier.classifyAction(actionType, {
+        tenantId: request.context.tenantId || "default",
+        userId: request.context.userId,
+        ...request.context,
+      });
+
+      if (riskClassifier.requiresApproval(riskLevel)) {
+        logger.info({
+          orchestrationId,
+          actionType,
+          riskLevel,
+        }, `🔐 High-risk action requires human approval: ${actionType}`);
+
+        const approvalRequestId = await hitlApprovalEngine.requestApproval({
+          actionType,
+          requester: request.context.userId || request.context.tenantId || "system",
+          tenantId: request.context.tenantId || "default",
+          description: `Orchestra action: ${request.domain}.${request.action}`,
+          affectedResources: [`orchestra://${request.domain}/${request.action}`],
+          context: {
+            orchestrationId,
+            domain: request.domain,
+            action: request.action,
+            arguments: request.arguments,
+          },
+        });
+
+        // Check if auto-approved (low risk) or requires human approval
+        if (!approvalRequestId.startsWith("auto-approved-")) {
+          logger.info({
+            orchestrationId,
+            approvalRequestId,
+          }, `⏳ Waiting for human approval: ${approvalRequestId}`);
+
+          try {
+            const approval = await hitlApprovalEngine.waitForApproval(approvalRequestId);
+            
+            if (approval.decision !== "approved") {
+              logger.warn({
+                orchestrationId,
+                approvalRequestId,
+                decision: approval.decision,
+              }, `❌ Action denied by human approver`);
+
+              return this.buildErrorResult(
+                request,
+                "HITL_DENIED",
+                `Action denied by human approver: ${approval.reason}`,
+                startTime
+              );
+            }
+
+            logger.info({
+              orchestrationId,
+              approvalRequestId,
+            }, `✅ Action approved by human approver`);
+          } catch (error) {
+            // Approval request expired, rejected, or canceled
+            logger.error({
+              orchestrationId,
+              approvalRequestId,
+              error: error instanceof Error ? error.message : String(error),
+            }, `❌ Approval request failed`);
+
+            return this.buildErrorResult(
+              request,
+              "HITL_FAILED",
+              `Human approval failed: ${error instanceof Error ? error.message : String(error)}`,
+              startTime
+            );
+          }
+        } else {
+          logger.debug({
+            orchestrationId,
+            actionType,
+            riskLevel,
+          }, `✅ Action auto-approved (low risk)`);
+        }
       }
 
       // 3. Create coordination session
