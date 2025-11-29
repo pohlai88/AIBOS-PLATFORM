@@ -107,9 +107,11 @@ This report analyzes architecture shortfalls identified across all audit reports
 
 ---
 
-### 3. API/HTTP Consolidation (Phase 3)
+### 3. API/HTTP Consolidation (Phase 3) ✅
 
 **Source:** `PHASE-3-MIGRATION-PLAN.md`, `DIRECTORY-STRUCTURE-WORK-COMPLETE.md`
+
+**Status:** ✅ **COMPLETE**
 
 **Finding:**
 
@@ -117,29 +119,31 @@ This report analyzes architecture shortfalls identified across all audit reports
 - Legacy routes in `api/routes/` marked deprecated
 - Consolidation plan exists but deferred
 
+**Completed Actions:**
+
+- ✅ Moved `http/middleware/` → `api/middleware/`
+- ✅ Moved `http/routes/` → `api/routes/` (replaced legacy routes)
+- ✅ Updated `api/router.ts` to use local imports
+- ✅ Removed `http/` directory
+- ✅ Updated GRCD-KERNEL.md documentation
+- ✅ Updated directory linter to exclude `http/`
+
 **Impact:**
 
-- ⚠️ Code duplication
-- ⚠️ Maintenance overhead
-- ⚠️ Developer confusion
-- ✅ Not breaking functionality
+- ✅ Single source of truth for HTTP routing
+- ✅ Reduced maintenance overhead
+- ✅ Clear routing structure
+- ✅ No code duplication
 
-**Action Required:**
-
-- Execute Phase 3 migration plan
-- Consolidate `api/` into `http/`
-- Remove deprecated routes
-- Update all imports
-
-**Effort:** 3.5 hours (per migration plan)  
-**Priority:** 🟡 **MEDIUM** - Code quality improvement
+**Status:** ✅ **CONSOLIDATION COMPLETE**  
+**Commit:** `9354645` - "refactor: Consolidate api/ and http/ into single api/ directory (Phase 3)"
 
 **Reasoning:**
 
-- **Not blocking** - both work, just duplication
-- **Improves maintainability** - single source of truth
-- **Reduces confusion** - clear routing structure
-- Can be done when convenient (not urgent)
+- ✅ **Single source of truth** - all HTTP code in `api/`
+- ✅ **Improved maintainability** - no duplication
+- ✅ **Clear structure** - developers know where to add routes
+- ✅ **Documentation updated** - GRCD template reflects new structure
 
 ---
 
@@ -359,7 +363,7 @@ This report analyzes architecture shortfalls identified across all audit reports
 | ------------------------ | ------------- | -------- | --------------- | ------ | --------- | ------------------------------------- |
 | Integration Verification | 🔴 Critical   | P0       | ✅ **COMPLETE** | 2-4h   | Yes       | Compliance requirement - **VERIFIED** |
 | Console.log Cleanup      | 🟡 High       | P1       | ✅ **COMPLETE** | 4-8h   | No        | Production observability - **DONE**   |
-| API/HTTP Consolidation   | 🟡 Medium     | P2       | ⏭️ Pending      | 3.5h   | No        | Code quality improvement              |
+| API/HTTP Consolidation   | 🟡 Medium     | P2       | ✅ **COMPLETE** | 3.5h   | No        | Code quality improvement - **DONE**  |
 | Directory Linter         | 🟡 Medium     | P2       | ✅ **COMPLETE** | 2-4h   | No        | Prevention tool - **DONE**            |
 | MCP SDK Integration      | 🟢 Low        | P3       | ⏭️ Deferred     | 4-8h   | No        | Advanced feature, deferred            |
 | Metadata Registry        | 🟢 Low        | P3       | ⏭️ Deferred     | 2-4h   | No        | Stub doesn't break anything           |

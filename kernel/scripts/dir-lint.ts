@@ -46,7 +46,6 @@ const CANONICAL_STRUCTURE: Record<string, {
   'finance': { required: true, description: 'Finance Compliance (Phase 6)' },
   'governance': { required: true, description: 'Governance Features (Phase 6)' },
   'hardening': { required: true, description: 'Security hardening' },
-  'http': { required: true, description: 'HTTP layer (active implementation)' },
   'isolation': { required: true, description: 'Isolation and sandboxing' },
   'jobs': { required: true, description: 'Background jobs' },
   'mcp': { required: true, description: 'MCP Governance Layer' },
@@ -88,6 +87,7 @@ const CANONICAL_STRUCTURE: Record<string, {
 // Directories that should NOT exist (deprecated/removed)
 const DEPRECATED_DIRS = [
   'routes', // Removed in Phase 2
+  'http', // Consolidated into api/ in Phase 3
 ];
 
 // Files that should exist at root
