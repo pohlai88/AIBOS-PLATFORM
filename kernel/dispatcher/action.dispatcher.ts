@@ -3,6 +3,7 @@ import { engineRegistry } from '../registry/engine.loader';
 import type { ActionContext } from '../types/engine.types';
 import type { KernelActionContract } from '../contracts/contract.types';
 import { appendAuditEntry } from '../audit/hash-chain.store';
+import { baseLogger } from '../observability/logger';
 
 /**
  * Action Dispatch Result
@@ -131,7 +132,12 @@ export class ActionDispatcher {
       };
 
       // 5. Execute action handler
-      console.log(`[ActionDispatcher] Executing action: ${actionId} (tenant: ${actionContext.tenant})`);
+      baseLogger.info(
+        { actionId, tenant: actionContext.tenant },
+        "[ActionDispatcher] Executing action: %s (tenant: %s)",
+        actionId,
+        actionContext.tenant
+      );
       const output = await handler(actionContext);
 
       // 6. Validate output against contract
@@ -189,11 +195,19 @@ export class ActionDispatcher {
           message: error instanceof Error ? error.message : 'Unknown error',
         },
       }).catch((auditError) => {
-        console.error(`[ActionDispatcher] Failed to audit error for ${actionId}:`, auditError);
+        baseLogger.error(
+          { actionId, auditError },
+          "[ActionDispatcher] Failed to audit error for %s",
+          actionId
+        );
       });
 
       // 10. Handle errors
-      console.error(`[ActionDispatcher] Error executing action ${actionId}:`, error);
+      baseLogger.error(
+        { actionId, error },
+        "[ActionDispatcher] Error executing action %s",
+        actionId
+      );
 
       return {
         success: false,
@@ -285,14 +299,14 @@ export class ActionDispatcher {
    * Default emit function
    */
   private defaultEmit(event: string, payload: unknown): void {
-    console.log(`[Event] ${event}:`, payload);
+    baseLogger.info({ event, payload }, "[Event] %s", event);
   }
 
   /**
    * Default log function
    */
   private defaultLog(...args: unknown[]): void {
-    console.log('[Action]', ...args);
+    baseLogger.info({ args }, "[Action] %s", args.join(" "));
   }
 
   /**
@@ -335,7 +349,11 @@ export class ActionDispatcher {
       });
     } catch (error) {
       // Log audit failures but don't throw (audit should never break the action)
-      console.error(`[ActionDispatcher] Audit failed for ${actionId}:`, error);
+      baseLogger.error(
+        { actionId, error },
+        "[ActionDispatcher] Audit failed for %s",
+        actionId
+      );
     }
   }
 }

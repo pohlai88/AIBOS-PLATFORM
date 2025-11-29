@@ -21,6 +21,7 @@
 
 import { engineRegistry } from '../registry/engine.loader';
 import { z } from 'zod';
+import { baseLogger } from '../observability/logger';
 import type { KernelEngine } from '../types/engine.types';
 import type { ActionContext } from '../types/engine.types';
 
@@ -55,7 +56,7 @@ export const GovernanceEnforcer = {
         const engines = engineRegistry.getAll();
 
         if (engines.length === 0) {
-            console.warn('[GOVERNANCE] No engines registered. Skipping manifest validation.');
+            baseLogger.warn('[GOVERNANCE] No engines registered. Skipping manifest validation.');
             return;
         }
 
@@ -93,12 +94,22 @@ export const GovernanceEnforcer = {
 
                 // Check tags (recommended)
                 if (!contract.tags || contract.tags.length === 0) {
-                    console.warn(`[GOVERNANCE] Engine "${engine.id}" action "${actionId}" has no tags (recommended for discovery)`);
+                    baseLogger.warn(
+                        { engineId: engine.id, actionId },
+                        '[GOVERNANCE] Engine "%s" action "%s" has no tags (recommended for discovery)',
+                        engine.id,
+                        actionId
+                    );
                 }
 
                 // Check permissions (recommended for RBAC)
                 if (!contract.permissions || contract.permissions.length === 0) {
-                    console.warn(`[GOVERNANCE] Engine "${engine.id}" action "${actionId}" has no permissions (recommended for RBAC)`);
+                    baseLogger.warn(
+                        { engineId: engine.id, actionId },
+                        '[GOVERNANCE] Engine "%s" action "%s" has no permissions (recommended for RBAC)',
+                        engine.id,
+                        actionId
+                    );
                 }
             }
         }
@@ -111,7 +122,11 @@ export const GovernanceEnforcer = {
             );
         }
 
-        console.info(`[GOVERNANCE] ✓ Engine manifests validated (${engines.length} engines, Pillar 1 & 2)`);
+        baseLogger.info(
+            { engineCount: engines.length },
+            '[GOVERNANCE] ✓ Engine manifests validated (%d engines, Pillar 1 & 2)',
+            engines.length
+        );
     },
 
     /**
@@ -179,7 +194,7 @@ export const GovernanceEnforcer = {
             );
         }
 
-        console.info('[GOVERNANCE] ✓ RBAC declarations validated (Pillar 3)');
+        baseLogger.info('[GOVERNANCE] ✓ RBAC declarations validated (Pillar 3)');
     },
 
     /**
@@ -213,7 +228,7 @@ export const GovernanceEnforcer = {
             );
         }
 
-        console.info('[GOVERNANCE] ✓ Contract versions validated (Pillar 2)');
+        baseLogger.info('[GOVERNANCE] ✓ Contract versions validated (Pillar 2)');
     },
 
     /**
@@ -225,20 +240,21 @@ export const GovernanceEnforcer = {
      * - Hot reload (dev mode)
      */
     runAll(): void {
-        console.info('[GOVERNANCE] Running all governance checks...');
+        baseLogger.info('[GOVERNANCE] Running all governance checks...');
 
         try {
             this.enforceEngineManifests();
             this.enforceRBACDeclarations();
             this.enforceContractVersioning();
 
-            console.info('[GOVERNANCE] ✅ All governance checks passed');
+            baseLogger.info('[GOVERNANCE] ✅ All governance checks passed');
         } catch (error) {
             if (error instanceof GovernanceViolationError) {
-                console.error(`[GOVERNANCE] ❌ ${error.message}`);
-                if (error.context) {
-                    console.error('[GOVERNANCE] Violations:', error.context);
-                }
+                baseLogger.error(
+                    { error: error.message, context: error.context },
+                    '[GOVERNANCE] ❌ %s',
+                    error.message
+                );
                 throw error;
             }
             throw error;
@@ -251,17 +267,17 @@ export const GovernanceEnforcer = {
      * Useful for gradual adoption
      */
     runAllWarningMode(): void {
-        console.info('[GOVERNANCE] Running governance checks (warning mode)...');
+        baseLogger.info('[GOVERNANCE] Running governance checks (warning mode)...');
 
         try {
             this.runAll();
         } catch (error) {
             if (error instanceof GovernanceViolationError) {
-                console.warn('[GOVERNANCE] ⚠️ Governance violations detected (warning mode)');
-                console.warn(`[GOVERNANCE] ${error.message}`);
-                if (error.context) {
-                    console.warn('[GOVERNANCE] Violations:', error.context);
-                }
+                baseLogger.warn(
+                    { error: error.message, context: error.context },
+                    '[GOVERNANCE] ⚠️ Governance violations detected (warning mode): %s',
+                    error.message
+                );
                 return;
             }
             throw error;

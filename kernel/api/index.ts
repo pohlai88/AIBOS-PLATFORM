@@ -50,13 +50,13 @@ export async function startAPIServer(config: { port: number }) {
 export async function stopAPIServer(): Promise<void> {
   if (server) {
     baseLogger.info("🛑 Stopping API server...");
-    
+
     // NF-4: Stop memory tracking
     if ((global as any).__memoryTrackingInterval) {
       clearInterval((global as any).__memoryTrackingInterval);
       (global as any).__memoryTrackingInterval = null;
     }
-    
+
     server.close();
     server = null;
   }

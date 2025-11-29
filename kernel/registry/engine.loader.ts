@@ -1,5 +1,6 @@
 // registry/engine.loader.ts
 import type { KernelEngine } from '../types/engine.types';
+import { baseLogger } from '../observability/logger';
 
 /**
  * Engine Registry
@@ -20,12 +21,22 @@ class EngineRegistry {
       throw new Error(`Engine "${engine.id}" is already registered`);
     }
 
-    console.log(`[EngineRegistry] Registering engine: ${engine.id} (v${engine.manifest.version})`);
+    baseLogger.info(
+      { engineId: engine.id, version: engine.manifest.version },
+      "[EngineRegistry] Registering engine: %s (v%s)",
+      engine.id,
+      engine.manifest.version
+    );
     this.engines.set(engine.id, engine);
 
     // Log registered actions
     const actionIds = Object.keys(engine.manifest.actions);
-    console.log(`[EngineRegistry] Engine "${engine.id}" registered ${actionIds.length} actions:`, actionIds);
+    baseLogger.info(
+      { engineId: engine.id, actionCount: actionIds.length, actionIds },
+      '[EngineRegistry] Engine "%s" registered %d actions',
+      engine.id,
+      actionIds.length
+    );
   }
 
   /**

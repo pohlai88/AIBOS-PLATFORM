@@ -5,36 +5,37 @@ import { initAI } from "../ai/lynx.adapter";
 import { initRegistries } from "../registry/_init";
 import { loadEngines } from "../registry/engine.loader";
 import { startAPIServer } from "../api";
+import { baseLogger } from "../observability/logger";
 
 export async function bootKernel() {
-  console.log("🟦 Booting AI-BOS Kernel...");
+  baseLogger.info("🟦 Booting AI-BOS Kernel...");
 
   // 1. Load config
   const config = loadConfig();
-  console.log("⚙️ Config loaded.");
+  baseLogger.info("⚙️ Config loaded.");
 
   // 2. Init services
   await connectDatabase();
-  console.log("🗄️ Database connected.");
+  baseLogger.info("🗄️ Database connected.");
 
   await connectCache();
-  console.log("📦 Redis connected.");
+  baseLogger.info("📦 Redis connected.");
 
   await initAI();
-  console.log("🤖 Lynx AI initialized.");
+  baseLogger.info("🤖 Lynx AI initialized.");
 
   // 3. Init registries
   initRegistries();
-  console.log("📚 Registries initialized.");
+  baseLogger.info("📚 Registries initialized.");
 
   // 4. Load engines
   await loadEngines();
-  console.log("🚀 Engines loaded.");
+  baseLogger.info("🚀 Engines loaded.");
 
   // 5. Start API server
   await startAPIServer(config);
-  console.log("🌐 Kernel API ready.");
+  baseLogger.info("🌐 Kernel API ready.");
 
-  console.log("🔥 Kernel boot completed.");
+  baseLogger.info("🔥 Kernel boot completed.");
 }
 

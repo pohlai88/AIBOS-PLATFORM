@@ -5,14 +5,14 @@ import { baseLogger } from "../../observability/logger";
 
 export async function bootSelfTest() {
   baseLogger.info("🔍 Running kernel self-tests...");
-  
+
   const tests = [
     {
       name: "Engine Registry",
       test: () => typeof engineRegistry.list === "function"
     },
     {
-      name: "Metadata Registry", 
+      name: "Metadata Registry",
       test: () => typeof metadataRegistry.listModels === "function"
     },
     {
@@ -20,10 +20,10 @@ export async function bootSelfTest() {
       test: () => typeof uiRegistry.list === "function"
     }
   ];
-  
+
   let passed = 0;
   let failed = 0;
-  
+
   for (const { name, test } of tests) {
     try {
       if (test()) {
@@ -37,9 +37,9 @@ export async function bootSelfTest() {
       failed++;
     }
   }
-  
+
   baseLogger.info({ passed, total: tests.length }, "   %d/%d tests passed", passed, tests.length);
-  
+
   if (failed > 0) {
     baseLogger.error({ failed }, "   ⚠️ Some self-tests failed");
   }

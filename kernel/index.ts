@@ -1,9 +1,10 @@
 import { bootstrapKernel } from "./bootstrap";
+import { baseLogger } from "./observability/logger";
 
 bootstrapKernel().then(() => {
-  console.log("🔥 AI-BOS Kernel booted successfully");
+  baseLogger.info("🔥 AI-BOS Kernel booted successfully");
 }).catch((err) => {
-  console.error("❌ Kernel boot failed:", err);
+  baseLogger.error({ err }, "❌ Kernel boot failed");
   process.exit(1);
 });
 

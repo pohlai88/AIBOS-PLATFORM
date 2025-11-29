@@ -2,6 +2,7 @@
 import { Pool } from "pg";
 import { createClient } from "redis";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 import type {
   ActionContext,
   DatabaseProxy,
@@ -107,19 +108,19 @@ export class KernelContainer {
     return {
       getEntity: async (name: string) => {
         // TODO: Implement metadata registry integration
-        console.debug(`[Metadata] getEntity: ${name}`);
+        baseLogger.debug({ entityName: name }, "[Metadata] getEntity: %s", name);
         return null;
       },
 
       getSchema: async (entityName: string) => {
         // TODO: Implement schema registry integration
-        console.debug(`[Metadata] getSchema: ${entityName}`);
+        baseLogger.debug({ entityName }, "[Metadata] getSchema: %s", entityName);
         return null;
       },
 
       getContract: async (actionId: string) => {
         // TODO: Implement contract registry integration
-        console.debug(`[Metadata] getContract: ${actionId}`);
+        baseLogger.debug({ actionId }, "[Metadata] getContract: %s", actionId);
         return null;
       },
     };
@@ -157,7 +158,7 @@ export class KernelContainer {
 
       // Log function (directly on context, not wrapped in object)
       log: (...args: unknown[]) => {
-        console.info("[ENGINE]", ...args);
+        baseLogger.info({ args }, "[ENGINE] %s", args.join(" "));
       },
 
       // Engine-specific configuration
@@ -173,19 +174,19 @@ export class KernelContainer {
   // CLEAN SHUTDOWN
   // -------------------------
   async shutdown(): Promise<void> {
-    console.info("[Container] Shutting down...");
+    baseLogger.info("[Container] Shutting down...");
 
     if (this.dbPool) {
       await this.dbPool.end();
-      console.info("[Container] Database pool closed");
+      baseLogger.info("[Container] Database pool closed");
     }
 
     if (this.redisClient) {
       await this.redisClient.quit();
-      console.info("[Container] Redis client closed");
+      baseLogger.info("[Container] Redis client closed");
     }
 
-    console.info("[Container] Shutdown complete");
+    baseLogger.info("[Container] Shutdown complete");
   }
 }
 

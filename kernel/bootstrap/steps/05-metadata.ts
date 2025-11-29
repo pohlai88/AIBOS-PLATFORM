@@ -5,15 +5,15 @@ import { baseLogger } from "../../observability/logger";
 
 export async function bootMetadata(engines: any[]) {
   baseLogger.info("📘 Initializing metadata registry...");
-  
+
   metadataRegistry.init();
-  
+
   let modelCount = 0;
-  
+
   await registryLock.lock(async () => {
     for (const engine of engines) {
       if (!engine.metadata) continue;
-      
+
       for (const [model, schema] of Object.entries<any>(engine.metadata)) {
         try {
           metadataRegistry.registerModel(model, schema);
@@ -24,7 +24,7 @@ export async function bootMetadata(engines: any[]) {
       }
     }
   });
-  
+
   kernelState.metadataCount = modelCount;
   baseLogger.info({ count: modelCount }, "   Registered %d model(s)", modelCount);
 }

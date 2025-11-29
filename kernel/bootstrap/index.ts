@@ -109,7 +109,7 @@ export async function bootstrapKernel() {
     },
     `⏱️  Boot time: ${bootTime}ms (SLA: <5000ms, ${bootReport.compliant ? "✅ Compliant" : "❌ Non-compliant"})`
   );
-  
+
   if (!bootReport.compliant) {
     const slowestStage = bootTracker.getSlowestStage();
     if (slowestStage) {
