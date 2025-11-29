@@ -109,14 +109,14 @@ console.log(`P99: ${benchmark.p99}ms`);
 
 ```typescript
 interface PolicyTest {
-  name: string;                    // Test identifier
-  description?: string;            // Optional description
+  name: string; // Test identifier
+  description?: string; // Optional description
   policy: string | PolicyManifest; // Policy name or manifest
-  input: PolicyEvaluationRequest;  // Input context
+  input: PolicyEvaluationRequest; // Input context
   expected: boolean | PolicyEvaluationResult; // Expected result
   precedence?: "legal" | "industry" | "internal"; // Expected precedence
-  skip?: boolean;                 // Skip this test
-  only?: boolean;                 // Run only this test
+  skip?: boolean; // Skip this test
+  only?: boolean; // Run only this test
 }
 ```
 
@@ -139,7 +139,7 @@ describe("Policy Tests", () => {
       it("should pass all tests", async () => {
         const results = await policyTestFramework.runSuite(suite);
         const failed = results.filter((r) => !r.passed);
-        
+
         if (failed.length > 0) {
           const messages = failed.map((r) => r.message).join("\n");
           throw new Error(`Tests failed:\n${messages}`);
@@ -172,4 +172,3 @@ describe("Policy Tests", () => {
 
 **Last Updated:** November 29, 2025  
 **Status:** ✅ Implemented - Ready for use
-
