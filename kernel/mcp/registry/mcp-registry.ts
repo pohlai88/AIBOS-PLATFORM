@@ -53,7 +53,7 @@ export class MCPRegistry {
       };
     }
 
-    const validatedManifest = validation.data;
+    const validatedManifest: MCPManifest = validation.data as MCPManifest;
 
     // 2. Generate manifest hash
     const manifestHash = this.generateManifestHash(validatedManifest);

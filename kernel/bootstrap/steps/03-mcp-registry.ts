@@ -7,7 +7,7 @@
 
 import { mcpRegistry, mcpManifestValidator } from "../../mcp";
 import type { MCPManifest } from "../../mcp/types";
-import { logger } from "../../observability/logger";
+import { baseLogger as logger } from "../../observability/logger";
 
 /**
  * MCP Registry Bootstrap Step
