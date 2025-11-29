@@ -15,6 +15,7 @@ import {
   mcpManifestSchema,
 } from "../../mcp";
 import { resourceDiscovery } from "../../mcp/discovery/resource-discovery";
+import { promptTemplateRegistry, type PromptTemplate } from "../../mcp/prompts";
 import {
   validateJsonBody,
   validateParams,
@@ -376,6 +377,67 @@ export function registerMcpRoutes(app: Hono) {
     }
 
     return c.json(metadata);
+  });
+
+  // GET /mcp/prompts/templates - List prompt templates (F-13: Prompt Templates)
+  app.get("/mcp/prompts/templates", async (c) => {
+    const category = c.req.query("category");
+    const templates = promptTemplateRegistry.listTemplates(category);
+    
+    return c.json({
+      count: templates.length,
+      templates,
+    });
+  });
+
+  // GET /mcp/prompts/templates/:id - Get template by ID
+  app.get("/mcp/prompts/templates/:id", async (c) => {
+    const id = c.req.param("id");
+    const template = promptTemplateRegistry.getTemplate(id);
+    
+    if (!template) {
+      return c.json({ error: "Template not found" }, 404);
+    }
+    
+    return c.json(template);
+  });
+
+  // POST /mcp/prompts/templates - Register new template
+  app.post("/mcp/prompts/templates", validateJsonBody(z.any()), async (c) => {
+    const body = await c.req.json<PromptTemplate>();
+    const result = promptTemplateRegistry.registerTemplate(body);
+    
+    if (!result.valid) {
+      return c.json({
+        success: false,
+        errors: result.errors,
+        warnings: result.warnings,
+      }, 400);
+    }
+    
+    return c.json({
+      success: true,
+      message: "Template registered",
+    });
+  });
+
+  // POST /mcp/prompts/templates/:id/render - Render template
+  app.post("/mcp/prompts/templates/:id/render", validateJsonBody(z.any()), async (c) => {
+    const id = c.req.param("id");
+    const body = await c.req.json<{ variables: Record<string, any> }>();
+    
+    try {
+      const rendered = promptTemplateRegistry.renderTemplate(id, body.variables || {});
+      return c.json({
+        success: true,
+        data: rendered,
+      });
+    } catch (error) {
+      return c.json({
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      }, 400);
+    }
   });
 }
 
