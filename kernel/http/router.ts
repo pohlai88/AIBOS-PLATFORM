@@ -25,6 +25,7 @@ import { registerOrchestraRoutes } from './routes/orchestra';
 import { registerPolicyRoutes } from './routes/policy';
 import { registerAgentRoutes } from './routes/agents';
 import { registerApprovalRoutes } from './routes/approvals';
+import { registerSearchRoutes } from './routes/search';
 
 // Extend Hono context variables for kernel-specific data.
 declare module 'hono' {
@@ -69,6 +70,7 @@ export function createKernelApp(): KernelApp {
     registerPolicyRoutes(app);
     registerAgentRoutes(app);
     registerApprovalRoutes(app);
+    registerSearchRoutes(app);
 
     return app;
 }
