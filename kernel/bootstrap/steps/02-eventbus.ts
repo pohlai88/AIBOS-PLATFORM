@@ -1,6 +1,8 @@
 import "../../events/index";
 
+import { baseLogger } from "../../observability/logger";
+
 export async function bootEventBus() {
-  console.log("📡 Event Bus ready.");
+  baseLogger.info("📡 Event Bus ready.");
 }
 

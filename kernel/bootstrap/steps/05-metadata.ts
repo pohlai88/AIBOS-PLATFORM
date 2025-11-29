@@ -1,9 +1,10 @@
 import { metadataRegistry } from "../../registry/metadata.registry";
 import { registryLock } from "../../hardening/locks/registry-lock";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootMetadata(engines: any[]) {
-  console.log("📘 Initializing metadata registry...");
+  baseLogger.info("📘 Initializing metadata registry...");
   
   metadataRegistry.init();
   
@@ -18,13 +19,13 @@ export async function bootMetadata(engines: any[]) {
           metadataRegistry.registerModel(model, schema);
           modelCount++;
         } catch (err: any) {
-          console.warn(`   ⚠️ ${model}: ${err.message}`);
+          baseLogger.warn({ model, error: err.message }, "   ⚠️ %s: %s", model, err.message);
         }
       }
     }
   });
   
   kernelState.metadataCount = modelCount;
-  console.log(`   Registered ${modelCount} model(s)`);
+  baseLogger.info({ count: modelCount }, "   Registered %d model(s)", modelCount);
 }
 

@@ -10,10 +10,11 @@ import { RedisStore } from "../../storage/redis";
 import { kernelState } from "../../hardening/diagnostics/state";
 import { getConfig } from "../../boot/kernel.config";
 import { KernelError } from "../../hardening/errors/kernel-error";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootStorage() {
   const config = getConfig();
-  console.log(`💾 Initializing storage (mode: ${config.storageMode})...`);
+  baseLogger.info({ storageMode: config.storageMode }, "💾 Initializing storage (mode: %s)...", config.storageMode);
 
   // ─────────────────────────────────────────────────────────
   // Database
@@ -28,9 +29,14 @@ export async function bootStorage() {
         "DB_CONNECT_FAILED"
       );
     }
-    console.log(`   ✅ Database: ${dbHealth.status} (${dbHealth.latencyMs}ms)`);
+    baseLogger.info(
+      { status: dbHealth.status, latencyMs: dbHealth.latencyMs },
+      "   ✅ Database: %s (%dms)",
+      dbHealth.status,
+      dbHealth.latencyMs
+    );
   } else {
-    console.log(`   📦 Database: in-memory mode`);
+    baseLogger.info("   📦 Database: in-memory mode");
   }
   kernelState.dbReady = true;
 
@@ -43,13 +49,23 @@ export async function bootStorage() {
   if (config.storageMode === "SUPABASE" && config.redisUrl) {
     if (redisHealth.status === "down") {
       // Soft-fail: log warning but continue
-      console.warn(`   ⚠️ Redis: ${redisHealth.status} - ${redisHealth.error}`);
-      console.warn(`   ⚠️ Continuing in degraded mode (no distributed cache)`);
+      baseLogger.warn(
+        { status: redisHealth.status, error: redisHealth.error },
+        "   ⚠️ Redis: %s - %s",
+        redisHealth.status,
+        redisHealth.error
+      );
+      baseLogger.warn("   ⚠️ Continuing in degraded mode (no distributed cache)");
     } else {
-      console.log(`   ✅ Redis: ${redisHealth.status} (${redisHealth.latencyMs}ms)`);
+      baseLogger.info(
+        { status: redisHealth.status, latencyMs: redisHealth.latencyMs },
+        "   ✅ Redis: %s (%dms)",
+        redisHealth.status,
+        redisHealth.latencyMs
+      );
     }
   } else {
-    console.log(`   📦 Redis: in-memory mode`);
+    baseLogger.info("   📦 Redis: in-memory mode");
   }
 
   // Note: Shutdown handlers are registered in api/index.ts

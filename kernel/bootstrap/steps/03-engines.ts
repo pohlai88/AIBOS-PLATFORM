@@ -4,9 +4,10 @@ import { safeAwait } from "../../hardening/guards/safe-await";
 import { withTimeout } from "../../hardening/guards/with-timeout";
 import { engineLoaderLock } from "../../hardening/locks/engine-loader-lock";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootEngines() {
-  console.log("📦 Loading engines...");
+  baseLogger.info("📦 Loading engines...");
   
   const [err] = await safeAwait(
     engineLoaderLock.lock(() =>
@@ -15,7 +16,7 @@ export async function bootEngines() {
   );
   
   if (err) {
-    console.error("❌ Engine loader error:", err);
+    baseLogger.error({ err }, "❌ Engine loader error");
     throw err;
   }
   
@@ -25,7 +26,7 @@ export async function bootEngines() {
   }
   
   kernelState.enginesLoaded = engines.length;
-  console.log(`   Loaded ${engines.length} engine(s)`);
+  baseLogger.info({ count: engines.length }, "   Loaded %d engine(s)", engines.length);
   return engines;
 }
 

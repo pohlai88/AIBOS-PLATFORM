@@ -1,10 +1,19 @@
 import { loadConfig } from "../../boot/kernel.config";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootConfig() {
-  console.log("⚙️  Loading config...");
+  baseLogger.info("⚙️  Loading config...");
   const config = loadConfig();
-  console.log(`   Root: ${config.rootDir}`);
-  console.log(`   Engines: ${config.engineDir}`);
-  console.log(`   Port: ${config.port}`);
+  baseLogger.info(
+    {
+      rootDir: config.rootDir,
+      engineDir: config.engineDir,
+      port: config.port,
+    },
+    "   Root: %s, Engines: %s, Port: %d",
+    config.rootDir,
+    config.engineDir,
+    config.port
+  );
 }
 

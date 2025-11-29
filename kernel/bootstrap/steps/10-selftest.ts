@@ -1,9 +1,10 @@
 import { metadataRegistry } from "../../registry/metadata.registry";
 import { engineRegistry } from "../../registry/engine.registry";
 import { uiRegistry } from "../../ui/ui.registry";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootSelfTest() {
-  console.log("🔍 Running kernel self-tests...");
+  baseLogger.info("🔍 Running kernel self-tests...");
   
   const tests = [
     {
@@ -28,19 +29,19 @@ export async function bootSelfTest() {
       if (test()) {
         passed++;
       } else {
-        console.error(`   ❌ ${name} failed`);
+        baseLogger.error({ testName: name }, "   ❌ %s failed", name);
         failed++;
       }
     } catch (err) {
-      console.error(`   ❌ ${name} error:`, err);
+      baseLogger.error({ testName: name, err }, "   ❌ %s error", name);
       failed++;
     }
   }
   
-  console.log(`   ${passed}/${tests.length} tests passed`);
+  baseLogger.info({ passed, total: tests.length }, "   %d/%d tests passed", passed, tests.length);
   
   if (failed > 0) {
-    console.error("   ⚠️ Some self-tests failed");
+    baseLogger.error({ failed }, "   ⚠️ Some self-tests failed");
   }
 }
 

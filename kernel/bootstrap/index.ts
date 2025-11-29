@@ -21,14 +21,15 @@ import { bootReady } from "./steps/12-ready";
 import { bootTracker } from "../observability/performance/boot-tracker";
 import { availabilityTracker } from "../observability/sla/availability-tracker";
 import { memoryTracker } from "../observability/performance/memory-tracker";
+import { baseLogger } from "../observability/logger";
 
 export async function bootstrapKernel() {
   // NF-3: Start boot tracking
   bootTracker.startBoot();
   bootTracker.startStage("bootstrap-init");
 
-  console.log("🔵 Booting AI-BOS Kernel...");
-  console.log("═".repeat(50));
+  baseLogger.info("🔵 Booting AI-BOS Kernel...");
+  baseLogger.info("═".repeat(50));
 
   // Phase 1: Core Infrastructure
   bootTracker.startStage("core-config");
@@ -98,14 +99,27 @@ export async function bootstrapKernel() {
   // NF-4: Initialize memory tracking
   memoryTracker.initialize();
 
-  console.log("═".repeat(50));
-  console.log("🟢 AI-BOS Kernel fully loaded.");
-  console.log(`⏱️  Boot time: ${bootTime}ms (SLA: <5000ms, ${bootReport.compliant ? "✅ Compliant" : "❌ Non-compliant"})`);
+  baseLogger.info("═".repeat(50));
+  baseLogger.info("🟢 AI-BOS Kernel fully loaded.");
+  baseLogger.info(
+    {
+      bootTime,
+      compliant: bootReport.compliant,
+      slaTarget: 5000,
+    },
+    `⏱️  Boot time: ${bootTime}ms (SLA: <5000ms, ${bootReport.compliant ? "✅ Compliant" : "❌ Non-compliant"})`
+  );
   
   if (!bootReport.compliant) {
     const slowestStage = bootTracker.getSlowestStage();
     if (slowestStage) {
-      console.log(`⚠️  Slowest stage: ${slowestStage.name} (${slowestStage.duration}ms)`);
+      baseLogger.warn(
+        {
+          stage: slowestStage.name,
+          duration: slowestStage.duration,
+        },
+        `⚠️  Slowest stage: ${slowestStage.name} (${slowestStage.duration}ms)`
+      );
     }
   }
 }

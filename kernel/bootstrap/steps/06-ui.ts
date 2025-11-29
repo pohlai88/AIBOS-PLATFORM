@@ -1,9 +1,10 @@
 import { uiRegistry } from "../../ui/ui.registry";
 import { registryLock } from "../../hardening/locks/registry-lock";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootUI(engines: any[]) {
-  console.log("🎨 Initializing UI registry...");
+  baseLogger.info("🎨 Initializing UI registry...");
   
   uiRegistry.init();
   
@@ -21,6 +22,6 @@ export async function bootUI(engines: any[]) {
   });
   
   kernelState.uiSchemaCount = schemaCount;
-  console.log(`   Registered ${schemaCount} UI schema(s)`);
+  baseLogger.info({ count: schemaCount }, "   Registered %d UI schema(s)", schemaCount);
 }
 

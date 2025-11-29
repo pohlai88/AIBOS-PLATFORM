@@ -7,9 +7,10 @@
 import { startAPIServer, registerShutdownHandlers } from "../../api/index";
 import { loadConfig } from "../../boot/kernel.config";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootAPI() {
-  console.log("🌐 Starting API server...");
+  baseLogger.info("🌐 Starting API server...");
 
   const config = loadConfig();
   await startAPIServer(config);
@@ -18,5 +19,5 @@ export async function bootAPI() {
   registerShutdownHandlers();
 
   kernelState.apiReady = true;
-  console.log(`   ✅ API running on port ${config.port}`);
+  baseLogger.info({ port: config.port }, "   ✅ API running on port %d", config.port);
 }

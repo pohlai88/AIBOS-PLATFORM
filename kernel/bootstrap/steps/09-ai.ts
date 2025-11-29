@@ -2,27 +2,28 @@ import { lynx, getLynxStatus } from "../../ai/lynx.client";
 import { safeAwait } from "../../hardening/guards/safe-await";
 import { withTimeout } from "../../hardening/guards/with-timeout";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootAI() {
-  console.log("🧠 Warming up Lynx AI...");
+  baseLogger.info("🧠 Warming up Lynx AI...");
   
   const [statusErr, status] = await safeAwait(
     withTimeout(getLynxStatus(), 2000, "LLM status check")
   );
   
   if (statusErr || !status) {
-    console.warn("   ⚠️ Could not check LLM status");
+    baseLogger.warn("   ⚠️ Could not check LLM status");
   } else {
     if (status.ollama) {
-      console.log("   ✅ Ollama (local) available");
+      baseLogger.info("   ✅ Ollama (local) available");
     } else {
-      console.log("   ⚠️ Ollama (local) unavailable");
+      baseLogger.info("   ⚠️ Ollama (local) unavailable");
     }
     
     if (status.openai) {
-      console.log("   ✅ OpenAI (fallback) available");
+      baseLogger.info("   ✅ OpenAI (fallback) available");
     } else {
-      console.log("   ⚠️ OpenAI (fallback) unavailable");
+      baseLogger.info("   ⚠️ OpenAI (fallback) unavailable");
     }
   }
   
@@ -32,15 +33,15 @@ export async function bootAI() {
   );
   
   if (warmupErr) {
-    console.warn("   ⚠️ Lynx warmup failed (non-fatal):", warmupErr);
+    baseLogger.warn({ err: warmupErr }, "   ⚠️ Lynx warmup failed (non-fatal)");
     return; // Don't throw - AI is optional
   }
   
   if (warmup && !warmup.includes("unavailable")) {
-    console.log("   Lynx AI ready.");
+    baseLogger.info("   Lynx AI ready.");
     kernelState.aiReady = true;
   } else {
-    console.log("   Lynx AI offline (governance checks will be skipped)");
+    baseLogger.info("   Lynx AI offline (governance checks will be skipped)");
   }
 }
 

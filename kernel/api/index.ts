@@ -10,13 +10,14 @@ import { Database } from "../storage/db";
 import { RedisStore } from "../storage/redis";
 import { availabilityTracker } from "../observability/sla/availability-tracker";
 import { memoryTracker } from "../observability/performance/memory-tracker";
+import { baseLogger } from "../observability/logger";
 
 let server: ReturnType<typeof serve> | null = null;
 
 export async function startAPIServer(config: { port: number }) {
   const app = createApiRouter();
 
-  console.log(`🌍 Starting API server on port ${config.port} ...`);
+  baseLogger.info({ port: config.port }, "🌍 Starting API server on port %d ...", config.port);
 
   server = serve({
     fetch: app.fetch,
@@ -28,7 +29,15 @@ export async function startAPIServer(config: { port: number }) {
     memoryTracker.takeSnapshot();
     const stats = memoryTracker.getMemoryStats();
     if (!stats.compliant) {
-      console.warn(`⚠️  Memory usage exceeds SLA: ${(stats.current / 1024 / 1024).toFixed(2)}MB > ${(stats.slaTarget / 1024 / 1024).toFixed(2)}MB`);
+      baseLogger.warn(
+        {
+          currentMB: (stats.current / 1024 / 1024).toFixed(2),
+          slaTargetMB: (stats.slaTarget / 1024 / 1024).toFixed(2),
+        },
+        "⚠️  Memory usage exceeds SLA: %sMB > %sMB",
+        (stats.current / 1024 / 1024).toFixed(2),
+        (stats.slaTarget / 1024 / 1024).toFixed(2)
+      );
     }
   }, 60000); // Every 60 seconds
 
@@ -40,7 +49,7 @@ export async function startAPIServer(config: { port: number }) {
 
 export async function stopAPIServer(): Promise<void> {
   if (server) {
-    console.log("🛑 Stopping API server...");
+    baseLogger.info("🛑 Stopping API server...");
     
     // NF-4: Stop memory tracking
     if ((global as any).__memoryTrackingInterval) {
@@ -57,7 +66,7 @@ export async function stopAPIServer(): Promise<void> {
  * Graceful shutdown handler
  */
 export async function gracefulShutdown(signal: string): Promise<void> {
-  console.log(`\n🛑 Received ${signal}, initiating graceful shutdown...`);
+  baseLogger.info({ signal }, "🛑 Received %s, initiating graceful shutdown...", signal);
 
   // NF-2: Mark system as down
   availabilityTracker.markDown("graceful-shutdown", `Received ${signal} signal`);
@@ -67,22 +76,22 @@ export async function gracefulShutdown(signal: string): Promise<void> {
   try {
     // 1. Stop accepting new requests
     await stopAPIServer();
-    console.log("   ✅ API server stopped");
+    baseLogger.info("   ✅ API server stopped");
 
     // 2. Close Redis connection
     await RedisStore.shutdown();
-    console.log("   ✅ Redis disconnected");
+    baseLogger.info("   ✅ Redis disconnected");
 
     // 3. Close database connection
     await Database.shutdown();
-    console.log("   ✅ Database disconnected");
+    baseLogger.info("   ✅ Database disconnected");
 
     const duration = Date.now() - shutdownStart;
-    console.log(`✅ Graceful shutdown complete (${duration}ms)`);
+    baseLogger.info({ duration }, "✅ Graceful shutdown complete (%dms)", duration);
 
     process.exit(0);
   } catch (err) {
-    console.error("❌ Error during shutdown:", err);
+    baseLogger.error({ err }, "❌ Error during shutdown");
     process.exit(1);
   }
 }
@@ -96,12 +105,12 @@ export function registerShutdownHandlers(): void {
 
   // Handle uncaught errors gracefully
   process.on("uncaughtException", (err) => {
-    console.error("❌ Uncaught exception:", err);
+    baseLogger.error({ err }, "❌ Uncaught exception");
     gracefulShutdown("uncaughtException");
   });
 
   process.on("unhandledRejection", (reason) => {
-    console.error("❌ Unhandled rejection:", reason);
+    baseLogger.error({ reason }, "❌ Unhandled rejection");
     // Don't exit on unhandled rejection, just log
   });
 }

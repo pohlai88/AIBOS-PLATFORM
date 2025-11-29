@@ -3,13 +3,14 @@ import { metadataRegistry } from "../../registry/metadata.registry";
 import { uiRegistry } from "../../ui/ui.registry";
 import { engineRegistry } from "../../registry/engine.registry";
 import { kernelState } from "../../hardening/diagnostics/state";
+import { baseLogger } from "../../observability/logger";
 
 export async function bootReady() {
-  console.log("🔒 Freezing registries...");
+  baseLogger.info("🔒 Freezing registries...");
   metadataRegistry.freeze();
   uiRegistry.freeze();
   engineRegistry.freeze();
-  console.log("   Registries frozen (immutable mode)");
+  baseLogger.info("   Registries frozen (immutable mode)");
 
   kernelState.setBootCompleted();
 
@@ -21,6 +22,6 @@ export async function bootReady() {
     timestamp: Date.now()
   });
 
-  console.log("🚀 Kernel Ready Event emitted.");
+  baseLogger.info("🚀 Kernel Ready Event emitted.");
 }
 
