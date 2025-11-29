@@ -144,16 +144,16 @@ Each orchestra operates with domain autonomy **within constitutional boundaries*
 | F-17 | Kernel MUST enforce cross-orchestra authorization                   | MUST                       | ✅                   | DB orchestra cannot bypass Compliance rules (cross-orchestra.ts)        |
 | F-18 | Kernel MUST support orchestra-specific tool registries              | MUST                       | ✅                   | Each orchestra has domain-specific tools (8 orchestras with tools)      |
 | F-19 | Kernel MUST enforce legal-first policy precedence                   | MUST                       | ✅                   | Law > Industry > Internal policies (precedence-resolver.ts)             |
-| F-20 | Kernel MUST support human-in-the-loop orchestration flows           | MUST                       | ⚠️                   | HITL approval engine exists but NOT integrated into orchestra conductor |
+| F-20 | Kernel MUST support human-in-the-loop orchestration flows           | MUST                       | ✅                   | HITL approval engine integrated into orchestra conductor (Phase 6.1.2) |
 
 ### 2.2 Non-Functional Requirements
 
 | ID    | Requirement            | Target                                | Measurement Source                                          | Status |
 | ----- | ---------------------- | ------------------------------------- | ----------------------------------------------------------- | ------ | ----------------------------------------------------------------- |
 | NF-1  | Latency                | <100ms per request (95th percentile)  | Prometheus histogram `kernel_http_request_duration_seconds` | ✅     |
-| NF-2  | Availability           | ≥99.9% uptime                         | Health check monitoring `/healthz`, `/readyz`               | ⚠️     | Availability tracker exists but NOT integrated into health checks |
-| NF-3  | Boot time              | <5 seconds                            | Bootstrap timer in `kernelState`                            | ⚠️     | Boot tracker exists but NOT called in bootstrap sequence          |
-| NF-4  | Memory footprint       | <512MB baseline                       | Process metrics `process.memoryUsage()`                     | ⚠️     | Memory tracker exists but NOT called during runtime               |
+| NF-2  | Availability           | ≥99.9% uptime                         | Health check monitoring `/healthz`, `/readyz`               | ✅     | Availability tracker integrated into bootstrap and shutdown (Phase 6.4.1) |
+| NF-3  | Boot time              | <5 seconds                            | Bootstrap timer in `kernelState`                            | ✅     | Boot tracker integrated into bootstrap sequence with stage tracking (Phase 6.4.2) |
+| NF-4  | Memory footprint       | <512MB baseline                       | Process metrics `process.memoryUsage()`                     | ✅     | Memory tracker integrated with periodic snapshots every 60s (Phase 6.4.3) |
 | NF-5  | Throughput             | 200 req/sec cluster-wide              | Rate limiter metrics                                        | ✅     |
 | NF-6  | Multi-tenant isolation | Zero cross-tenant data leakage        | Isolation verifier tests                                    | ✅     |
 | NF-7  | Secrets management     | KMS with automatic rotation           | Audit log verification                                      | ✅     |
@@ -174,8 +174,8 @@ Each orchestra operates with domain autonomy **within constitutional boundaries*
 | C-5  | Kernel MUST support audit trail queryability                            | SOC2, ISO 27001                  | Audit API endpoint `/auditz`        | ✅     |
 | C-6  | Kernel MUST align with legal-first priority (law > industry > internal) | EU AI Act, ISO 42001             | Policy pack validation              | ✅     |
 | C-7  | Kernel MUST enforce MCP manifest compliance                             | ISO 42001, AI Governance         | MCP manifest validation logs        | ✅     | ISO 42001 validator integrated in manifest validator                 |
-| C-8  | Kernel MUST support human-in-the-loop for critical AI decisions         | EU AI Act, ISO 42001             | Human approval audit logs           | ⚠️     | HITL engine exists but NOT integrated into orchestra conductor       |
-| C-9  | Kernel MUST enforce MFRS/IFRS financial reporting standards             | MFRS, IFRS, SOX                  | Finance Orchestra validation        | ⚠️     | MFRS/IFRS validators exist but NOT integrated into Finance Orchestra |
+| C-8  | Kernel MUST support human-in-the-loop for critical AI decisions         | EU AI Act, ISO 42001             | Human approval audit logs           | ✅     | HITL engine integrated into orchestra conductor (Phase 6.1.2)       |
+| C-9  | Kernel MUST enforce MFRS/IFRS financial reporting standards             | MFRS, IFRS, SOX                  | Finance Orchestra validation        | ✅     | MFRS/IFRS validators integrated into Finance Orchestra actions (Phase 6.2.2) |
 | C-10 | Kernel MUST support multi-region data residency                         | GDPR, PDPA                       | Tenant config validation            | ⚪     |
 
 ---
