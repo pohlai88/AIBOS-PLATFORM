@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { appendAuditEntry } from "../audit/hash-chain.store";
 import { kernelContainer } from "../core/container";
+import { baseLogger } from "../observability/logger";
 
 export interface MigrationPlan {
   strategy: "direct" | "dual-write";
@@ -191,7 +192,12 @@ export class AdaptiveMigrationEngine {
     const db = await kernelContainer.getDatabase();
 
     for (const step of plan.steps) {
-      console.info(`[Migration] Phase ${step.phase}: ${step.action}`);
+      baseLogger.info(
+        { phase: step.phase, action: step.action, entityName },
+        "[Migration] Phase %d: %s",
+        step.phase,
+        step.action
+      );
 
       // Execute SQL if provided
       if (step.sql) {
@@ -211,8 +217,11 @@ export class AdaptiveMigrationEngine {
         },
       });
 
-      console.info(
-        `[Migration] Phase ${step.phase} completed (${step.duration})`
+      baseLogger.info(
+        { phase: step.phase, duration: step.duration, entityName },
+        "[Migration] Phase %d completed (%s)",
+        step.phase,
+        step.duration
       );
     }
   }

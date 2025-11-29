@@ -103,7 +103,7 @@ export async function lynxStream(prompt: string, onChunk: (text: string) => void
     if (response.ok && response.body) {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -113,7 +113,7 @@ export async function lynxStream(prompt: string, onChunk: (text: string) => void
           try {
             const json = JSON.parse(line);
             if (json.response) onChunk(json.response);
-          } catch {}
+          } catch { }
         }
       }
       return;
@@ -141,7 +141,7 @@ export async function getLynxStatus(): Promise<{
   try {
     const res = await fetch(`${OLLAMA_URL}/api/tags`);
     ollamaOk = res.ok;
-  } catch {}
+  } catch { }
 
   if (OPENAI_API_KEY) {
     try {
@@ -149,7 +149,7 @@ export async function getLynxStatus(): Promise<{
         headers: { "Authorization": `Bearer ${OPENAI_API_KEY}` }
       });
       openaiOk = res.ok;
-    } catch {}
+    } catch { }
   }
 
   return { ollama: ollamaOk, openai: openaiOk };

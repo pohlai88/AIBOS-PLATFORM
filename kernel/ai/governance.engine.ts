@@ -20,6 +20,7 @@
 
 import { eventBus } from "../events/event-bus";
 import { appendAuditEntry } from "../audit/hash-chain.store";
+import { baseLogger } from "../observability/logger";
 import { schemaGuardian } from "./guardians/schema.guardian";
 import { performanceGuardian } from "./guardians/performance.guardian";
 import { complianceGuardian } from "./guardians/compliance.guardian";
@@ -156,7 +157,7 @@ export class AiGovernanceEngine {
         },
       });
     } catch (error) {
-      console.error("[GovernanceEngine] Failed to emit event:", error);
+      baseLogger.error({ error }, "[GovernanceEngine] Failed to emit event");
     }
 
     // --- Audit decision ---
@@ -176,7 +177,7 @@ export class AiGovernanceEngine {
         },
       });
     } catch (error) {
-      console.error("[GovernanceEngine] Failed to audit decision:", error);
+      baseLogger.error({ error }, "[GovernanceEngine] Failed to audit decision");
     }
 
     // --- Enforce mandatory guardian rules ---
@@ -198,8 +199,8 @@ export class AiGovernanceEngine {
     const status: GovernanceResult["status"] = hasErrors
       ? "WARNING"
       : hasWarnings
-      ? "WARNING"
-      : "APPROVED";
+        ? "WARNING"
+        : "APPROVED";
 
     return {
       status,

@@ -2,6 +2,7 @@
 import { schedule } from "node-cron";
 import crypto from "node:crypto";
 import { appendAuditEntry } from "../audit/hash-chain.store";
+import { baseLogger } from "../observability/logger";
 
 interface SecretStore {
   current: string;
@@ -29,9 +30,7 @@ export class SecretRotationService {
       process.env.JWT_SECRET || this.secrets.get("jwt")?.current;
 
     if (!oldSecret) {
-      console.warn(
-        "[SecretRotation] No existing JWT secret found, initializing..."
-      );
+      baseLogger.warn("[SecretRotation] No existing JWT secret found, initializing...");
     }
 
     const now = new Date();
@@ -59,9 +58,7 @@ export class SecretRotationService {
     // Update vault (implement based on your secrets manager)
     await this.updateVault("JWT_SECRET", newSecret);
 
-    console.info(
-      "[SecretRotation] JWT secret rotated successfully (grace period: 24h)"
-    );
+    baseLogger.info("[SecretRotation] JWT secret rotated successfully (grace period: 24h)");
   }
 
   /**
@@ -82,7 +79,7 @@ export class SecretRotationService {
     // - Update vault
     // - Notify services via webhook
 
-    console.info("[SecretRotation] API keys rotated successfully");
+    baseLogger.info("[SecretRotation] API keys rotated successfully");
   }
 
   /**
@@ -103,7 +100,7 @@ export class SecretRotationService {
     // - Update connection strings in vault
     // - Drop old user after grace period
 
-    console.info("[SecretRotation] DB credentials rotated successfully");
+    baseLogger.info("[SecretRotation] DB credentials rotated successfully");
   }
 
   /**
@@ -146,7 +143,7 @@ export class SecretRotationService {
     // Example for HashiCorp Vault:
     // await vaultClient.write(`secret/data/${key}`, { data: { value } });
 
-    console.info(`[SecretRotation] Updated vault: ${key}`);
+    baseLogger.info({ key }, "[SecretRotation] Updated vault: %s", key);
   }
 
   /**
@@ -162,9 +159,7 @@ export class SecretRotationService {
     // Rotate DB credentials every 90 days at 5 AM
     schedule("0 5 1 */3 *", () => this.rotateDBCredentials());
 
-    console.info(
-      "[SecretRotation] Service started - JWT: 30d, API Keys: 90d, DB: 90d"
-    );
+    baseLogger.info("[SecretRotation] Service started - JWT: 30d, API Keys: 90d, DB: 90d");
   }
 }
 
