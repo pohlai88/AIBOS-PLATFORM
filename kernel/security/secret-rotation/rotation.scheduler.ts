@@ -241,7 +241,7 @@ export class RotationScheduler {
      * Manually trigger rotation for a specific secret type
      */
     async manualRotation(type: SecretType): Promise<void> {
-        console.info(`[RotationScheduler] Manual rotation triggered for: ${type}`);
+        baseLogger.info({ type }, '[RotationScheduler] Manual rotation triggered for: %s', type);
         const policy = this.policies.get(type);
         if (!policy) {
             throw new Error(`No policy found for secret type: ${type}`);
