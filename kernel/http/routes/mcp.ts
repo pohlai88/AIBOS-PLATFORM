@@ -10,6 +10,8 @@ import { z } from "zod";
 import {
   mcpRegistry,
   mcpToolExecutor,
+  mcpResourceHandler,
+  mcpSessionManager,
   mcpManifestSchema,
 } from "../../mcp";
 import {
@@ -215,6 +217,106 @@ export function registerMcpRoutes(app: Hono) {
           description: resource.description,
           mimeType: resource.mimeType,
         })),
+      });
+    }
+  );
+
+  // GET /mcp/servers/:serverName/resources/:uri - Get specific resource
+  const MCPResourceParams = z.object({
+    serverName: z.string().min(1),
+    uri: z.string().min(1),
+  });
+
+  app.get(
+    "/mcp/servers/:serverName/resources/:uri",
+    validateParams(MCPResourceParams),
+    async (c) => {
+      const { serverName, uri } = getValidParams<z.infer<typeof MCPResourceParams>>(c);
+
+      const result = await mcpResourceHandler.getResource(serverName, {
+        uri: decodeURIComponent(uri),
+        metadata: {
+          traceId: c.get("traceId") || undefined,
+        },
+      });
+
+      if (!result.success) {
+        return c.json(result, result.error?.code === "SERVER_NOT_FOUND" ? 404 : 400);
+      }
+
+      return c.json(result);
+    }
+  );
+
+  // POST /mcp/sessions - Create new MCP session
+  const CreateSessionSchema = z.object({
+    serverName: z.string().min(1),
+    tenantId: z.string().optional(),
+    userId: z.string().optional(),
+  });
+
+  app.post("/mcp/sessions", validateJsonBody(CreateSessionSchema), async (c) => {
+    const body = getValidBody<z.infer<typeof CreateSessionSchema>>(c);
+
+    const session = await mcpSessionManager.createSession(body.serverName, {
+      tenantId: body.tenantId,
+      userId: body.userId,
+      traceId: c.get("traceId") || undefined,
+    });
+
+    if (!session) {
+      return c.json({ error: "Failed to create session" }, 400);
+    }
+
+    return c.json(
+      {
+        sessionId: session.sessionId,
+        serverName: session.manifest.name,
+        state: session.state,
+        createdAt: session.createdAt,
+      },
+      201
+    );
+  });
+
+  // GET /mcp/sessions - List active sessions
+  app.get("/mcp/sessions", async (c) => {
+    const sessions = mcpSessionManager.listActiveSessions();
+
+    return c.json({
+      count: sessions.length,
+      sessions: sessions.map((s) => ({
+        sessionId: s.sessionId,
+        serverName: s.manifest.name,
+        state: s.state,
+        createdAt: s.createdAt,
+        lastAccessedAt: s.lastAccessedAt,
+        accessCount: s.accessCount,
+      })),
+    });
+  });
+
+  // DELETE /mcp/sessions/:sessionId - Close session
+  const SessionIdParams = z.object({
+    sessionId: z.string().min(1),
+  });
+
+  app.delete(
+    "/mcp/sessions/:sessionId",
+    validateParams(SessionIdParams),
+    async (c) => {
+      const { sessionId } = getValidParams<z.infer<typeof SessionIdParams>>(c);
+      const reason = c.req.query("reason") || "Manual close via API";
+
+      const success = await mcpSessionManager.closeSession(sessionId, reason);
+
+      if (!success) {
+        return c.json({ error: "Session not found" }, 404);
+      }
+
+      return c.json({
+        success: true,
+        message: `Session ${sessionId} closed`,
       });
     }
   );

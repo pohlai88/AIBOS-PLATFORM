@@ -22,6 +22,10 @@ export { MCPToolValidator, mcpToolValidator } from "./validator/tool.validator";
 
 // Executor
 export { MCPToolExecutor, mcpToolExecutor } from "./executor/tool.executor";
+export { MCPResourceHandler, mcpResourceHandler } from "./executor/resource.handler";
+export type { ResourceRequest, ResourceResponse } from "./executor/resource.handler";
+export { MCPSessionManager, mcpSessionManager } from "./executor/session.manager";
+export type { SessionConfig } from "./executor/session.manager";
 
 // Audit
 export { MCPAuditLogger, mcpAuditLogger } from "./audit/mcp-audit";
@@ -32,3 +36,7 @@ export { MCPEventEmitter, mcpEventEmitter, MCP_EVENTS } from "./events/mcp-event
 
 // Telemetry
 export * from "./telemetry/mcp-metrics";
+
+// SDK Client
+export { MCPClient, MCPClientPool, mcpClientPool } from "./sdk/mcp-client";
+export type { MCPClientConfig, MCPClientState } from "./sdk/mcp-client";
