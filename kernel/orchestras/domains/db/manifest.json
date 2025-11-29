@@ -1,0 +1,50 @@
+{
+  "name": "database-orchestra",
+  "version": "1.0.0",
+  "domain": "db",
+  "description": "Database Orchestra - Schema design, query optimization, migrations, and data governance",
+  "agents": [
+    {
+      "name": "schema-architect",
+      "role": "Database Schema Designer",
+      "description": "Designs optimal database schemas aligned with business requirements",
+      "capabilities": ["schema_design", "normalization", "indexing"],
+      "mcpTools": ["github"]
+    },
+    {
+      "name": "query-optimizer",
+      "role": "Query Performance Specialist",
+      "description": "Analyzes and optimizes database queries for performance",
+      "capabilities": ["query_analysis", "performance_tuning", "execution_plans"]
+    }
+  ],
+  "tools": [
+    {
+      "name": "analyze_schema",
+      "description": "Analyze database schema for optimization opportunities",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tables": { "type": "array" }
+        },
+        "required": ["tables"]
+      }
+    }
+  ],
+  "policies": [
+    {
+      "id": "db-security-001",
+      "domain": "db",
+      "rule": "All database access must be audited",
+      "precedence": "legal",
+      "enforced": true
+    }
+  ],
+  "mcpServers": ["github"],
+  "metadata": {
+    "author": "AI-BOS Team",
+    "tags": ["database", "schema", "performance"],
+    "priority": "critical"
+  }
+}
+
