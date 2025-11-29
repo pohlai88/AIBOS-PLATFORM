@@ -64,7 +64,9 @@ export class LLMAdapter {
       return this.heuristicAnalysis(code);
     } catch (error) {
       // On LLM failure, use heuristic fallback
-      console.warn("LLM analysis failed, using heuristic fallback:", error);
+      // Import logger dynamically to avoid circular dependency
+      const { baseLogger } = await import("../observability/logger");
+      baseLogger.warn({ error }, "LLM analysis failed, using heuristic fallback");
       return this.heuristicAnalysis(code);
     }
   }

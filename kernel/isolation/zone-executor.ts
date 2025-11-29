@@ -12,6 +12,7 @@
 import { ZoneManager, type Zone } from "./zone-manager";
 import { ZoneRateLimiter } from "./zone-rate-limiter";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
@@ -198,9 +199,9 @@ export class ZoneExecutor {
   private static buildZoneSafeGlobals(zone: Zone): Record<string, any> {
     return {
       console: {
-        log: (...args: any[]) => console.log(`[Zone:${zone.id}]`, ...args),
-        warn: (...args: any[]) => console.warn(`[Zone:${zone.id}]`, ...args),
-        error: (...args: any[]) => console.error(`[Zone:${zone.id}]`, ...args),
+        log: (...args: any[]) => baseLogger.info({ zoneId: zone.id, args }, "[Zone:%s] %s", zone.id, args.join(" ")),
+        warn: (...args: any[]) => baseLogger.warn({ zoneId: zone.id, args }, "[Zone:%s] %s", zone.id, args.join(" ")),
+        error: (...args: any[]) => baseLogger.error({ zoneId: zone.id, args }, "[Zone:%s] %s", zone.id, args.join(" ")),
       },
       fetch: async (url: string, options?: RequestInit) => {
         const networkCheck = ZoneRateLimiter.checkNetworkCall(zone.id);

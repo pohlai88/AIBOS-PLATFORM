@@ -466,7 +466,9 @@ export class ${this.toPascalCase(config.id)}Connector implements StorageContract
 
     private async saveAdapter(adapter: GeneratedAdapter): Promise<void> {
         // In production, save to database
-        console.log(`[AdapterGenerator] Saved adapter: ${adapter.id}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ adapterId: adapter.id }, "[AdapterGenerator] Saved adapter: %s", adapter.id);
     }
 
     private async getAdapter(adapterId: string): Promise<GeneratedAdapter | null> {

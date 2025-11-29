@@ -118,7 +118,9 @@ export class AdaptiveMigrationEngine {
         diff: SchemaDiff,
         tenantId = 'system'
     ): Promise<MigrationPlan> {
-        console.info(`[AdaptiveMigrationEngine] Creating migration plan for: ${tableName}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ tableName, tenantId }, "[AdaptiveMigrationEngine] Creating migration plan for: %s", tableName);
 
         const phases: MigrationPhase[] = [];
 
@@ -241,7 +243,9 @@ export class AdaptiveMigrationEngine {
         plan: MigrationPlan,
         tenantId = 'system'
     ): Promise<MigrationResult> {
-        console.info(`[AdaptiveMigrationEngine] Executing migration for: ${plan.tableName}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ tableName: plan.tableName, tenantId }, "[AdaptiveMigrationEngine] Executing migration for: %s", plan.tableName);
 
         const migrationId = `mig_${plan.tableName}_${Date.now()}`;
         const status: MigrationStatus = {
@@ -259,7 +263,15 @@ export class AdaptiveMigrationEngine {
             for (let i = 0; i < plan.phases.length; i++) {
                 const phase = plan.phases[i];
                 
-                console.info(`[AdaptiveMigrationEngine] Phase ${i + 1}/${plan.totalPhases}: ${phase.name}`);
+                // Import logger dynamically to avoid circular dependency
+                const { baseLogger } = await import("../../observability/logger");
+                baseLogger.info(
+                    { phase: i + 1, totalPhases: plan.totalPhases, phaseName: phase.name, tableName: plan.tableName },
+                    "[AdaptiveMigrationEngine] Phase %d/%d: %s",
+                    i + 1,
+                    plan.totalPhases,
+                    phase.name
+                );
 
                 // Update status
                 status.currentPhase = i + 1;
@@ -331,7 +343,9 @@ export class AdaptiveMigrationEngine {
                 },
             });
 
-            console.error(`[AdaptiveMigrationEngine] ❌ Migration failed: ${plan.tableName}`, err);
+            // Import logger dynamically to avoid circular dependency
+            const { baseLogger } = await import("../../observability/logger");
+            baseLogger.error({ err, tableName: plan.tableName, tenantId, migrationId }, "[AdaptiveMigrationEngine] ❌ Migration failed: %s", plan.tableName);
 
             return {
                 success: false,
@@ -382,7 +396,9 @@ export class AdaptiveMigrationEngine {
         tenantId: string
     ): Promise<void> {
         // Mock implementation - would execute actual SQL/schema changes
-        console.info(`[AdaptiveMigrationEngine] Executing phase: ${phase.name}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ phaseName: phase.name, tableName }, "[AdaptiveMigrationEngine] Executing phase: %s", phase.name);
         
         // Simulate async work
         await new Promise(resolve => setTimeout(resolve, 100));

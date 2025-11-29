@@ -18,6 +18,7 @@ import { StorageContract } from "../types";
 import { storageAbstractionLayer } from "../storage-abstraction.layer";
 import { eventBus } from "../../events/event-bus";
 import { auditChain } from "../../audit/cryptographic-audit";
+import { baseLogger } from "../../observability/logger";
 
 export interface MigrationPlan {
   id: string;
@@ -271,7 +272,7 @@ export class MigrationWizard {
    * Rollback migration (switch back to source)
    */
   async rollback(tenantId: string, plan: MigrationPlan): Promise<void> {
-    console.log(`[Migration Wizard] Rolling back migration ${plan.id} for tenant ${tenantId}`);
+    baseLogger.info({ planId: plan.id, tenantId }, "[Migration Wizard] Rolling back migration %s for tenant %s", plan.id, tenantId);
 
     // In production, this would:
     // 1. Stop writes to target
@@ -294,7 +295,7 @@ export class MigrationWizard {
     plan: MigrationPlan,
     targetConfig: any
   ): Promise<void> {
-    console.log(`[Migration Wizard] Finalizing migration ${plan.id} for tenant ${tenantId}`);
+    baseLogger.info({ planId: plan.id, tenantId }, "[Migration Wizard] Finalizing migration %s for tenant %s", plan.id, tenantId);
 
     // Update tenant configuration to point to new storage
     await storageAbstractionLayer.updateTenantStorage(tenantId, {
@@ -349,7 +350,7 @@ export class MigrationWizard {
     table: string,
     progress: MigrationProgress
   ): Promise<void> {
-    console.log(`[Migration Wizard] Copying table: ${table}`);
+    baseLogger.info({ table }, "[Migration Wizard] Copying table: %s", table);
 
     // Fetch all rows (batched for large tables)
     const batchSize = 1000;
@@ -383,7 +384,7 @@ export class MigrationWizard {
     table: string,
     progress: MigrationProgress
   ): Promise<void> {
-    console.log(`[Migration Wizard] Shadow migration for table: ${table}`);
+    baseLogger.info({ table }, "[Migration Wizard] Shadow migration for table: %s", table);
 
     // Shadow migration copies data while source is still live
     // This allows zero-downtime migration
@@ -396,7 +397,7 @@ export class MigrationWizard {
     table: string,
     progress: MigrationProgress
   ): Promise<void> {
-    console.log(`[Migration Wizard] Incremental sync for table: ${table}`);
+    baseLogger.info({ table }, "[Migration Wizard] Incremental sync for table: %s", table);
 
     // Sync migration copies only new/updated rows
     // Requires timestamp column (created_at, updated_at)

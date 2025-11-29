@@ -12,6 +12,7 @@
 
 import { eventBus } from '../../events/event-bus';
 import { appendAuditEntry } from '../../audit/hash-chain.store';
+import { baseLogger } from '../../observability/logger';
 import type { DualReadResult } from './types';
 
 export class DualReaderProxy {
@@ -24,7 +25,7 @@ export class DualReaderProxy {
     enableDualRead(tableName: string, shadowTableName: string): void {
         this.shadowTables.set(tableName, shadowTableName);
         this.enabled = true;
-        console.info(`[DualReaderProxy] Enabled dual-read for: ${tableName} → ${shadowTableName}`);
+        baseLogger.info({ tableName, shadowTableName }, "[DualReaderProxy] Enabled dual-read for: %s → %s", tableName, shadowTableName);
     }
 
     /**
@@ -32,7 +33,7 @@ export class DualReaderProxy {
      */
     disableDualRead(tableName: string): void {
         this.shadowTables.delete(tableName);
-        console.info(`[DualReaderProxy] Disabled dual-read for: ${tableName}`);
+        baseLogger.info({ tableName }, "[DualReaderProxy] Disabled dual-read for: %s", tableName);
     }
 
     /**
@@ -92,9 +93,13 @@ export class DualReaderProxy {
 
         // Log drift if detected
         if (driftDetected) {
-            console.warn(`[DualReaderProxy] DRIFT DETECTED in ${tableName}`);
-            console.warn(`  Old rows: ${oldRows.length}, New rows: ${newRows.length}`);
-            console.warn(`  Differences:`, differences);
+            baseLogger.warn(
+                { tableName, oldRowCount: oldRows.length, newRowCount: newRows.length, differences },
+                "[DualReaderProxy] DRIFT DETECTED in %s (Old: %d, New: %d)",
+                tableName,
+                oldRows.length,
+                newRows.length
+            );
 
             // Emit event
             await eventBus.publishTyped('metadata.migration.drift_detected', {

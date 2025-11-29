@@ -50,7 +50,7 @@ export class ConsciousLoop {
     if (this.isRunning) return;
 
     this.isRunning = true;
-    
+
     // Start sub-systems
     AutonomousTuner.start();
     ResourceThrottler.startMonitoring();
@@ -75,7 +75,7 @@ export class ConsciousLoop {
     if (!this.isRunning) return;
 
     this.isRunning = false;
-    
+
     if (this.loopInterval) {
       clearInterval(this.loopInterval);
       this.loopInterval = null;

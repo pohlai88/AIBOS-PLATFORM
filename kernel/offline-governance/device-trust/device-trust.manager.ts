@@ -427,7 +427,9 @@ export class DeviceTrustManager {
      */
     private async saveDeviceRegistration(registration: DeviceRegistration): Promise<void> {
         // In production, save to database
-        console.log(`[Device Trust] Saved registration for ${registration.deviceId}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ deviceId: registration.deviceId }, "[Device Trust] Saved registration for %s", registration.deviceId);
     }
 }
 

@@ -6,7 +6,7 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 
 /**
  * Root ESLint configuration for the entire monorepo
- * 
+ *
  * This single config file handles all packages:
  * - Next.js apps: Use Next.js-specific rules
  * - Regular packages: Use base TypeScript rules
@@ -78,9 +78,12 @@ export default defineConfig([
       },
     },
     rules: {
-      "no-console": ["error", { 
-        allow: [] // No console methods allowed in production code
-      }],
+      "no-console": [
+        "error",
+        {
+          allow: [], // No console methods allowed in production code
+        },
+      ],
     },
   },
   // Global ignores for all files

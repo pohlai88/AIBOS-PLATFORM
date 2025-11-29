@@ -14,6 +14,7 @@
 import { MerkleDAG, merkleDAG, type DriftDiff, type StateSnapshot } from "./merkle-dag";
 import { CascadePredictor, cascadePredictor, type CascadeReport } from "./cascade-predictor";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
@@ -383,7 +384,7 @@ export class PredictiveDriftShield {
 
       return true;
     } catch (error) {
-      console.error("Failed to apply fix:", error);
+      baseLogger.error({ error, fixId: fix.id }, "Failed to apply fix");
       return false;
     }
   }

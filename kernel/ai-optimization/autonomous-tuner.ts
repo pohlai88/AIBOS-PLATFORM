@@ -14,6 +14,7 @@ import { PatternRecognitionEngine } from "./pattern-engine";
 import { CacheManager } from "../performance/cache-manager";
 import { ExecutionPool } from "../performance/execution-pool";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
@@ -66,7 +67,7 @@ export class AutonomousTuner {
       }
     }, this.config.tuneIntervalMs);
 
-    console.log("🎯 Autonomous Tuner started");
+    baseLogger.info("🎯 Autonomous Tuner started");
   }
 
   /**

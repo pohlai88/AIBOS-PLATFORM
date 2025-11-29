@@ -19,6 +19,7 @@ import crypto from "node:crypto";
 import { eventBus } from "../../events/event-bus";
 import { auditChain } from "../../audit/cryptographic-audit";
 import { StorageContract } from "../types";
+import { baseLogger } from "../../observability/logger";
 
 export interface EncryptionConfig {
   enabled: boolean;
@@ -96,7 +97,7 @@ export class StorageGuardian {
       "sha512"
     );
 
-    console.log(`[Storage Guardian] Encryption key loaded for tenant ${this.config.tenantId}`);
+    baseLogger.info({ tenantId: this.config.tenantId }, "[Storage Guardian] Encryption key loaded for tenant %s", this.config.tenantId);
   }
 
   /**

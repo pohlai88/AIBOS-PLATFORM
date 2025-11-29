@@ -295,7 +295,14 @@ export function defineEngine(definition: EngineDefinition): KernelEngine {
   // Auto-register
   registerEngine(engine);
 
-  console.log(`[SDK] Engine "${definition.id}" defined and registered (${definition.actions.length} actions)`);
+  // Import logger dynamically to avoid circular dependency
+  const { baseLogger } = await import("../observability/logger");
+  baseLogger.info(
+    { engineId: definition.id, actionCount: definition.actions.length },
+    '[SDK] Engine "%s" defined and registered (%d actions)',
+    definition.id,
+    definition.actions.length
+  );
 
   return engine;
 }

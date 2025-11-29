@@ -397,7 +397,14 @@ export class SyncGuardian {
 
   private async applyPayload(tenantId: string, payload: OfflinePayload): Promise<void> {
     // Apply payload to database through storage abstraction layer
-    console.log(`[Sync Guardian] Applying ${payload.operation} to ${payload.entity}`);
+    // Import logger dynamically to avoid circular dependency
+    const { baseLogger } = await import("../../observability/logger");
+    baseLogger.info(
+      { operation: payload.operation, entity: payload.entity, tenantId },
+      "[Sync Guardian] Applying %s to %s",
+      payload.operation,
+      payload.entity
+    );
     
     // In production, use storage abstraction layer
     // await storageAbstractionLayer.getStorage(tenantId).insert(payload.entity, payload.data);

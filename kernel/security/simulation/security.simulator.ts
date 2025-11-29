@@ -28,6 +28,7 @@
 import { actionDispatcher } from '../../dispatcher/action.dispatcher';
 import { eventBus } from '../../events/event-bus';
 import { appendAuditEntry } from '../../audit/hash-chain.store';
+import { baseLogger } from '../../observability/logger';
 import type {
     SimulationResult,
     SimulationReport,
@@ -46,14 +47,14 @@ export class SecuritySimulator {
      * Run all security simulations
      */
     async runAll(tenantId = 'simulation'): Promise<SimulationReport> {
-        console.info('[SecuritySimulator] Running comprehensive security simulation...');
+        baseLogger.info('[SecuritySimulator] Running comprehensive security simulation...');
 
         const startTime = Date.now();
         const results: SimulationResult[] = [];
 
         // Run all scenarios
         for (const [id, scenario] of this.scenarios) {
-            console.info(`[SecuritySimulator] Running scenario: ${scenario.name}`);
+            baseLogger.info({ scenarioId: id, scenarioName: scenario.name }, "[SecuritySimulator] Running scenario: %s", scenario.name);
             const result = await this.runScenario(id, tenantId);
             results.push(result);
         }
@@ -106,13 +107,14 @@ export class SecuritySimulator {
 
         // Log result
         if (report.deploymentAllowed) {
-            console.info(`[SecuritySimulator] ✅ Simulation PASSED (score: ${score.toFixed(1)}%)`);
+            baseLogger.info({ score, passed, failed }, "[SecuritySimulator] ✅ Simulation PASSED (score: %s%%)", score.toFixed(1));
         } else {
-            console.error(`[SecuritySimulator] ❌ Simulation FAILED (score: ${score.toFixed(1)}% < 95%)`);
-            console.error(`[SecuritySimulator] Failed scenarios:`);
-            results.filter(r => r.status === 'FAIL').forEach(r => {
-                console.error(`  - ${r.scenarioName}: ${r.message}`);
-            });
+            const failedScenarios = results.filter(r => r.status === 'FAIL');
+            baseLogger.error(
+                { score, passed, failed, failedScenarios },
+                "[SecuritySimulator] ❌ Simulation FAILED (score: %s%% < 95%%)",
+                score.toFixed(1)
+            );
         }
 
         return report;
@@ -160,7 +162,7 @@ export class SecuritySimulator {
      */
     registerScenario(scenario: AttackScenario): void {
         this.scenarios.set(scenario.id, scenario);
-        console.info(`[SecuritySimulator] Registered scenario: ${scenario.name}`);
+        baseLogger.info({ scenarioId: scenario.id, scenarioName: scenario.name }, "[SecuritySimulator] Registered scenario: %s", scenario.name);
     }
 
     /**

@@ -496,17 +496,23 @@ export class StaleUsersMonitor {
         reason?: string
     ): Promise<void> {
         // Update in database
-        console.log(`[Stale Users Monitor] Updated user status: ${userId} -> ${status}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ userId, status }, "[Stale Users Monitor] Updated user status: %s -> %s", userId, status);
     }
 
     private async invalidateSyncMatrix(tenantId: string, userId: string, deviceId: string): Promise<void> {
         // Mark sync matrix as invalid in database
-        console.log(`[Stale Users Monitor] Invalidated sync matrix for ${userId}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ userId }, "[Stale Users Monitor] Invalidated sync matrix for %s", userId);
     }
 
     private async revokeDeviceTrust(deviceId: string): Promise<void> {
         // Revoke device trust in device registry
-        console.log(`[Stale Users Monitor] Revoked device trust: ${deviceId}`);
+        // Import logger dynamically to avoid circular dependency
+        const { baseLogger } = await import("../../observability/logger");
+        baseLogger.info({ deviceId }, "[Stale Users Monitor] Revoked device trust: %s", deviceId);
     }
 }
 
