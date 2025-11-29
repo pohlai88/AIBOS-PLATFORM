@@ -6,6 +6,7 @@
  */
 
 import { mcpRegistry, mcpManifestValidator } from "../../mcp";
+import { manifestLoader } from "../../mcp/registry/manifest.loader";
 import type { MCPManifest } from "../../mcp/types";
 import { baseLogger as logger } from "../../observability/logger";
 
@@ -74,24 +75,22 @@ export async function bootstrapMCPRegistry(): Promise<void> {
 /**
  * Load MCP manifests from configuration
  * 
- * TODO: Implement actual manifest loading from:
- * - File system (manifests/*.json)
- * - Environment variables
- * - Remote registry
+ * Loads from:
+ * - File system (kernel/mcp/manifests/*.json)
+ * - Environment variables (MCP_MANIFESTS)
+ * - Remote registry (MCP_REGISTRY_URL)
  */
 async function loadMCPManifests(): Promise<MCPManifest[]> {
-  // Placeholder implementation
-  // In production, this will load from actual configuration sources
-  
   logger.info("📂 Loading MCP manifests...");
 
-  // For now, return empty array
-  // Manifests will be loaded from:
-  // 1. kernel/mcp/manifests/*.json
-  // 2. Environment: MCP_MANIFESTS_PATH
-  // 3. Remote: MCP_REGISTRY_URL
-  
-  return [];
+  try {
+    const manifests = await manifestLoader.loadAll();
+    logger.info(`✅ Loaded ${manifests.length} manifests from all sources`);
+    return manifests;
+  } catch (error) {
+    logger.error("❌ Failed to load manifests:", { error });
+    return [];
+  }
 }
 
 /**

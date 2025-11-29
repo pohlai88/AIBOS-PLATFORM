@@ -1,0 +1,32 @@
+{
+  "name": "example-server",
+  "version": "1.0.0",
+  "protocol": "mcp",
+  "protocolVersion": "2025-03-26",
+  "description": "Example MCP server manifest - replace with actual servers",
+  "tools": [
+    {
+      "name": "example_tool",
+      "description": "An example tool that demonstrates the MCP tool schema",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Example input parameter"
+          }
+        },
+        "required": ["input"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "example://resource/1",
+      "name": "example_resource",
+      "description": "An example resource",
+      "mimeType": "application/json"
+    }
+  ]
+}
+

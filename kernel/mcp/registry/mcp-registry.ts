@@ -11,6 +11,9 @@ import type {
   MCPValidationResult,
 } from "../types";
 import { validateMCPManifest } from "../schemas/mcp-manifest.schema";
+import { mcpAuditLogger } from "../audit/mcp-audit";
+import { mcpEventEmitter } from "../events/mcp-events";
+import { recordManifestRegistration } from "../telemetry/mcp-metrics";
 import { createHash } from "crypto";
 
 /**
@@ -47,6 +50,10 @@ export class MCPRegistry {
     // 1. Validate manifest schema
     const validation = validateMCPManifest(manifest);
     if (!validation.success) {
+      // Record failed registration
+      const manifestName = (manifest as any)?.name || "unknown";
+      recordManifestRegistration(manifestName, false);
+      
       return {
         success: false,
         error: `Manifest validation failed: ${JSON.stringify(validation.error.errors)}`,
@@ -79,6 +86,18 @@ export class MCPRegistry {
     // 5. Store in registry
     this.registry.set(manifestHash, entry);
     this.manifestsByName.set(validatedManifest.name, manifestHash);
+
+    // 6. Audit registration
+    await mcpAuditLogger.auditManifestRegistered(
+      validatedManifest,
+      manifestHash
+    );
+
+    // 7. Emit registration event
+    await mcpEventEmitter.emitManifestRegistered(validatedManifest, manifestHash);
+
+    // 8. Record metrics
+    recordManifestRegistration(validatedManifest.name, true);
 
     return {
       success: true,
@@ -114,7 +133,7 @@ export class MCPRegistry {
   /**
    * Disable a manifest
    */
-  public disable(name: string): boolean {
+  public async disable(name: string, reason?: string): Promise<boolean> {
     const hash = this.manifestsByName.get(name);
     if (!hash) return false;
 
@@ -122,6 +141,13 @@ export class MCPRegistry {
     if (!entry) return false;
 
     entry.status = "disabled";
+    
+    // Audit disable action
+    await mcpAuditLogger.auditManifestDisabled(name, reason);
+    
+    // Emit disabled event
+    await mcpEventEmitter.emitManifestDisabled(name, reason);
+    
     return true;
   }
 

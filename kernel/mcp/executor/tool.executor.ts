@@ -13,6 +13,9 @@ import type {
 } from "../types";
 import { mcpToolValidator } from "../validator/tool.validator";
 import { mcpRegistry } from "../registry/mcp-registry";
+import { mcpAuditLogger } from "../audit/mcp-audit";
+import { mcpEventEmitter } from "../events/mcp-events";
+import { recordToolInvocation } from "../telemetry/mcp-metrics";
 
 export class MCPToolExecutor {
   /**
@@ -66,6 +69,9 @@ export class MCPToolExecutor {
       // 3. Validate invocation
       const validation = mcpToolValidator.validate(tool, invocation);
       if (!validation.valid) {
+        // Record validation error
+        recordToolInvocation(serverName, invocation.tool, "validation_error", Date.now() - startTime);
+        
         return {
           success: false,
           error: {
@@ -76,12 +82,15 @@ export class MCPToolExecutor {
         };
       }
 
-      // 4. Execute tool (placeholder - actual implementation will call MCP server)
+      // 4. Emit tool invoked event
+      await mcpEventEmitter.emitToolInvoked(serverName, invocation.tool, invocation);
+
+      // 5. Execute tool (placeholder - actual implementation will call MCP server)
       // TODO: Implement actual MCP server communication
       const result = await this.invokeTool(serverName, tool, invocation);
 
-      // 5. Return result with metadata
-      return {
+      // 6. Build result with metadata
+      const finalResult: MCPToolResult = {
         success: true,
         data: result,
         metadata: {
@@ -89,8 +98,19 @@ export class MCPToolExecutor {
           validatedAt: new Date().toISOString(),
         },
       };
+
+      // 7. Audit the invocation
+      await mcpAuditLogger.auditToolInvocation(serverName, invocation, finalResult);
+
+      // 8. Emit success event
+      await mcpEventEmitter.emitToolSucceeded(serverName, invocation.tool, finalResult);
+
+      // 9. Record metrics
+      recordToolInvocation(serverName, invocation.tool, "success", Date.now() - startTime);
+
+      return finalResult;
     } catch (error) {
-      return {
+      const errorResult: MCPToolResult = {
         success: false,
         error: {
           code: "EXECUTION_ERROR",
@@ -101,6 +121,17 @@ export class MCPToolExecutor {
           validatedAt: new Date().toISOString(),
         },
       };
+
+      // Audit the failed invocation
+      await mcpAuditLogger.auditToolInvocation(serverName, invocation, errorResult);
+
+      // Emit failure event
+      await mcpEventEmitter.emitToolFailed(serverName, invocation.tool, errorResult);
+
+      // Record error metrics
+      recordToolInvocation(serverName, invocation.tool, "failed", Date.now() - startTime);
+
+      return errorResult;
     }
   }
 
