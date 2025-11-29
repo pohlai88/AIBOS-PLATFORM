@@ -10,6 +10,7 @@ import type { MCPManifest, MCPValidationResult, MCPValidationError } from "../ty
 import { validateMCPManifest } from "../schemas/mcp-manifest.schema";
 import { MCP_PROTOCOL_VERSION } from "../types";
 import { manifestSigner, keyManager, signatureAudit, type ManifestSignature } from "../crypto";
+import { iso42001Validator } from "../compliance";
 
 export class MCPManifestValidator {
   private requireSignatures: boolean;
@@ -188,6 +189,60 @@ export class MCPManifestValidator {
         path: "signature",
         message: "MCP manifest is not signed. Consider adding a cryptographic signature for enhanced security.",
         code: "SIGNATURE_MISSING",
+      });
+    }
+
+    // 7. ISO 42001 Compliance Validation (C-7: MCP Manifest Compliance)
+    try {
+      const complianceResult = iso42001Validator.validateManifest(validatedManifest);
+      
+      // Add compliance violations as warnings (not blocking, but important)
+      if (complianceResult.violations.length > 0) {
+        complianceResult.violations.forEach((violation) => {
+          if (violation.severity === "critical" || violation.severity === "high") {
+            // Critical/high violations block registration
+            result.valid = false;
+            result.errors?.push({
+              path: "compliance",
+              message: `ISO 42001 violation: ${violation.description} (${violation.requirement})`,
+              code: `ISO42001_${violation.id.toUpperCase()}`,
+            });
+          } else {
+            // Medium/low violations are warnings
+            result.warnings?.push({
+              path: "compliance",
+              message: `ISO 42001 warning: ${violation.description} (${violation.requirement})`,
+              code: `ISO42001_${violation.id.toUpperCase()}`,
+            });
+          }
+        });
+      }
+      
+      // Add compliance warnings
+      if (complianceResult.warnings.length > 0) {
+        complianceResult.warnings.forEach((warning) => {
+          result.warnings?.push({
+            path: "compliance",
+            message: `ISO 42001: ${warning.description}. Recommendation: ${warning.recommendation}`,
+            code: `ISO42001_${warning.id.toUpperCase()}`,
+          });
+        });
+      }
+      
+      // Log compliance score if low
+      if (complianceResult.score < 70) {
+        result.warnings?.push({
+          path: "compliance",
+          message: `ISO 42001 compliance score is ${complianceResult.score}% (target: ≥70%). Review violations and warnings.`,
+          code: "ISO42001_LOW_SCORE",
+        });
+      }
+    } catch (error) {
+      // Compliance validation error - log but don't block
+      result.warnings?.push({
+        path: "compliance",
+        message: `ISO 42001 compliance validation error: ${error instanceof Error ? error.message : String(error)}`,
+        code: "ISO42001_VALIDATION_ERROR",
       });
     }
 
