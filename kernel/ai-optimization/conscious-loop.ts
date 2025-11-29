@@ -17,6 +17,7 @@ import { SelfHealingEngine, type HealthIndicators } from "./self-healer";
 import { ResourceThrottler } from "../performance/resource-throttler";
 import { ExecutionPool } from "../performance/execution-pool";
 import { eventBus } from "../events/event-bus";
+import { baseLogger } from "../observability/logger";
 
 // ═══════════════════════════════════════════════════════════
 // Types
