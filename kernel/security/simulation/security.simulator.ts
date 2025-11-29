@@ -433,7 +433,7 @@ export class SecuritySimulator {
             },
         });
 
-        console.info(`[SecuritySimulator] Registered ${this.scenarios.size} default scenarios`);
+        baseLogger.info({ scenarioCount: this.scenarios.size }, "[SecuritySimulator] Registered %d default scenarios", this.scenarios.size);
     }
 }
 

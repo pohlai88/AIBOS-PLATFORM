@@ -319,7 +319,9 @@ export class AdaptiveMigrationEngine {
                 },
             });
 
-            console.info(`[AdaptiveMigrationEngine] ✅ Migration completed: ${plan.tableName}`);
+            // Import logger dynamically to avoid circular dependency
+            const { baseLogger } = await import("../../observability/logger");
+            baseLogger.info({ tableName: plan.tableName, tenantId, migrationId }, "[AdaptiveMigrationEngine] ✅ Migration completed: %s", plan.tableName);
 
             return {
                 success: true,
