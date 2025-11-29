@@ -461,10 +461,12 @@ graph TB
   │   │   └── compliance/                # Financial compliance
   │   │       ├── mfrs-ifrs-validator.ts # MFRS/IFRS validator
   │   │       └── chart-of-accounts.ts   # Chart of accounts
-  │   ├── http/                          # HTTP layer (active implementation)
+  │   ├── api/                           # HTTP API layer (Hono)
   │   │   ├── middleware/                # HTTP middleware
   │   │   ├── routes/                    # HTTP route handlers
-  │   │   └── router.ts                  # HTTP router
+  │   │   ├── router.ts                  # HTTP router
+  │   │   ├── openapi.ts                 # OpenAPI generator
+  │   │   └── zod-middleware.ts          # Zod validation middleware
   │   ├── boot/                          # Configuration loading
   │   │   ├── kernel.config.ts           # Kernel configuration
   │   │   └── environment.ts             # Environment config
@@ -538,7 +540,7 @@ graph TB
 
 **Important Notes:**
 
-* **`api/` vs `http/`:** Currently both directories exist. `http/` contains the active implementation (middleware, routes), while `api/` is the entry point that imports from `http/`. New HTTP routes should be added to `kernel/http/routes/`. See `DIRECTORY-STRUCTURE-WORK-COMPLETE.md` for details.
+* **`api/` directory:** The `api/` directory is the single source of truth for all HTTP routing. It contains middleware, routes, and the router. The `http/` directory was consolidated into `api/` in Phase 3 (November 2025).
 * **`boot/` vs `bootstrap/`:** `boot/` contains configuration loading (`kernel.config.ts`), while `bootstrap/` contains the boot sequence steps. Both serve different purposes and should be kept separate.
 * **`routes/` (deprecated):** The standalone `routes/` directory was removed in Phase 2 (November 2025) as it was unused. All route handlers are now in `kernel/http/routes/` or `kernel/api/routes/`.
 

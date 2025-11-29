@@ -1,57 +1,69 @@
 import { Hono } from "hono";
-import { traceIdMiddleware } from "../http/middleware/trace-id";
-import { httpMetricsMiddleware } from "../http/middleware/metrics";
-import { authMiddleware, optionalAuthMiddleware } from "../http/middleware/auth";
-import { registerMetadataRoutes } from "./routes/metadata.routes";
-import { registerEngineRoutes } from "./routes/engines.routes";
-import { registerActionRoutes } from "./routes/action.routes";
-import { registerHealthRoutes } from "./routes/health.routes";
-import { registerTenantRoutes } from "./routes/tenant.routes";
-import { registerUIRoutes } from "./routes/ui.routes";
-import { healthRoute } from "./routes/health";
-import { readyRoute } from "./routes/ready";
-import { diagRoute } from "./routes/diag";
-import { auditRoute } from "./routes/audit";
-import { registerActionRoutes as registerNewActionRoutes } from "../http/routes/actions";
-import { registerEngineRoutes as registerNewEngineRoutes } from "../http/routes/engines";
-import { registerMetricsRoutes } from "../http/routes/metrics";
-import { registerSecretRoutes } from "../http/routes/secrets";
+import { traceIdMiddleware } from "./middleware/trace-id";
+import { httpMetricsMiddleware } from "./middleware/metrics";
+import { authMiddleware } from "./middleware/auth";
+import { registerActionRoutes } from "./routes/actions";
+import { registerEngineRoutes } from "./routes/engines";
+import { registerUiRoutes } from "./routes/ui";
+import { registerMetadataRoutes } from "./routes/metadata";
+import { registerTenantRoutes } from "./routes/tenants";
+import { registerHealthRoutes } from "./routes/health";
+import { registerDiagRoutes } from "./routes/diag";
+import { registerAuditRoutes } from "./routes/audit";
+import { registerMetricsRoutes } from "./routes/metrics";
+import { registerMcpRoutes } from "./routes/mcp";
+import { registerOrchestraRoutes } from "./routes/orchestra";
+import { registerPolicyRoutes } from "./routes/policy";
+import { registerAgentRoutes } from "./routes/agents";
+import { registerApprovalRoutes } from "./routes/approvals";
+import { registerSearchRoutes } from "./routes/search";
+import { registerSecretRoutes } from "./routes/secrets";
 
-export const createApiRouter = () => {
+// Extend Hono context variables for kernel-specific data.
+declare module 'hono' {
+    interface ContextVariableMap {
+        principal: import('../auth/types').Principal | null;
+        tenantId: string | null;
+        traceId: string | null;
+    }
+}
+
+export type KernelApp = Hono;
+
+/**
+ * Create and configure the kernel HTTP application.
+ *
+ * This function is the single entry point for all HTTP routing. It applies
+ * global middleware (trace id, metrics, auth) and then mounts all feature
+ * routes. This consolidates the previous split between `api/` and `http/`.
+ */
+export const createApiRouter = (): KernelApp => {
   const app = new Hono();
 
-  // Global middleware (order: traceId → metrics → auth)
-  app.use("*", traceIdMiddleware);
-  app.use("*", httpMetricsMiddleware);
+  // Global middlewares
+  app.use('*', traceIdMiddleware);
+  app.use('*', httpMetricsMiddleware);
+  app.use('*', authMiddleware);
 
-  // Prometheus metrics (no auth required)
+  // Health / diagnostics (no auth required for these)
+  registerHealthRoutes(app);
+  registerDiagRoutes(app);
   registerMetricsRoutes(app);
 
-  // Health & diagnostics (no auth required)
-  app.route("/healthz", healthRoute);
-  app.route("/readyz", readyRoute);
-  app.route("/diagz", diagRoute);
-  app.route("/auditz", auditRoute);
-
-  // API routes with auth
-  app.use("/api/*", authMiddleware);
-  registerNewActionRoutes(app);
-  registerNewEngineRoutes(app);
-  registerSecretRoutes(app);
-
-  // Legacy routes (with optional auth for backward compat)
-  app.use("/metadata/*", optionalAuthMiddleware);
-  app.use("/engines/*", optionalAuthMiddleware);
-  app.use("/actions/*", optionalAuthMiddleware);
-  app.use("/tenants/*", optionalAuthMiddleware);
-  app.use("/ui/*", optionalAuthMiddleware);
-
-  registerMetadataRoutes(app);
-  registerEngineRoutes(app);
+  // Core kernel domains
   registerActionRoutes(app);
-  registerHealthRoutes(app);
+  registerEngineRoutes(app);
+  registerUiRoutes(app);
+  registerMetadataRoutes(app);
   registerTenantRoutes(app);
-  registerUIRoutes(app);
+  registerAuditRoutes(app);
+  registerMcpRoutes(app);
+  registerOrchestraRoutes(app);
+  registerPolicyRoutes(app);
+  registerAgentRoutes(app);
+  registerApprovalRoutes(app);
+  registerSearchRoutes(app);
+  registerSecretRoutes(app);
 
   return app;
 };

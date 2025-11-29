@@ -1,15 +1,30 @@
-import { Hono } from "hono";
-import { auditStore } from "../../audit/audit.store";
+/**
+ * Audit Routes
+ *
+ * Endpoints for audit log access.
+ */
 
-export const auditRoute = new Hono();
+import type { Hono } from 'hono';
+import { getRecentAuditEvents } from '../../audit/audit.store';
 
-auditRoute.get("/", c => {
-  return c.json(auditStore.all());
-});
+export function registerAuditRoutes(app: Hono) {
+  // Get recent audit events
+  app.get('/audit', async (c) => {
+    const limit = parseInt(c.req.query('limit') ?? '100', 10);
+    const events = getRecentAuditEvents(Math.min(limit, 1000));
 
-auditRoute.get("/filter", c => {
-  const category = c.req.query("category");
-  const actor = c.req.query("actor");
-  return c.json(auditStore.filter(category, actor));
-});
+    return c.json({
+      events: events.map((e) => ({
+        id: e.id,
+        createdAt: e.createdAt.toISOString(),
+        eventType: e.event.eventType,
+        severity: e.event.severity,
+        principalId: e.event.principalId,
+        tenantId: e.event.tenantId,
+        actionId: e.event.actionId,
+      })),
+      count: events.length,
+    });
+  });
+}
 
