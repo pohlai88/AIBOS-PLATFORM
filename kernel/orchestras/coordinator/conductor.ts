@@ -147,7 +147,7 @@ export class OrchestraConductor {
 
           try {
             const approval = await hitlApprovalEngine.waitForApproval(approvalRequestId);
-            
+
             if (approval.decision !== "approved") {
               logger.warn({
                 orchestrationId,
