@@ -5,7 +5,7 @@
 
 ---
 
-## 📋 Complete List of All Reports (18 Total - After Cleanup)
+## 📋 Complete List of All Reports (19 Total - After Cleanup)
 
 ### 🎯 Directory Structure Reports (2)
 
@@ -59,7 +59,7 @@
 
 ---
 
-### 📊 Advice & Planning Reports (2)
+### 📊 Advice & Planning Reports (3)
 
 16. **`FINAL-ADVICE-NEXT-STEPS.md`**
     - Final advice and next steps recommendations
@@ -84,6 +84,13 @@
     - Evidence-based recommendations (Yes/No/Hybrid)
     - Market share capture strategy
     - ROI projections
+
+20. **`ARCHITECTURE-SHORTFALL-ANALYSIS.md`**
+    - Comprehensive architecture shortfall analysis
+    - Prioritization (Must Fix / Should Fix / Can Defer)
+    - Reasoning for acceptable technical debt
+    - Architecture health score
+    - Action recommendations
 
 ---
 
@@ -193,10 +200,10 @@
 | **Structure**         | 2      | Work Complete, Phase 3 Migration Plan                   |
 | **Compliance**        | 4      | Final Report, 360 Audit, Achievement, Integration Fixes |
 | **Code Quality**      | 1      | TODO Audit                                              |
-| **Advice & Planning** | 1      | Final Advice                                            |
+| **Advice & Planning** | 2      | Final Advice, Architecture Shortfall Analysis           |
 | **Phase Summaries**   | 6      | Phase 1-6 Complete Summaries                            |
 | **Planning Docs**     | 0      | (Removed - plans completed)                             |
-| **TOTAL**             | **18** | Current active reports                                  |
+| **TOTAL**             | **19** | Current active reports                                  |
 
 ---
 
@@ -235,5 +242,5 @@
 ---
 
 **Last Updated:** November 29, 2025  
-**Total Reports:** 18 (after cleanup)  
+**Total Reports:** 19 (after cleanup)  
 **Status:** ✅ Complete Catalog - Legacy docs removed
