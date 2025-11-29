@@ -89,9 +89,9 @@ export class NeonConnector implements StorageContract {
       await client.query("SELECT NOW()");
       client.release();
 
-      console.log("[Neon] Connected to Neon Serverless PostgreSQL");
+      baseLogger.info("[Neon] Connected to Neon Serverless PostgreSQL");
       if (this.config.branch) {
-        console.log(`[Neon] Using branch: ${this.config.branch}`);
+        baseLogger.info({ branch: this.config.branch }, "[Neon] Using branch: %s", this.config.branch);
       }
 
       await eventBus.publish("storage.connected", {
@@ -269,7 +269,7 @@ export class NeonConnector implements StorageContract {
       const result = await this.sql(sql, params || []);
       return result as T[];
     } catch (error: any) {
-      console.error("[Neon] Serverless query failed:", error);
+      baseLogger.error({ error }, "[Neon] Serverless query failed");
       throw error;
     }
   }
