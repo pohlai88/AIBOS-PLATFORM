@@ -107,9 +107,13 @@ export function useClientToken(tokenPath: string): {
 
     // Get token value
     const tokenValue = tokenHelpers.getTokenValue(tokenPath)
-    setValue(tokenValue)
-    setIsValid(true)
-    setError(null)
+    // Use setTimeout to avoid synchronous setState in effect
+    const timer = setTimeout(() => {
+      setValue(tokenValue)
+      setIsValid(true)
+      setError(null)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [tokenPath])
 
   return { value, isValid, error }

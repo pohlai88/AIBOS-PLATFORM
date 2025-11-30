@@ -12,34 +12,34 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type TableVariant = 'default' | 'bordered' | 'striped'
-type TableSize = 'sm' | 'md' | 'lg'
+type TableVariant = "default" | "bordered" | "striped";
+type TableSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const tableVariants = {
   base: [
-    'w-full caption-bottom',
-    typographyTokens.bodySm,
-    'mcp-shared-component',
-  ].join(' '),
+    "w-full caption-bottom",
+    "text-sm leading-relaxed", // bodySm equivalent
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
-      default: '',
-      bordered: `border ${colorTokens.border}`,
-      striped: '',
+      default: "",
+      bordered: "border border-border", // References --color-border
+      striped: "",
     },
     size: {
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
+      sm: "text-sm",
+      md: "text-base",
+      lg: "text-lg",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interfaces
 export interface TableProps
@@ -47,17 +47,17 @@ export interface TableProps
   /**
    * Visual variant of the table
    */
-  variant?: TableVariant
+  variant?: TableVariant;
 
   /**
    * Size of the table
    */
-  size?: TableSize
+  size?: TableSize;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 export interface TableHeaderProps
@@ -74,7 +74,7 @@ export interface TableRowProps
   /**
    * Whether the row is clickable (visual indicator only)
    */
-  clickable?: boolean
+  clickable?: boolean;
 }
 
 export interface TableHeadProps
@@ -108,12 +108,12 @@ export interface TableCaptionProps
  * ```
  */
 export const Table = React.forwardRef<HTMLTableElement, TableProps>(
-  ({ className, variant = 'default', size = 'md', testId, ...props }, ref) => {
+  ({ className, variant = "default", size = "md", testId, ...props }, ref) => {
     const variantClasses =
       tableVariants.variants.variant[variant] ||
-      tableVariants.variants.variant.default
+      tableVariants.variants.variant.default;
     const sizeClasses =
-      tableVariants.variants.size[size] || tableVariants.variants.size.md
+      tableVariants.variants.size[size] || tableVariants.variants.size.md;
 
     return (
       <div className="relative w-full overflow-auto">
@@ -131,11 +131,11 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
           {...props}
         />
       </div>
-    )
+    );
   }
-)
+);
 
-Table.displayName = 'Table'
+Table.displayName = "Table";
 
 /**
  * TableHeader - Table header section
@@ -146,12 +146,12 @@ export const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn(`border-b ${colorTokens.border}`, className)}
+    className={cn("border-b border-border", className)} // References --color-border
     {...props}
   />
-))
+));
 
-TableHeader.displayName = 'TableHeader'
+TableHeader.displayName = "TableHeader";
 
 /**
  * TableBody - Table body section
@@ -162,12 +162,12 @@ export const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn('[&_tr:last-child]:border-0', className)}
+    className={cn("[&_tr:last-child]:border-0", className)}
     {...props}
   />
-))
+));
 
-TableBody.displayName = 'TableBody'
+TableBody.displayName = "TableBody";
 
 /**
  * TableFooter - Table footer section
@@ -179,16 +179,16 @@ export const TableFooter = React.forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      `border-t ${colorTokens.border}`,
-      colorTokens.bgMuted,
-      'font-medium',
+      "border-t border-border", // References --color-border
+      "bg-bg-muted", // References --color-bg-muted
+      "font-medium",
       className
     )}
     {...props}
   />
-))
+));
 
-TableFooter.displayName = 'TableFooter'
+TableFooter.displayName = "TableFooter";
 
 /**
  * TableRow - Table row
@@ -198,17 +198,17 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
     <tr
       ref={ref}
       className={cn(
-        `border-b ${colorTokens.border}`,
-        'transition-colors',
-        clickable && `hover:${colorTokens.bgMuted} cursor-pointer`,
+        "border-b border-border", // References --color-border
+        "transition-colors",
+        clickable && "hover:bg-bg-muted cursor-pointer", // References --color-bg-muted
         className
       )}
       {...props}
     />
   )
-)
+);
 
-TableRow.displayName = 'TableRow'
+TableRow.displayName = "TableRow";
 
 /**
  * TableHead - Table header cell
@@ -218,17 +218,17 @@ export const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
     <th
       ref={ref}
       className={cn(
-        'h-12 px-4 text-left align-middle font-medium',
-        colorTokens.textMuted,
-        '[&:has([role=checkbox])]:pr-0',
+        "h-12 px-4 text-left align-middle font-medium",
+        "text-fg-muted", // References --color-fg-muted
+        "[&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
     />
   )
-)
+);
 
-TableHead.displayName = 'TableHead'
+TableHead.displayName = "TableHead";
 
 /**
  * TableCell - Table data cell
@@ -238,16 +238,16 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     <td
       ref={ref}
       className={cn(
-        'p-4 align-middle',
-        '[&:has([role=checkbox])]:pr-0',
+        "p-4 align-middle",
+        "[&:has([role=checkbox])]:pr-0",
         className
       )}
       {...props}
     />
   )
-)
+);
 
-TableCell.displayName = 'TableCell'
+TableCell.displayName = "TableCell";
 
 /**
  * TableCaption - Table caption
@@ -258,19 +258,19 @@ export const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn('mt-4 text-sm', colorTokens.textMuted, className)}
+    className={cn("mt-4 text-sm", "text-fg-muted", className)} // References --color-fg-muted
     {...props}
   />
-))
+));
 
-TableCaption.displayName = 'TableCaption'
+TableCaption.displayName = "TableCaption";
 
 // 🎯 STEP 8: Export types for external consumption
-export { tableVariants }
-export type { TableSize, TableVariant }
+export { tableVariants };
+export type { TableSize, TableVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Table
+export default Table;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

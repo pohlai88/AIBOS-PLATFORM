@@ -12,49 +12,47 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type LinkVariant = 'default' | 'primary' | 'muted' | 'danger'
-type LinkUnderline = 'none' | 'hover' | 'always'
+type LinkVariant = "default" | "primary" | "muted" | "danger";
+type LinkUnderline = "none" | "hover" | "always";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const linkVariants = {
   base: [
     // Base styles
-    'inline-flex items-center gap-1',
-    'transition-all duration-200',
-    'cursor-pointer',
-    'mcp-shared-component',
-    typographyTokens.bodyMd,
-  ].join(' '),
+    "inline-flex items-center gap-1",
+    "transition-all duration-200",
+    "cursor-pointer",
+    "mcp-shared-component",
+    "text-[15px] leading-relaxed", // bodyMd equivalent
+  ].join(" "),
   variants: {
     variant: {
-      default: [colorTokens.text, 'hover:opacity-80'].join(' '),
+      default: ["text-fg", "hover:opacity-80"].join(" "), // References --color-fg
 
       primary: [
-        `text-[${colorTokens.primarySoftSurface}]`,
-        'hover:opacity-80',
-      ].join(' '),
+        "text-[var(--color-primary-soft)]", // References CSS variable
+        "hover:opacity-80",
+      ].join(" "),
 
-      muted: [colorTokens.textMuted, 'hover:opacity-80'].join(' '),
+      muted: ["text-fg-muted", "hover:opacity-80"].join(" "), // References --color-fg-muted
 
       danger: [
-        `text-[${colorTokens.dangerSoftSurface}]`,
-        'hover:opacity-80',
-      ].join(' '),
+        "text-[var(--color-danger-soft)]", // References CSS variable
+        "hover:opacity-80",
+      ].join(" "),
     },
     underline: {
-      none: 'no-underline',
-      hover: 'no-underline hover:underline',
-      always: 'underline',
+      none: "no-underline",
+      hover: "no-underline hover:underline",
+      always: "underline",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface LinkProps
@@ -62,50 +60,50 @@ export interface LinkProps
   /**
    * Visual variant of the link
    */
-  variant?: LinkVariant
+  variant?: LinkVariant;
 
   /**
    * Underline behavior
    */
-  underline?: LinkUnderline
+  underline?: LinkUnderline;
 
   /**
    * Whether the link is currently active
    * Typically used for navigation highlighting
    */
-  active?: boolean
+  active?: boolean;
 
   /**
    * Whether the link is external
    * Adds rel="noopener noreferrer" and target="_blank" if true
    */
-  external?: boolean
+  external?: boolean;
 
   /**
    * Icon to display before the link text
    */
-  startIcon?: React.ReactNode
+  startIcon?: React.ReactNode;
 
   /**
    * Icon to display after the link text
    */
-  endIcon?: React.ReactNode
+  endIcon?: React.ReactNode;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Optional click handler - provided by parent component
    * Only works in Client Components
    */
-  onClick?: React.MouseEventHandler<HTMLAnchorElement>
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 
   /**
    * Children (link text/content)
    */
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 /**
@@ -167,8 +165,8 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
   (
     {
       className,
-      variant = 'default',
-      underline = 'hover',
+      variant = "default",
+      underline = "hover",
       active = false,
       external = false,
       startIcon,
@@ -184,26 +182,26 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
     // Build variant classes
     const variantClasses =
       linkVariants.variants.variant[variant] ||
-      linkVariants.variants.variant.default
+      linkVariants.variants.variant.default;
     const underlineClasses =
       linkVariants.variants.underline[underline] ||
-      linkVariants.variants.underline.hover
+      linkVariants.variants.underline.hover;
 
     // External link props
     const externalProps = external
       ? {
-          target: '_blank',
-          rel: 'noopener noreferrer',
+          target: "_blank",
+          rel: "noopener noreferrer",
         }
-      : {}
+      : {};
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-current': active ? ('page' as const) : undefined,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'link-shared',
-    }
+      "data-testid": testId,
+      "aria-current": active ? ("page" as const) : undefined,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "link-shared",
+    };
 
     return (
       <a
@@ -214,13 +212,11 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
           linkVariants.base,
           variantClasses,
           underlineClasses,
-          // Active state styling
+          // Active state styling (references CSS variable)
           active &&
-            ['font-semibold', `text-[${colorTokens.primarySoftSurface}]`].join(
-              ' '
-            ),
+            ["font-semibold", "text-[var(--color-primary-soft)]"].join(" "),
           // Focus styling (WCAG 2.1 required)
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           // External link indicator spacing
           external && endIcon === undefined && "after:content-['_↗']",
           className
@@ -246,18 +242,18 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(
           </span>
         )}
       </a>
-    )
+    );
   }
-)
+);
 
-Link.displayName = 'Link'
+Link.displayName = "Link";
 
 // 🎯 STEP 8: Export types for external consumption
-export { linkVariants }
-export type { LinkUnderline, LinkVariant }
+export { linkVariants };
+export type { LinkUnderline, LinkVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Link
+export default Link;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

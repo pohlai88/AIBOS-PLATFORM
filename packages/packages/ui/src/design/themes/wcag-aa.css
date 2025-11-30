@@ -1,0 +1,62 @@
+/* ======================================================================
+   AI-BOS WCAG AA Theme v3.3
+   Enhanced accessibility baseline for all users
+   Applies moderate improvements to typography, spacing,
+   borders, and interaction contrast.
+   ====================================================================== */
+
+   :root[data-theme="aa"] {
+
+    /* --------------------------------------------------------------- */
+    /* TYPOGRAPHY — 5% SCALE UP ACROSS ALL TEXT SIZES */
+    /* --------------------------------------------------------------- */
+    --theme-font-xs: calc(var(--font-xs) * 1.05);
+    --theme-font-sm: calc(var(--font-sm) * 1.05);
+    --theme-font-base: calc(var(--font-base) * 1.05);
+    --theme-font-lg: calc(var(--font-lg) * 1.05);
+  
+    --theme-font-h1: calc(var(--font-h1) * 1.05);
+    --theme-font-h2: calc(var(--font-h2) * 1.05);
+    --theme-font-h3: calc(var(--font-h3) * 1.05);
+    --theme-font-h4: calc(var(--font-h4) * 1.05);
+    --theme-font-h5: calc(var(--font-h5) * 1.05);
+    --theme-font-h6: calc(var(--font-h6) * 1.05);
+  
+    --theme-font-display-sm: calc(var(--font-display-sm) * 1.05);
+    --theme-font-display-md: calc(var(--font-display-md) * 1.05);
+    --theme-font-display-lg: calc(var(--font-display-lg) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* LINE HEIGHT — small boost (AAA applies larger boost) */
+    /* --------------------------------------------------------------- */
+    --theme-line-height-normal: calc(var(--line-height-normal) * 1.05);
+    --theme-line-height-relaxed: calc(var(--line-height-relaxed) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* INTERACTION — minimum tap area */
+    /* --------------------------------------------------------------- */
+    --theme-hit-min: 44px;
+  
+    /* --------------------------------------------------------------- */
+    /* BORDER CONTRAST — stronger for visibility */
+    /* --------------------------------------------------------------- */
+    --theme-border: color-mix(in srgb, var(--color-border) 85%, black 15%);
+    --theme-border-subtle: color-mix(in srgb, var(--color-border-subtle) 80%, black 20%);
+  
+    /* --------------------------------------------------------------- */
+    /* SPACING — slight increase for touch accuracy */
+    /* --------------------------------------------------------------- */
+    --theme-spacing-2xs: calc(var(--spacing-2xs) * 1.05);
+    --theme-spacing-xs: calc(var(--spacing-xs) * 1.05);
+    --theme-spacing-sm: calc(var(--spacing-sm) * 1.05);
+    --theme-spacing-md: calc(var(--spacing-md) * 1.05);
+    --theme-spacing-lg: calc(var(--spacing-lg) * 1.05);
+    --theme-spacing-xl: calc(var(--spacing-xl) * 1.05);
+    --theme-spacing-2xl: calc(var(--spacing-2xl) * 1.05);
+  
+    /* --------------------------------------------------------------- */
+    /* FOCUS RING — slightly more visible */
+    /* --------------------------------------------------------------- */
+    --theme-ring: color-mix(in srgb, var(--color-ring) 85%, black 15%);
+  }
+  

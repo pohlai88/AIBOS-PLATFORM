@@ -1,0 +1,22 @@
+{
+  "name": "@aibos/mcp-ui-testing",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server for UI package testing - test generation, coverage validation, and pattern checking",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0"
+  },
+  "keywords": ["mcp", "testing", "vitest", "aibos", "ui"],
+  "author": "AIBOS Platform",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}
+

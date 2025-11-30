@@ -12,33 +12,29 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type DividerOrientation = 'horizontal' | 'vertical'
-type DividerVariant = 'default' | 'dashed' | 'dotted'
+type DividerOrientation = "horizontal" | "vertical";
+type DividerVariant = "default" | "dashed" | "dotted";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const dividerVariants = {
-  base: ['shrink-0', colorTokens.border, 'mcp-shared-component'].join(' '),
+  base: ["shrink-0", "border-border", "mcp-shared-component"].join(" "), // References --color-border
   variants: {
     orientation: {
-      horizontal: 'h-[1px] w-full',
-      vertical: 'w-[1px] h-full',
+      horizontal: "h-[1px] w-full",
+      vertical: "w-[1px] h-full",
     },
     variant: {
-      default: 'border-solid',
-      dashed: 'border-dashed',
-      dotted: 'border-dotted',
+      default: "border-solid",
+      dashed: "border-dashed",
+      dotted: "border-dotted",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -46,29 +42,29 @@ export interface DividerProps extends React.HTMLAttributes<HTMLDivElement> {
    * Orientation of the divider
    * @default 'horizontal'
    */
-  orientation?: DividerOrientation
+  orientation?: DividerOrientation;
 
   /**
    * Visual variant of the divider
    * @default 'default'
    */
-  variant?: DividerVariant
+  variant?: DividerVariant;
 
   /**
    * Whether to add decorative margins
    * @default true
    */
-  decorative?: boolean
+  decorative?: boolean;
 
   /**
    * Optional label to display in the center
    */
-  label?: React.ReactNode
+  label?: React.ReactNode;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -108,8 +104,8 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
   (
     {
       className,
-      orientation = 'horizontal',
-      variant = 'default',
+      orientation = "horizontal",
+      variant = "default",
       decorative = true,
       label,
       testId,
@@ -120,29 +116,29 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const orientationClasses =
       dividerVariants.variants.orientation[orientation] ||
-      dividerVariants.variants.orientation.horizontal
+      dividerVariants.variants.orientation.horizontal;
     const variantClasses =
       dividerVariants.variants.variant[variant] ||
-      dividerVariants.variants.variant.default
+      dividerVariants.variants.variant.default;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      role: decorative ? 'presentation' : 'separator',
-      'aria-orientation': orientation,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'divider-shared',
-    }
+      "data-testid": testId,
+      role: decorative ? "presentation" : "separator",
+      "aria-orientation": orientation,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "divider-shared",
+    };
 
     // If label is provided, render with label layout
-    if (label && orientation === 'horizontal') {
+    if (label && orientation === "horizontal") {
       return (
         <div
           ref={ref}
           className={cn(
-            'flex items-center',
-            decorative && `my-${spacingTokens.md}`,
-            'mcp-shared-component',
+            "flex items-center",
+            decorative && "my-4", // Direct spacing (1rem)
+            "mcp-shared-component",
             className
           )}
           {...accessibilityProps}
@@ -158,9 +154,9 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
           />
           <span
             className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
-              'px-4 whitespace-nowrap'
+              "text-sm leading-relaxed", // bodySm equivalent
+              "text-fg-muted", // References --color-fg-muted
+              "px-4 whitespace-nowrap"
             )}
           >
             {label}
@@ -174,7 +170,7 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
             )}
           />
         </div>
-      )
+      );
     }
 
     // Default divider without label
@@ -185,26 +181,26 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
           dividerVariants.base,
           orientationClasses,
           variantClasses,
-          orientation === 'horizontal'
-            ? [`border-t`, decorative && `my-${spacingTokens.md}`]
-            : [`border-l`, decorative && `mx-${spacingTokens.md}`],
+          orientation === "horizontal"
+            ? ["border-t", decorative && "my-4"] // Direct spacing (1rem)
+            : ["border-l", decorative && "mx-4"], // Direct spacing (1rem)
           className
         )}
         {...accessibilityProps}
         {...props}
       />
-    )
+    );
   }
-)
+);
 
-Divider.displayName = 'Divider'
+Divider.displayName = "Divider";
 
 // 🎯 STEP 8: Export types for external consumption
-export { dividerVariants }
-export type { DividerOrientation, DividerVariant }
+export { dividerVariants };
+export type { DividerOrientation, DividerVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Divider
+export default Divider;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

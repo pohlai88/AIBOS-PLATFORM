@@ -12,29 +12,26 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define types for type safety
 export interface BreadcrumbItem {
   /**
    * Label text for the breadcrumb item
    */
-  label: string
+  label: string;
 
   /**
    * URL for the breadcrumb link
    * If not provided, renders as plain text (for current page)
    */
-  href?: string
+  href?: string;
 
   /**
    * Icon to display before the label
    */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
 }
 
 // 🎯 STEP 2: Define RSC-compatible props interface
@@ -42,52 +39,53 @@ export interface BreadcrumbProps extends React.HTMLAttributes<HTMLElement> {
   /**
    * Array of breadcrumb items
    */
-  items: BreadcrumbItem[]
+  items: BreadcrumbItem[];
 
   /**
    * Custom separator between breadcrumb items
    * Default: "/" character
    */
-  separator?: React.ReactNode
+  separator?: React.ReactNode;
 
   /**
    * Maximum number of items to show before truncating
    * Items in the middle will be replaced with "..."
    */
-  maxItems?: number
+  maxItems?: number;
 
   /**
    * Show home icon for first item
    */
-  showHome?: boolean
+  showHome?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
-// 🎯 STEP 3: Create RSC-safe variant system using design tokens
+// 🎯 STEP 3: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const breadcrumbVariants = {
   nav: [
-    'flex items-center flex-wrap gap-2',
-    typographyTokens.bodySm,
-    'mcp-shared-component',
-  ].join(' '),
+    "flex items-center flex-wrap gap-2",
+    "text-sm leading-relaxed", // bodySm equivalent
+    "mcp-shared-component",
+  ].join(" "),
 
-  item: ['inline-flex items-center gap-1.5'].join(' '),
+  item: ["inline-flex items-center gap-1.5"].join(" "),
 
   link: [
-    colorTokens.textMuted,
-    'hover:opacity-80',
-    'transition-all duration-200',
-    'no-underline hover:underline',
-  ].join(' '),
+    "text-fg-muted", // References --color-fg-muted
+    "hover:opacity-80",
+    "transition-all duration-200",
+    "no-underline hover:underline",
+  ].join(" "),
 
-  current: [colorTokens.text, 'font-medium'].join(' '),
+  current: ["text-fg", "font-medium"].join(" "), // References --color-fg
 
-  separator: [colorTokens.textMuted, 'select-none'].join(' '),
-}
+  separator: ["text-fg-muted", "select-none"].join(" "), // References --color-fg-muted
+};
 
 /**
  * Breadcrumb - RSC-Compatible Navigation Component
@@ -149,7 +147,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
     {
       className,
       items,
-      separator = '/',
+      separator = "/",
       maxItems,
       showHome = false,
       testId,
@@ -160,19 +158,19 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
     // Process items for truncation if needed
     const processedItems = React.useMemo(() => {
       if (!maxItems || items.length <= maxItems) {
-        return items
+        return items;
       }
 
       // Keep first item, last item, and truncate middle
-      const firstItem = items[0]
-      const lastItems = items.slice(-(maxItems - 1))
+      const firstItem = items[0];
+      const lastItems = items.slice(-(maxItems - 1));
 
       return [
         firstItem,
-        { label: '...', href: undefined }, // Truncation indicator
+        { label: "...", href: undefined }, // Truncation indicator
         ...lastItems,
-      ]
-    }, [items, maxItems])
+      ];
+    }, [items, maxItems]);
 
     // Home icon (simple house SVG)
     const homeIcon = (
@@ -199,7 +197,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
           strokeLinejoin="round"
         />
       </svg>
-    )
+    );
 
     return (
       <nav
@@ -213,9 +211,9 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
       >
         <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0">
           {processedItems.map((item, index) => {
-            const isLast = index === processedItems.length - 1
-            const isFirst = index === 0
-            const isTruncated = item.label === '...'
+            const isLast = index === processedItems.length - 1;
+            const isFirst = index === 0;
+            const isTruncated = item.label === "...";
 
             return (
               <li key={index} className={breadcrumbVariants.item}>
@@ -226,7 +224,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                     href={item.href}
                     className={cn(
                       breadcrumbVariants.link,
-                      'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none'
+                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none"
                     )}
                   >
                     {isFirst && showHome ? homeIcon : item.icon}
@@ -240,7 +238,7 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                         ? breadcrumbVariants.current
                         : breadcrumbVariants.link
                     )}
-                    aria-current={isLast ? 'page' : undefined}
+                    aria-current={isLast ? "page" : undefined}
                   >
                     {isFirst && showHome ? homeIcon : item.icon}
                     {!(isFirst && showHome) && <span>{item.label}</span>}
@@ -257,21 +255,21 @@ export const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
                   </span>
                 )}
               </li>
-            )
+            );
           })}
         </ol>
       </nav>
-    )
+    );
   }
-)
+);
 
-Breadcrumb.displayName = 'Breadcrumb'
+Breadcrumb.displayName = "Breadcrumb";
 
 // 🎯 STEP 8: Export variant system for external consumption
-export { breadcrumbVariants }
+export { breadcrumbVariants };
 
 // 🎯 STEP 9: Default export for convenience
-export default Breadcrumb
+export default Breadcrumb;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

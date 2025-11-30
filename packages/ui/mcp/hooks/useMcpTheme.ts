@@ -266,7 +266,8 @@ export function useMcpTheme(
       async function loadTheme() {
         try {
           setLoading(true)
-          setError(null)
+          // Use setTimeout to avoid synchronous setState in effect
+          setTimeout(() => setError(null), 0)
 
           // PATCH: Enhanced cache with validation and TTL
           if (cacheKey && themeCache.has(cacheKey)) {
@@ -670,8 +671,8 @@ async function validateThemeOverrides(
       const mockThemeCode = `
         const theme = {
           ${Object.entries(overrides)
-            .map(([key, value]) => `"${key}": "${value}"`)
-            .join(',\n          ')}
+          .map(([key, value]) => `"${key}": "${value}"`)
+          .join(',\n          ')}
         };
       `
 

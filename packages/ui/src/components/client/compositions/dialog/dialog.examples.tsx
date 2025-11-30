@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './dialog'
+} from "./dialog";
 
 // Example 1: Basic Dialog
 // ============================================================================
@@ -37,7 +37,7 @@ export function BasicDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Example 2: Confirmation Dialog
@@ -45,8 +45,8 @@ export function BasicDialogExample() {
 
 export function ConfirmationDialogExample() {
   const handleConfirm = () => {
-    console.log('Confirmed!')
-  }
+    console.log("Confirmed!");
+  };
 
   return (
     <Dialog>
@@ -71,7 +71,7 @@ export function ConfirmationDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Example 3: Form Dialog
@@ -125,19 +125,19 @@ export function FormDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Example 4: Controlled Dialog
 // ============================================================================
 
 export function ControlledDialogExample() {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
 
   const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen)
-    console.log('Dialog open state:', isOpen)
-  }
+    setOpen(isOpen);
+    console.log("Dialog open state:", isOpen);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -148,7 +148,7 @@ export function ControlledDialogExample() {
         <DialogHeader>
           <DialogTitle>Controlled Dialog</DialogTitle>
           <DialogDescription>
-            This dialog's open state is controlled by React state.
+            This dialog&apos;s open state is controlled by React state.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -158,7 +158,7 @@ export function ControlledDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Example 5: Full Screen Dialog
@@ -192,15 +192,15 @@ export function FullScreenDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 // Example 6: Custom Styled Dialog with Layer 1 Typography
 // ============================================================================
 
-import * as React from 'react'
-import { Heading } from '../../../shared/typography/heading'
-import { Text } from '../../../shared/typography/text'
+import * as React from "react";
+import { Heading } from "../../../shared/typography/heading";
+import { Text } from "../../../shared/typography/text";
 
 export function CustomStyledDialogExample() {
   return (
@@ -237,5 +237,5 @@ export function CustomStyledDialogExample() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -12,76 +12,70 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
 type IconButtonVariant =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'ghost'
-  | 'danger'
-type IconButtonSize = 'sm' | 'md' | 'lg' | 'xl'
+  | "default"
+  | "primary"
+  | "secondary"
+  | "ghost"
+  | "danger";
+type IconButtonSize = "sm" | "md" | "lg" | "xl";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const iconButtonVariants = {
   base: [
     // Base styles
-    'inline-flex items-center justify-center',
-    'transition-all duration-200',
-    'cursor-pointer',
-    'flex-shrink-0',
-    'mcp-shared-component',
-  ].join(' '),
+    "inline-flex items-center justify-center",
+    "transition-all duration-200",
+    "cursor-pointer",
+    "flex-shrink-0",
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgElevated,
-        colorTokens.text,
-        `border border-[${colorTokens.border}]`,
-        shadowTokens.xs,
-        'hover:opacity-90',
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+        "shadow-[var(--shadow-xs)]", // References --shadow-xs
+        "hover:opacity-90",
+      ].join(" "),
 
       primary: [
-        colorTokens.primarySoftSurface,
-        'text-white',
-        shadowTokens.sm,
-        'hover:opacity-90',
-      ].join(' '),
+        "bg-primary-soft", // References --color-primary-soft
+        "text-primary-foreground", // References --color-primary-foreground
+        "shadow-[var(--shadow-sm)]", // References --shadow-sm
+        "hover:opacity-90",
+      ].join(" "),
 
       secondary: [
-        colorTokens.secondarySoftSurface,
-        colorTokens.text,
-        `border border-[${colorTokens.border}]`,
-        'hover:opacity-90',
-      ].join(' '),
+        "bg-secondary-soft", // References --color-secondary-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+        "hover:opacity-90",
+      ].join(" "),
 
-      ghost: ['bg-transparent', colorTokens.text, 'hover:bg-black/5'].join(' '),
+      ghost: ["bg-transparent", "text-fg", "hover:bg-black/5"].join(" "), // References --color-fg
 
       danger: [
-        colorTokens.dangerSoftSurface,
-        'text-white',
-        shadowTokens.sm,
-        'hover:opacity-90',
-      ].join(' '),
+        "bg-danger-soft", // References --color-danger-soft
+        "text-danger-foreground", // References --color-danger-foreground
+        "shadow-[var(--shadow-sm)]", // References --shadow-sm
+        "hover:opacity-90",
+      ].join(" "),
     },
     size: {
-      sm: ['h-8 w-8', radiusTokens.sm, 'text-sm'].join(' '),
-      md: ['h-10 w-10', radiusTokens.md, 'text-base'].join(' '),
-      lg: ['h-12 w-12', radiusTokens.md, 'text-lg'].join(' '),
-      xl: ['h-14 w-14', radiusTokens.lg, 'text-xl'].join(' '),
+      sm: ["h-8 w-8", "rounded-[var(--radius-sm)]", "text-sm"].join(" "), // References --radius-sm
+      md: ["h-10 w-10", "rounded-[var(--radius-md)]", "text-base"].join(" "), // References --radius-md
+      lg: ["h-12 w-12", "rounded-[var(--radius-md)]", "text-lg"].join(" "), // References --radius-md
+      xl: ["h-14 w-14", "rounded-[var(--radius-lg)]", "text-xl"].join(" "), // References --radius-lg
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface IconButtonProps
@@ -89,41 +83,41 @@ export interface IconButtonProps
   /**
    * Visual variant of the icon button
    */
-  variant?: IconButtonVariant
+  variant?: IconButtonVariant;
 
   /**
    * Size of the icon button
    */
-  size?: IconButtonSize
+  size?: IconButtonSize;
 
   /**
    * Icon element to display
    * Pass any React node (SVG, icon component, etc.)
    */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
 
   /**
    * Accessible label for screen readers
    * REQUIRED for accessibility (WCAG 2.1)
    */
-  'aria-label': string
+  "aria-label": string;
 
   /**
    * Loading state indicator
    * Shows spinner and disables interaction
    */
-  loading?: boolean
+  loading?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Optional click handler - provided by parent component
    * Only works in Client Components
    */
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 /**
@@ -181,37 +175,37 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       icon,
-      'aria-label': ariaLabel,
+      "aria-label": ariaLabel,
       loading = false,
       disabled = false,
       testId,
       onClick,
-      type = 'button',
+      type = "button",
       ...props
     },
     ref
   ) => {
-    const isDisabled = disabled || loading
+    const isDisabled = disabled || loading;
 
     // Build variant classes
     const variantClasses =
       iconButtonVariants.variants.variant[variant] ||
-      iconButtonVariants.variants.variant.default
+      iconButtonVariants.variants.variant.default;
     const sizeClasses =
       iconButtonVariants.variants.size[size] ||
-      iconButtonVariants.variants.size.md
+      iconButtonVariants.variants.size.md;
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-label': ariaLabel,
-      'aria-busy': loading,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'icon-button-shared',
-    }
+      "data-testid": testId,
+      "aria-label": ariaLabel,
+      "aria-busy": loading,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "icon-button-shared",
+    };
 
     return (
       <button
@@ -224,11 +218,11 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           variantClasses,
           sizeClasses,
           // Loading state styling
-          loading && 'pointer-events-none opacity-70',
+          loading && "pointer-events-none opacity-70",
           // Disabled state styling
-          disabled && 'cursor-not-allowed opacity-50',
+          disabled && "cursor-not-allowed opacity-50",
           // Focus styling (WCAG 2.1 required)
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           className
         )}
         {...accessibilityProps}
@@ -241,18 +235,18 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           icon
         )}
       </button>
-    )
+    );
   }
-)
+);
 
-IconButton.displayName = 'IconButton'
+IconButton.displayName = "IconButton";
 
 // 🎯 STEP 8: Export types for external consumption
-export { iconButtonVariants }
-export type { IconButtonSize, IconButtonVariant }
+export { iconButtonVariants };
+export type { IconButtonSize, IconButtonVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default IconButton
+export default IconButton;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

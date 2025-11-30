@@ -5,7 +5,6 @@
 
 ---
 
-
 ## Overview
 
 This document defines mcp servers overview.
@@ -23,6 +22,7 @@ The AI-BOS platform uses **Model Context Protocol (MCP)** servers to provide AI 
 ## 🎯 Purpose
 
 MCP servers enable:
+
 - ✅ **Standardized Interface** - All tools follow the same protocol
 - ✅ **Type Safety** - Tools have defined input/output schemas
 - ✅ **Governance** - All actions include metadata for audit and compliance
@@ -38,6 +38,7 @@ MCP servers enable:
 **Purpose:** Optimized filesystem access with controlled allowedPaths
 
 **Tools:**
+
 - `read_file` - Read file contents
 - `list_directory` - List directory contents
 - `write_file` - Write file contents
@@ -54,6 +55,7 @@ MCP servers enable:
 **Purpose:** React component validation and Next.js RSC boundary checking
 
 **Tools:**
+
 - `validate_react_component` - Validate React component for best practices
 - `check_server_client_usage` - Check Server/Client component usage
 - `validate_rsc_boundary` - Validate RSC boundary with enhanced checks
@@ -71,6 +73,7 @@ MCP servers enable:
 **Purpose:** Theme token management, validation, and Tailwind class validation
 
 **Tools:**
+
 - `read_tailwind_config` - Returns Tailwind v4 CSS tokens
 - `validate_token_exists` - Check if token exists in globals.css
 - `suggest_token` - Suggest appropriate token for color/value
@@ -83,11 +86,28 @@ MCP servers enable:
 
 ---
 
-### 4. **aibos-documentation**
+### 4. **aibos-ui-testing**
+
+**Purpose:** UI package testing - test generation, coverage validation, and pattern checking
+
+**Tools:**
+
+- `generate_component_test` - Generate test file for React component following GRCD-TESTING.md patterns
+- `check_test_coverage` - Check if component meets 95% coverage threshold
+- `validate_test_pattern` - Validate test file follows GRCD-TESTING.md patterns
+
+**Status:** ✅ Active  
+**Version:** 1.0.0  
+**Docs:** [UI Testing MCP](../../../.mcp/ui-testing/README.md)
+
+---
+
+### 5. **aibos-documentation**
 
 **Purpose:** Auto-generate and maintain documentation via MCP tools
 
 **Tools:**
+
 - `validate_docs` - Validate documentation structure and compliance
 - `update_token_reference` - Auto-generate token reference from globals.css
 - `sync_nextra` - Sync documentation to Nextra
@@ -100,11 +120,12 @@ MCP servers enable:
 
 ---
 
-### 5. **aibos-ui-generator**
+### 6. **aibos-ui-generator**
 
 **Purpose:** Generate UI layouts/components from natural language
 
 **Tools:**
+
 - `generate_ui_layout` - Generate UI layout/component code from prompt
 
 **Status:** ✅ Active  
@@ -120,6 +141,7 @@ MCP servers enable:
 **Purpose:** AI-driven component generation with complete constitution governance (86 rules)
 
 **Tools:**
+
 - `generate_component` - Generate React component with complete validation
 
 **Status:** ✅ Active  
@@ -134,6 +156,7 @@ MCP servers enable:
 **Purpose:** Accessibility validation for React components with WCAG 2.1 compliance
 
 **Tools:**
+
 - `validate_component` - Validate React component accessibility
 - `check_contrast` - Check WCAG 2.1 contrast ratio
 
@@ -228,6 +251,7 @@ All MCP servers are configured in `.cursor/mcp.json`:
 MCP servers are automatically available when configured. Use them by:
 
 1. **Asking Cursor to use a tool:**
+
    ```
    Validate the Button component using React MCP
    ```
@@ -243,7 +267,7 @@ MCP servers are automatically available when configured. Use them by:
 // Example: Validate component
 const result = await mcp_react_validation_validate_react_component({
   filePath: "packages/ui/src/components/button.tsx",
-  componentName: "Button"
+  componentName: "Button",
 });
 ```
 
@@ -260,4 +284,3 @@ const result = await mcp_react_validation_validate_react_component({
 
 **Last Updated:** 2025-11-24  
 **Maintained By:** AI-BOS MCP Team
-

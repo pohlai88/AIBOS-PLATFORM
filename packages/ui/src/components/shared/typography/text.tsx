@@ -12,68 +12,66 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define typography variant types
-type TextSize = 'xs' | 'sm' | 'md' | 'lg'
-type TextWeight = 'normal' | 'medium' | 'semibold' | 'bold'
-type TextVariant = 'default' | 'label' | 'caption' | 'overline'
+type TextSize = "xs" | "sm" | "md" | "lg";
+type TextWeight = "normal" | "medium" | "semibold" | "bold";
+type TextVariant = "default" | "label" | "caption" | "overline";
 type TextColor =
-  | 'default'
-  | 'muted'
-  | 'subtle'
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-type TextAlign = 'left' | 'center' | 'right' | 'justify'
+  | "default"
+  | "muted"
+  | "subtle"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger";
+type TextAlign = "left" | "center" | "right" | "justify";
 
 // 🎯 STEP 2: Create RSC-safe typography variant system
 const textVariants = {
   base: [
-    'mcp-shared-typography', // MCP validation marker
-    'block', // Text display
-  ].join(' '),
+    "mcp-shared-typography", // MCP validation marker
+    "block", // Text display
+  ].join(" "),
   variants: {
+    // ✅ GRCD Compliant: Direct Tailwind classes (typography tokens are already Tailwind)
     size: {
-      xs: typographyTokens.bodySm, // 14px (text-sm)
-      sm: typographyTokens.bodyMd, // 15px (text-[15px])
-      md: typographyTokens.body, // 16px (text-base)
-      lg: typographyTokens.bodyLg, // 18px (text-lg)
+      xs: "text-sm leading-relaxed", // bodySm equivalent
+      sm: "text-[15px] leading-relaxed", // bodyMd equivalent
+      md: "text-base leading-relaxed", // body equivalent
+      lg: "text-lg leading-relaxed", // bodyLg equivalent
     },
     weight: {
-      normal: 'font-normal',
-      medium: 'font-medium',
-      semibold: 'font-semibold',
-      bold: 'font-bold',
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
     },
     variant: {
-      default: '', // No additional classes
-      label: typographyTokens.label, // 14px medium
-      caption: typographyTokens.caption, // 12px subtle
-      overline: typographyTokens.overline, // 12px medium uppercase
+      default: "", // No additional classes
+      label: "text-sm font-medium", // label equivalent
+      caption: "text-xs text-fg-subtle leading-normal", // caption equivalent
+      overline: "text-xs font-medium tracking-wide uppercase", // overline equivalent
     },
     color: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      subtle: colorTokens.textSubtle,
-      primary: 'text-primary',
-      success: 'text-success',
-      warning: 'text-warning',
-      danger: 'text-danger',
+      default: "text-fg", // References --color-fg
+      muted: "text-fg-muted", // References --color-fg-muted
+      subtle: "text-fg-subtle", // References --color-fg-subtle
+      primary: "text-primary",
+      success: "text-success",
+      warning: "text-warning",
+      danger: "text-danger",
     },
     align: {
-      left: 'text-left',
-      center: 'text-center',
-      right: 'text-right',
-      justify: 'text-justify',
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+      justify: "text-justify",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible typography props interface
 export interface TextProps extends React.HTMLAttributes<HTMLElement> {
@@ -83,55 +81,55 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
    * @default 'p'
    */
   as?:
-    | 'p'
-    | 'span'
-    | 'div'
-    | 'label'
-    | 'legend'
-    | 'figcaption'
-    | 'time'
-    | 'address'
+    | "p"
+    | "span"
+    | "div"
+    | "label"
+    | "legend"
+    | "figcaption"
+    | "time"
+    | "address";
 
   /**
    * Typography size (visual, independent of semantic element)
    * @default 'md'
    */
-  size?: TextSize
+  size?: TextSize;
 
   /**
    * Font weight
    * @default 'normal'
    */
-  weight?: TextWeight
+  weight?: TextWeight;
 
   /**
    * Text variant (overrides size if set)
    * @default 'default'
    */
-  variant?: TextVariant
+  variant?: TextVariant;
 
   /**
    * Text color using design tokens
    * @default 'default'
    */
-  color?: TextColor
+  color?: TextColor;
 
   /**
    * Text alignment
    * @default 'left'
    */
-  align?: TextAlign
+  align?: TextAlign;
 
   /**
    * Truncate text with ellipsis
    * @default false
    */
-  truncate?: boolean
+  truncate?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -196,12 +194,12 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
 export const Text = React.forwardRef<HTMLElement, TextProps>(
   (
     {
-      as: Component = 'p',
-      size = 'md',
-      weight = 'normal',
-      variant = 'default',
-      color = 'default',
-      align = 'left',
+      as: Component = "p",
+      size = "md",
+      weight = "normal",
+      variant = "default",
+      color = "default",
+      align = "left",
       truncate = false,
       testId,
       className,
@@ -213,24 +211,24 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
 
     // Variant overrides size if set (label, caption, overline have specific sizing)
-    const useVariantSizing = variant !== 'default'
+    const useVariantSizing = variant !== "default";
 
     // Build className from variant system
     const sizeClasses = useVariantSizing
-      ? ''
-      : textVariants.variants.size[size] || textVariants.variants.size.md
-    const weightClasses = textVariants.variants.weight[weight]
-    const variantClasses = textVariants.variants.variant[variant]
-    const colorClasses = textVariants.variants.color[color]
-    const alignClasses = textVariants.variants.align[align]
+      ? ""
+      : textVariants.variants.size[size] || textVariants.variants.size.md;
+    const weightClasses = textVariants.variants.weight[weight];
+    const variantClasses = textVariants.variants.variant[variant];
+    const colorClasses = textVariants.variants.color[color];
+    const alignClasses = textVariants.variants.align[align];
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
+      "data-testid": testId,
       // MCP Guardian: Constitution compliance markers
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'text-typography',
-    }
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "text-typography",
+    };
 
     return (
       <Component
@@ -242,7 +240,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
           variantClasses,
           colorClasses,
           alignClasses,
-          truncate && 'truncate',
+          truncate && "truncate",
           className
         )}
         {...accessibilityProps}
@@ -250,18 +248,18 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
       >
         {children}
       </Component>
-    )
+    );
   }
-)
+);
 
-Text.displayName = 'Text'
+Text.displayName = "Text";
 
 // 🎯 STEP 6: Export types for external consumption
-export { textVariants }
-export type { TextAlign, TextColor, TextSize, TextVariant, TextWeight }
+export { textVariants };
+export type { TextAlign, TextColor, TextSize, TextVariant, TextWeight };
 
 // 🎯 STEP 7: Default export for convenience
-export default Text
+export default Text;
 
 // 🎯 STEP 8: RSC Compliance Checklist
 // ✅ No 'use client' directive

@@ -12,141 +12,136 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  colorTokens,
-  radiusTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type CheckboxVariant = 'default' | 'primary' | 'success' | 'danger'
-type CheckboxSize = 'sm' | 'md' | 'lg'
+type CheckboxVariant = "default" | "primary" | "success" | "danger";
+type CheckboxSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const checkboxVariants = {
   base: [
-    // Base styles using componentTokens
-    'inline-flex items-center justify-center',
-    'border-2',
-    'transition-all duration-200',
-    'cursor-pointer',
-    'flex-shrink-0',
-    'mcp-shared-component',
-  ].join(' '),
+    // Base styles
+    "inline-flex items-center justify-center",
+    "border-2",
+    "transition-all duration-200",
+    "cursor-pointer",
+    "flex-shrink-0",
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        'checked:bg-current',
-        `checked:border-[${colorTokens.primarySoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:bg-current",
+        "checked:border-[var(--color-primary-soft)]", // References CSS variable
+      ].join(" "),
 
       primary: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:bg-[${colorTokens.primarySoftSurface}]`,
-        `checked:border-[${colorTokens.primarySoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:bg-[var(--color-primary-soft)]", // References CSS variable
+        "checked:border-[var(--color-primary-soft)]", // References CSS variable
+      ].join(" "),
 
       success: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:bg-[${colorTokens.successSoftSurface}]`,
-        `checked:border-[${colorTokens.successSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:bg-[var(--color-success-soft)]", // References CSS variable
+        "checked:border-[var(--color-success-soft)]", // References CSS variable
+      ].join(" "),
 
       danger: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:bg-[${colorTokens.dangerSoftSurface}]`,
-        `checked:border-[${colorTokens.dangerSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:bg-[var(--color-danger-soft)]", // References CSS variable
+        "checked:border-[var(--color-danger-soft)]", // References CSS variable
+      ].join(" "),
     },
     size: {
-      sm: ['h-4 w-4', radiusTokens.sm].join(' '),
-      md: ['h-5 w-5', radiusTokens.md].join(' '),
-      lg: ['h-6 w-6', radiusTokens.md].join(' '),
+      sm: ["h-4 w-4", "rounded-[var(--radius-sm)]"].join(" "), // References --radius-sm
+      md: ["h-5 w-5", "rounded-[var(--radius-md)]"].join(" "), // References --radius-md
+      lg: ["h-6 w-6", "rounded-[var(--radius-md)]"].join(" "), // References --radius-md
     },
   },
-}
+};
 
 // Label variant system
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const labelVariants = {
   base: [
-    'inline-flex items-center gap-2',
-    'cursor-pointer',
-    'select-none',
-    colorTokens.text,
-  ].join(' '),
+    "inline-flex items-center gap-2",
+    "cursor-pointer",
+    "select-none",
+    "text-fg", // References --color-fg
+  ].join(" "),
   size: {
-    sm: typographyTokens.bodySm,
-    md: typographyTokens.bodyMd,
-    lg: typographyTokens.headingMd,
+    sm: "text-sm leading-relaxed", // bodySm equivalent
+    md: "text-[15px] leading-relaxed", // bodyMd equivalent
+    lg: "text-base font-semibold", // headingMd equivalent
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   /**
    * Visual variant of the checkbox
    */
-  variant?: CheckboxVariant
+  variant?: CheckboxVariant;
 
   /**
    * Size of the checkbox
    */
-  size?: CheckboxSize
+  size?: CheckboxSize;
 
   /**
    * Label text for the checkbox
    * If provided, renders a label element
    */
-  label?: React.ReactNode
+  label?: React.ReactNode;
 
   /**
    * Error state indicator
    * Shows error styling when true
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Error message to display
    * Only shown when error is true
    */
-  errorMessage?: string
+  errorMessage?: string;
 
   /**
    * Helper text to display below the checkbox
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Indeterminate state (partially checked)
    * Visual only - controlled by parent
    */
-  indeterminate?: boolean
+  indeterminate?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Wrapper className for the container
    */
-  wrapperClassName?: string
+  wrapperClassName?: string;
 
   /**
    * Optional change handler - provided by parent component
    * Only works in Client Components
    */
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 /**
@@ -199,8 +194,8 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       label,
       error = false,
       errorMessage,
@@ -216,30 +211,30 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     ref
   ) => {
     // Generate unique ID unconditionally (RSC-safe)
-    const generatedId = React.useId()
-    const checkboxId = id || `checkbox-${generatedId}`
+    const generatedId = React.useId();
+    const checkboxId = id || `checkbox-${generatedId}`;
 
     // Build variant classes
     const variantClasses =
       checkboxVariants.variants.variant[variant] ||
-      checkboxVariants.variants.variant.default
+      checkboxVariants.variants.variant.default;
     const sizeClasses =
-      checkboxVariants.variants.size[size] || checkboxVariants.variants.size.md
-    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md
+      checkboxVariants.variants.size[size] || checkboxVariants.variants.size.md;
+    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md;
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-describedby':
+      "data-testid": testId,
+      "aria-describedby":
         error && errorMessage
           ? `${checkboxId}-error`
           : helperText
             ? `${checkboxId}-helper`
             : undefined,
-      'aria-invalid': error,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'checkbox-shared',
-    }
+      "aria-invalid": error,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "checkbox-shared",
+    };
 
     // Checkbox input element
     const checkboxElement = (
@@ -253,40 +248,36 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           checkboxVariants.base,
           variantClasses,
           sizeClasses,
-          // Error state styling
+          // Error state styling (references CSS variables)
           error &&
             [
-              `border-[${colorTokens.dangerSoftSurface}]`,
-              `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
-            ].join(' '),
+              "border-[var(--color-danger-soft)]",
+              "focus-visible:ring-[var(--color-danger-soft)]",
+            ].join(" "),
           // Focus styling (WCAG 2.1 required)
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
           // Disabled state styling
-          disabled && 'cursor-not-allowed opacity-50',
+          disabled && "cursor-not-allowed opacity-50",
           // Indeterminate state (visual only)
-          indeterminate && 'indeterminate:bg-current',
+          indeterminate && "indeterminate:bg-current",
           className
         )}
         {...accessibilityProps}
         {...props}
       />
-    )
+    );
 
     // If no label, return just the checkbox
     if (!label) {
       return (
-        <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+        <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
           {checkboxElement}
 
           {/* Helper text */}
           {helperText && !error && (
             <span
               id={`${checkboxId}-helper`}
-              className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
-                'mt-1'
-              )}
+              className={cn("text-sm leading-relaxed", "text-fg-muted", "mt-1")}
             >
               {helperText}
             </span>
@@ -297,9 +288,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             <span
               id={`${checkboxId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`,
-                'mt-1'
+                "text-sm leading-relaxed",
+                "text-[var(--color-danger-soft)]", // References CSS variable
+                "mt-1"
               )}
               role="alert"
             >
@@ -307,18 +298,18 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             </span>
           )}
         </div>
-      )
+      );
     }
 
     // Return checkbox with label
     return (
-      <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+      <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
         <label
           htmlFor={checkboxId}
           className={cn(
             labelVariants.base,
             labelSizeClasses,
-            disabled && 'cursor-not-allowed opacity-50'
+            disabled && "cursor-not-allowed opacity-50"
           )}
         >
           {checkboxElement}
@@ -329,11 +320,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
         {helperText && !error && (
           <span
             id={`${checkboxId}-helper`}
-            className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
-              'ml-7'
-            )}
+            className={cn("text-sm leading-relaxed", "text-fg-muted", "ml-7")}
           >
             {helperText}
           </span>
@@ -344,9 +331,9 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           <span
             id={`${checkboxId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`,
-              'ml-7'
+              "text-sm leading-relaxed",
+              "text-[var(--color-danger-soft)]", // References CSS variable
+              "ml-7"
             )}
             role="alert"
           >
@@ -354,18 +341,18 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           </span>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Checkbox.displayName = 'Checkbox'
+Checkbox.displayName = "Checkbox";
 
 // 🎯 STEP 8: Export types for external consumption
-export { checkboxVariants }
-export type { CheckboxSize, CheckboxVariant }
+export { checkboxVariants };
+export type { CheckboxSize, CheckboxVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Checkbox
+export default Checkbox;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

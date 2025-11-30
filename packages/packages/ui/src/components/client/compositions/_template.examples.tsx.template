@@ -1,0 +1,115 @@
+/**
+ * {{COMPONENT_NAME}} Examples - Layer 2 Radix Composition
+ *
+ * Usage examples for the {{COMPONENT_NAME}} component.
+ *
+ * @module {{COMPONENT_NAME}}Examples
+ * @layer 2
+ */
+
+'use client'
+
+import * as React from 'react'
+import {
+  {{COMPONENT_NAME}},
+  {{COMPONENT_NAME}}Close,
+  {{COMPONENT_NAME}}Content,
+  {{COMPONENT_NAME}}Trigger,
+} from './{{COMPONENT_LOWER}}'
+
+// ============================================================================
+// Basic Example
+// ============================================================================
+
+export function {{COMPONENT_NAME}}BasicExample() {
+  return (
+    <{{COMPONENT_NAME}}>
+      <{{COMPONENT_NAME}}Trigger>
+        <button className="px-4 py-2 bg-blue-500 text-white rounded">
+          Open {{COMPONENT_NAME}}
+        </button>
+      </{{COMPONENT_NAME}}Trigger>
+      <{{COMPONENT_NAME}}Content>
+        <p>This is the {{COMPONENT_LOWER}} content.</p>
+        <{{COMPONENT_NAME}}Close>
+          <button className="mt-4 px-4 py-2 bg-gray-200 rounded">Close</button>
+        </{{COMPONENT_NAME}}Close>
+      </{{COMPONENT_NAME}}Content>
+    </{{COMPONENT_NAME}}>
+  )
+}
+
+// ============================================================================
+// Size Variants Example
+// ============================================================================
+
+export function {{COMPONENT_NAME}}SizeExample() {
+  return (
+    <div className="flex gap-4">
+      {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
+        <{{COMPONENT_NAME}} key={size}>
+          <{{COMPONENT_NAME}}Trigger>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              {size.toUpperCase()}
+            </button>
+          </{{COMPONENT_NAME}}Trigger>
+          <{{COMPONENT_NAME}}Content size={size}>
+            <p>Size: {size}</p>
+          </{{COMPONENT_NAME}}Content>
+        </{{COMPONENT_NAME}}>
+      ))}
+    </div>
+  )
+}
+
+// ============================================================================
+// Visual Variants Example
+// ============================================================================
+
+export function {{COMPONENT_NAME}}VariantExample() {
+  return (
+    <div className="flex gap-4">
+      {(['default', 'elevated', 'bordered'] as const).map((variant) => (
+        <{{COMPONENT_NAME}} key={variant}>
+          <{{COMPONENT_NAME}}Trigger>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded">
+              {variant}
+            </button>
+          </{{COMPONENT_NAME}}Trigger>
+          <{{COMPONENT_NAME}}Content variant={variant}>
+            <p>Variant: {variant}</p>
+          </{{COMPONENT_NAME}}Content>
+        </{{COMPONENT_NAME}}>
+      ))}
+    </div>
+  )
+}
+
+// ============================================================================
+// Controlled Example
+// ============================================================================
+
+export function {{COMPONENT_NAME}}ControlledExample() {
+  const [open, setOpen] = React.useState(false)
+
+  return (
+    <{{COMPONENT_NAME}} open={open} onOpenChange={setOpen}>
+      <{{COMPONENT_NAME}}Trigger>
+        <button className="px-4 py-2 bg-blue-500 text-white rounded">
+          Controlled {{COMPONENT_NAME}}
+        </button>
+      </{{COMPONENT_NAME}}Trigger>
+      <{{COMPONENT_NAME}}Content>
+        <p>This {{COMPONENT_LOWER}} is controlled.</p>
+        <p>Open state: {open ? 'true' : 'false'}</p>
+        <button
+          onClick={() => setOpen(false)}
+          className="mt-4 px-4 py-2 bg-gray-200 rounded"
+        >
+          Close Programmatically
+        </button>
+      </{{COMPONENT_NAME}}Content>
+    </{{COMPONENT_NAME}}>
+  )
+}
+

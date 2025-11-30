@@ -1,0 +1,28 @@
+{
+  "name": "@aibos/strategic-partner-v3",
+  "version": "3.0.0",
+  "description": "AI-BOS Strategic Partner MCP Server v3.0 - Pipeline-based architecture with validation, performance monitoring, and framework-agnostic generation",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "design-system",
+    "component-generation",
+    "validation",
+    "pipeline"
+  ],
+  "author": "AI-BOS Platform Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

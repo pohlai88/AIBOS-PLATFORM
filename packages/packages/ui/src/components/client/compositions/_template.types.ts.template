@@ -1,0 +1,85 @@
+/**
+ * {{COMPONENT_NAME}} Types - Layer 2 Radix Composition
+ *
+ * Type definitions for the {{COMPONENT_NAME}} component.
+ *
+ * @module {{COMPONENT_NAME}}Types
+ * @layer 2
+ */
+
+import type * as {{COMPONENT_NAME}}Primitive from '@radix-ui/react-{{RADIX_PACKAGE}}'
+
+// ============================================================================
+// Size and Variant Types
+// ============================================================================
+
+/**
+ * Available sizes for {{COMPONENT_NAME}}
+ */
+export type {{COMPONENT_NAME}}Size = 'sm' | 'md' | 'lg' | 'xl'
+
+/**
+ * Visual variants for {{COMPONENT_NAME}}
+ */
+export type {{COMPONENT_NAME}}Variant = 'default' | 'elevated' | 'bordered'
+
+// ============================================================================
+// Component Props
+// ============================================================================
+
+/**
+ * Props for {{COMPONENT_NAME}} root component
+ */
+export interface {{COMPONENT_NAME}}RootProps
+  extends React.ComponentPropsWithoutRef<typeof {{COMPONENT_NAME}}Primitive.Root> {
+  /**
+   * Test ID for automated testing
+   */
+  testId?: string
+}
+
+/**
+ * Props for {{COMPONENT_NAME}} trigger component
+ */
+export interface {{COMPONENT_NAME}}TriggerProps
+  extends React.ComponentPropsWithoutRef<typeof {{COMPONENT_NAME}}Primitive.Trigger> {
+  /**
+   * Render as child element
+   */
+  asChild?: boolean
+}
+
+/**
+ * Props for {{COMPONENT_NAME}} content component
+ */
+export interface {{COMPONENT_NAME}}ContentProps
+  extends React.ComponentPropsWithoutRef<typeof {{COMPONENT_NAME}}Primitive.Content> {
+  /**
+   * Size variant
+   * @default 'md'
+   */
+  size?: {{COMPONENT_NAME}}Size
+
+  /**
+   * Visual variant
+   * @default 'default'
+   */
+  variant?: {{COMPONENT_NAME}}Variant
+
+  /**
+   * Test ID for automated testing
+   */
+  testId?: string
+}
+
+/**
+ * Props for {{COMPONENT_NAME}} close component
+ */
+export interface {{COMPONENT_NAME}}CloseProps
+  extends React.ComponentPropsWithoutRef<typeof {{COMPONENT_NAME}}Primitive.Close> {
+  /**
+   * Render as child element
+   */
+  asChild?: boolean
+}
+

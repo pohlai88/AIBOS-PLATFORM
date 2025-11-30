@@ -21,14 +21,13 @@
  * ```
  */
 
-'use client'
+"use client";
 
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import * as React from 'react'
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+import * as React from "react";
 
-// Import design tokens
-import { colorTokens, radiusTokens } from '../../../../design/tokens/tokens'
-import { cn } from '../../../../design/utilities/cn'
+// Import design utilities
+import { cn } from "../../../../design/utilities/cn";
 
 // Import types
 import type {
@@ -39,26 +38,26 @@ import type {
   ScrollAreaViewportProps,
   ScrollbarSize,
   ScrollbarVisibility,
-} from './scroll-area.types'
+} from "./scroll-area.types";
 
 /**
  * Scrollbar size variants
  */
 const scrollbarSizeVariants: Record<ScrollbarSize, string> = {
-  sm: 'w-1.5 h-1.5',
-  md: 'w-2.5 h-2.5',
-  lg: 'w-3 h-3',
-}
+  sm: "w-1.5 h-1.5",
+  md: "w-2.5 h-2.5",
+  lg: "w-3 h-3",
+};
 
 /**
  * Scrollbar visibility variants
  */
 const scrollbarVisibilityVariants: Record<ScrollbarVisibility, string> = {
-  auto: '', // Default Radix behavior
-  always: 'opacity-100',
-  hover: 'opacity-0 group-hover:opacity-100 transition-opacity',
-  scroll: 'opacity-0 data-[state=visible]:opacity-100 transition-opacity',
-}
+  auto: "", // Default Radix behavior
+  always: "opacity-100",
+  hover: "opacity-0 group-hover:opacity-100 transition-opacity",
+  scroll: "opacity-0 data-[state=visible]:opacity-100 transition-opacity",
+};
 
 /**
  * ScrollArea - Root component
@@ -74,23 +73,23 @@ export const ScrollArea = React.forwardRef<
     {
       className,
       children,
-      scrollType = 'vertical',
-      scrollbarSize = 'md',
-      scrollbarVisibility = 'hover',
+      scrollType = "vertical",
+      scrollbarSize = "md",
+      scrollbarVisibility = "hover",
       testId,
       ...props
     },
     ref
   ) => {
-    const showVertical = scrollType === 'vertical' || scrollType === 'both'
-    const showHorizontal = scrollType === 'horizontal' || scrollType === 'both'
+    const showVertical = scrollType === "vertical" || scrollType === "both";
+    const showHorizontal = scrollType === "horizontal" || scrollType === "both";
 
     return (
       <ScrollAreaPrimitive.Root
         ref={ref}
         className={cn(
-          'group relative overflow-hidden',
-          'mcp-client-interactive',
+          "group relative overflow-hidden",
+          "mcp-client-interactive",
           className
         )}
         data-testid={testId}
@@ -124,10 +123,10 @@ export const ScrollArea = React.forwardRef<
 
         {showVertical && showHorizontal && <ScrollAreaCorner />}
       </ScrollAreaPrimitive.Root>
-    )
+    );
   }
-)
-ScrollArea.displayName = 'ScrollArea'
+);
+ScrollArea.displayName = "ScrollArea";
 
 /**
  * ScrollAreaViewport - The scrollable content viewport
@@ -140,13 +139,13 @@ export const ScrollAreaViewport = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <ScrollAreaPrimitive.Viewport
     ref={ref}
-    className={cn('h-full w-full rounded-[inherit]', className)}
+    className={cn("h-full w-full rounded-[inherit]", className)}
     {...props}
   >
     {children}
   </ScrollAreaPrimitive.Viewport>
-))
-ScrollAreaViewport.displayName = 'ScrollAreaViewport'
+));
+ScrollAreaViewport.displayName = "ScrollAreaViewport";
 
 /**
  * ScrollAreaScrollbar - The scrollbar track and thumb
@@ -156,24 +155,24 @@ ScrollAreaViewport.displayName = 'ScrollAreaViewport'
 export const ScrollAreaScrollbar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Scrollbar>,
   ScrollAreaScrollbarProps
->(({ className, orientation = 'vertical', ...props }, ref) => (
+>(({ className, orientation = "vertical", ...props }, ref) => (
   <ScrollAreaPrimitive.Scrollbar
     ref={ref}
     orientation={orientation}
     className={cn(
-      'flex touch-none transition-colors select-none',
-      orientation === 'vertical' &&
-        'h-full w-2.5 border-l border-l-transparent p-px',
-      orientation === 'horizontal' &&
-        'h-2.5 w-full border-t border-t-transparent p-px',
+      "flex touch-none transition-colors select-none",
+      orientation === "vertical" &&
+        "h-full w-2.5 border-l border-l-transparent p-px",
+      orientation === "horizontal" &&
+        "h-2.5 w-full border-t border-t-transparent p-px",
       className
     )}
     {...props}
   >
     <ScrollAreaThumb />
   </ScrollAreaPrimitive.Scrollbar>
-))
-ScrollAreaScrollbar.displayName = 'ScrollAreaScrollbar'
+));
+ScrollAreaScrollbar.displayName = "ScrollAreaScrollbar";
 
 /**
  * ScrollAreaThumb - The draggable thumb inside the scrollbar
@@ -187,17 +186,17 @@ export const ScrollAreaThumb = React.forwardRef<
   <ScrollAreaPrimitive.Thumb
     ref={ref}
     className={cn(
-      'relative flex-1',
-      radiusTokens.full,
-      'bg-gray-300 hover:bg-gray-400',
-      'dark:bg-gray-700 dark:hover:bg-gray-600',
-      'transition-colors',
+      "relative flex-1",
+      "rounded-[var(--radius-full)]", // References --radius-full
+      "bg-gray-300 hover:bg-gray-400",
+      "dark:bg-gray-700 dark:hover:bg-gray-600",
+      "transition-colors",
       className
     )}
     {...props}
   />
-))
-ScrollAreaThumb.displayName = 'ScrollAreaThumb'
+));
+ScrollAreaThumb.displayName = "ScrollAreaThumb";
 
 /**
  * ScrollAreaCorner - The corner element when both scrollbars are visible
@@ -210,11 +209,11 @@ export const ScrollAreaCorner = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ScrollAreaPrimitive.Corner
     ref={ref}
-    className={cn(colorTokens.bg, className)}
+    className={cn("bg-bg", className)} // References --color-bg
     {...props}
   />
-))
-ScrollAreaCorner.displayName = 'ScrollAreaCorner'
+));
+ScrollAreaCorner.displayName = "ScrollAreaCorner";
 
 // Default export for convenience
 export default Object.assign(ScrollArea, {
@@ -222,4 +221,4 @@ export default Object.assign(ScrollArea, {
   Scrollbar: ScrollAreaScrollbar,
   Thumb: ScrollAreaThumb,
   Corner: ScrollAreaCorner,
-})
+});

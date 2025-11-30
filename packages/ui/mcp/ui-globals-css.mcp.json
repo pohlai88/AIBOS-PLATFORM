@@ -1,0 +1,53 @@
+{
+  "component": "globals.css",
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-27",
+  "intent": "Maintain globals.css as SSOT for all CSS variables, following GRCD-GLOBALS-CSS.md specifications",
+  "constraints": [
+    "MUST follow GRCD-GLOBALS-CSS.md structure",
+    "MUST define all tokens as CSS custom properties",
+    "MUST NOT duplicate token definitions",
+    "MUST use semantic naming conventions (--color-*, --radius-*, --shadow-*)",
+    "MUST support theme overrides via CSS selectors",
+    "MUST maintain WCAG AA/AAA compliance",
+    "MUST NOT contain component-specific styles",
+    "MUST NOT use !important",
+    "MUST follow theme override hierarchy (Safe Mode > WCAG > Dark > Tenant > Base)"
+  ],
+  "input_sources": [
+    "GRCD-GLOBALS-CSS.md (packages/ui/GRCD-GLOBALS-CSS.md)",
+    "globals.css (packages/ui/src/design/tokens/globals.css)",
+    "Design system specifications"
+  ],
+  "output_targets": {
+    "code": "packages/ui/src/design/tokens/globals.css"
+  },
+  "style": {
+    "normative_language": true,
+    "anti_drift": true,
+    "css_variables_only": true,
+    "no_duplication": true
+  },
+  "validation": {
+    "pre_commit": [
+      "CSS variable naming validation",
+      "Duplicate variable detection",
+      "Theme hierarchy validation",
+      "WCAG contrast validation"
+    ]
+  },
+  "mcp_governance": {
+    "css_variable_validation": true,
+    "naming_convention_enforcement": true,
+    "theme_hierarchy_enforcement": true,
+    "wcag_compliance_validation": true
+  },
+  "normative_requirements": [
+    "CSS-MCP-1: All CSS variable definitions MUST be in globals.css only",
+    "CSS-MCP-2: CSS variable naming MUST follow semantic conventions",
+    "CSS-MCP-3: Theme overrides MUST follow hierarchy (Safe Mode > WCAG > Dark > Tenant > Base)",
+    "CSS-MCP-4: WCAG and Safe Mode themes MUST be immutable",
+    "CSS-MCP-5: Tenant customization MUST only override --accent-* tokens"
+  ]
+}
+

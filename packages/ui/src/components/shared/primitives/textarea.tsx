@@ -12,135 +12,126 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  colorTokens,
-  radiusTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type TextareaVariant = 'default' | 'filled' | 'outlined'
-type TextareaSize = 'sm' | 'md' | 'lg'
-type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both'
+type TextareaVariant = "default" | "filled" | "outlined";
+type TextareaSize = "sm" | "md" | "lg";
+type TextareaResize = "none" | "vertical" | "horizontal" | "both";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const textareaVariants = {
   base: [
     // Base styles
-    'w-full',
-    'transition-all duration-200',
-    'mcp-shared-component',
-    typographyTokens.bodyMd,
-  ].join(' '),
+    "w-full",
+    "transition-all duration-200",
+    "mcp-shared-component",
+    "text-[15px] leading-relaxed", // bodyMd equivalent
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgElevated,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-        radiusTokens.md,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
 
       filled: [
-        colorTokens.bgMuted,
-        colorTokens.text,
-        'border-0',
-        radiusTokens.md,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "text-fg", // References --color-fg
+        "border-0",
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
 
       outlined: [
-        'bg-transparent',
-        colorTokens.text,
-        `border-2 ${colorTokens.border}`,
-        radiusTokens.md,
-      ].join(' '),
+        "bg-transparent",
+        "text-fg", // References --color-fg
+        "border-2 border-border", // References --color-border
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
     },
     size: {
-      sm: [spacingTokens.sm, typographyTokens.bodySm, 'min-h-[80px]'].join(' '),
-      md: [spacingTokens.md, typographyTokens.bodyMd, 'min-h-[120px]'].join(
-        ' '
-      ),
-      lg: [spacingTokens.lg, typographyTokens.headingMd, 'min-h-[160px]'].join(
-        ' '
-      ),
+      sm: ["px-3 py-1.5", "text-sm leading-relaxed", "min-h-[80px]"].join(" "), // spacingTokens.sm + bodySm
+      md: ["px-4 py-2", "text-[15px] leading-relaxed", "min-h-[120px]"].join(
+        " "
+      ), // spacingTokens.md + bodyMd
+      lg: ["px-5 py-2.5", "text-base font-semibold", "min-h-[160px]"].join(" "), // spacingTokens.lg + headingMd
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface TextareaProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size"> {
   /**
    * Visual variant of the textarea
    */
-  variant?: TextareaVariant
+  variant?: TextareaVariant;
 
   /**
    * Size of the textarea
    */
-  size?: TextareaSize
+  size?: TextareaSize;
 
   /**
    * Resize behavior
    */
-  resize?: TextareaResize
+  resize?: TextareaResize;
 
   /**
    * Label text for the textarea
    */
-  label?: string
+  label?: string;
 
   /**
    * Whether the field is required
    */
-  required?: boolean
+  required?: boolean;
 
   /**
    * Error state indicator
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Error message to display
    */
-  errorMessage?: string
+  errorMessage?: string;
 
   /**
    * Helper text to display below the textarea
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Show character count
    * If number provided, shows "X / max" format
    */
-  maxLength?: number
+  maxLength?: number;
 
   /**
    * Show current character count
    */
-  showCharCount?: boolean
+  showCharCount?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Wrapper className for the container
    */
-  wrapperClassName?: string
+  wrapperClassName?: string;
 
   /**
    * Optional change handler - provided by parent component
    * Only works in Client Components
    */
-  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
 }
 
 /**
@@ -194,9 +185,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
-      resize = 'vertical',
+      variant = "default",
+      size = "md",
+      resize = "vertical",
       label,
       required = false,
       error = false,
@@ -216,8 +207,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     ref
   ) => {
     // Generate unique ID unconditionally (RSC-safe)
-    const generatedId = React.useId()
-    const textareaId = id || `textarea-${generatedId}`
+    const generatedId = React.useId();
+    const textareaId = id || `textarea-${generatedId}`;
 
     // Character count (works with both controlled and uncontrolled)
     const currentLength =
@@ -225,56 +216,54 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         ? String(value).length
         : defaultValue !== undefined
           ? String(defaultValue).length
-          : 0
+          : 0;
 
     // Build variant classes
     const variantClasses =
       textareaVariants.variants.variant[variant] ||
-      textareaVariants.variants.variant.default
+      textareaVariants.variants.variant.default;
     const sizeClasses =
-      textareaVariants.variants.size[size] || textareaVariants.variants.size.md
+      textareaVariants.variants.size[size] || textareaVariants.variants.size.md;
 
     // Resize class mapping
     const resizeClass = {
-      none: 'resize-none',
-      vertical: 'resize-y',
-      horizontal: 'resize-x',
-      both: 'resize',
-    }[resize]
+      none: "resize-none",
+      vertical: "resize-y",
+      horizontal: "resize-x",
+      both: "resize",
+    }[resize];
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-describedby':
+      "data-testid": testId,
+      "aria-describedby":
         error && errorMessage
           ? `${textareaId}-error`
           : helperText
             ? `${textareaId}-helper`
             : undefined,
-      'aria-invalid': error,
-      'aria-required': required,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'textarea-shared',
-    }
+      "aria-invalid": error,
+      "aria-required": required,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "textarea-shared",
+    };
 
     return (
-      <div className={cn('flex flex-col gap-1.5', wrapperClassName)}>
+      <div className={cn("flex flex-col gap-1.5", wrapperClassName)}>
         {/* Label */}
         {label && (
           <label
             htmlFor={textareaId}
             className={cn(
-              typographyTokens.bodySm,
-              'font-medium',
-              colorTokens.text,
-              disabled && 'opacity-50'
+              "text-sm leading-relaxed", // bodySm equivalent
+              "font-medium",
+              "text-fg", // References --color-fg
+              disabled && "opacity-50"
             )}
           >
             {label}
             {required && (
-              <span className={`text-[${colorTokens.dangerSoftSurface}] ml-1`}>
-                *
-              </span>
+              <span className="text-[var(--color-danger-soft)] ml-1">*</span>
             )}
           </label>
         )}
@@ -293,19 +282,19 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             variantClasses,
             sizeClasses,
             resizeClass,
-            // Error state styling
+            // Error state styling (references CSS variables)
             error &&
               [
-                `border-[${colorTokens.dangerSoftSurface}]`,
-                `focus:border-[${colorTokens.dangerSoftSurface}]`,
-                `focus:ring-[${colorTokens.dangerSoftSurface}]`,
-              ].join(' '),
+                "border-[var(--color-danger-soft)]",
+                "focus:border-[var(--color-danger-soft)]",
+                "focus:ring-[var(--color-danger-soft)]",
+              ].join(" "),
             // Focus styling (WCAG 2.1 required)
-            'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
+            "focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none",
             // Disabled state styling
-            disabled && 'cursor-not-allowed opacity-50',
-            // Placeholder styling
-            `placeholder:${colorTokens.textMuted}`,
+            disabled && "cursor-not-allowed opacity-50",
+            // Placeholder styling (references CSS variable)
+            "placeholder:text-fg-muted",
             className
           )}
           {...accessibilityProps}
@@ -318,7 +307,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {!error && helperText && (
             <span
               id={`${textareaId}-helper`}
-              className={cn(typographyTokens.bodySm, colorTokens.textMuted)}
+              className={cn("text-sm leading-relaxed", "text-fg-muted")}
             >
               {helperText}
             </span>
@@ -328,8 +317,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             <span
               id={`${textareaId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`
+                "text-sm leading-relaxed",
+                "text-[var(--color-danger-soft)]" // References CSS variable
               )}
               role="alert"
             >
@@ -341,9 +330,9 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {(showCharCount || maxLength) && (
             <span
               className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
-                'ml-auto'
+                "text-sm leading-relaxed",
+                "text-fg-muted", // References CSS variable
+                "ml-auto"
               )}
             >
               {maxLength ? `${currentLength} / ${maxLength}` : currentLength}
@@ -351,18 +340,18 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
         </div>
       </div>
-    )
+    );
   }
-)
+);
 
-Textarea.displayName = 'Textarea'
+Textarea.displayName = "Textarea";
 
 // 🎯 STEP 8: Export types for external consumption
-export { textareaVariants }
-export type { TextareaResize, TextareaSize, TextareaVariant }
+export { textareaVariants };
+export type { TextareaResize, TextareaSize, TextareaVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Textarea
+export default Textarea;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

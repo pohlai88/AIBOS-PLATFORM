@@ -1,0 +1,124 @@
+{
+    "component": "frontend",
+    "version": "2.0.0",
+    "lastUpdated": "2025-01-27",
+    "intent": "Generate frontend code following GRCD-FRONTEND.md specifications, MCP governance, and ERP context integration",
+    "constraints": [
+        "MUST follow GRCD structure from GRCD-FRONTEND.md",
+        "MUST save files only under allowed directories (see GRCD Section 4)",
+        "MUST respect dependency matrix (see GRCD Section 5)",
+        "MUST use TypeScript with strict mode",
+        "MUST use kebab-case for file names",
+        "MUST NOT create files in root directory",
+        "MUST NOT introduce dependencies not in compatibility matrix",
+        "MUST NOT import tokens directly in components",
+        "MUST NOT bypass ThemeProvider for styling",
+        "MUST enforce theme-first architecture",
+        "MUST use MCP tools for component generation and validation",
+        "MUST integrate ERP context into UI/UX decisions",
+        "MUST enforce WCAG 2.2 AA/AAA compliance",
+        "MUST respect RSC boundaries (Server/Client/Shared)",
+        "MUST use 3D custom icons for main ERP modules (Finance, Sales, Purchase, Warehouse, Manufacturing, HR, Project, Asset, Report)",
+        "MUST use HeroIcons for other modules, sub-modules, and utility features",
+        "MUST follow ERP-ICON-POLICY.md for icon selection decisions"
+    ],
+    "input_sources": [
+        "GRCD-FRONTEND.md (root level)",
+        "GRCD-UI.md (packages/ui/GRCD-UI.md)",
+        "GRCD-COMPONENTS.md (packages/ui/GRCD-COMPONENTS.md)",
+        "MCP_TOOLS_VALIDATION_REPORT.md (packages/ui/MCP_TOOLS_VALIDATION_REPORT.md)",
+        "ERP_IDEAS_AND_PAIN_POINTS.md (root level)",
+        "ERP-ICON-POLICY.md (packages/ui/src/components/shared/primitives/icons/ERP-ICON-POLICY.md)",
+        "ICON-CREATION-GUIDE.md (packages/ui/src/components/shared/primitives/icons/ICON-CREATION-GUIDE.md)",
+        "codebase (packages/ui/)",
+        "existing patterns in packages/ui/",
+        "MCP specification (modelcontextprotocol.io)"
+    ],
+    "output_targets": {
+        "code": "packages/ui/src/",
+        "components": "packages/ui/src/components/",
+        "mcp": "packages/ui/mcp/",
+        "tests": "packages/ui/tests/",
+        "docs": "docs/01-foundation/ui-system/"
+    },
+    "style": {
+        "normative_language": true,
+        "anti_drift": true,
+        "type_safety": "strict",
+        "error_handling": "typed_errors",
+        "logging": "structured",
+        "mcp_governance": true,
+        "theme_first": true,
+        "erp_context": true
+    },
+    "validation": {
+        "pre_commit": [
+            "TypeScript type check",
+            "Directory structure validation",
+            "Dependency compatibility check",
+            "GRCD conformance check",
+            "MCP manifest validation",
+            "Token usage validation",
+            "RSC boundary validation",
+            "Accessibility validation"
+        ]
+    },
+    "mcp_governance": {
+        "component_generation": "useMcpComponents",
+        "validation_pipeline": "useMcpValidation, ValidationPipeline",
+        "theme_management": "useMcpTheme, McpThemeProvider",
+        "token_validation": "tokenHelpers",
+        "manifest_validation": true,
+        "schema_enforcement": true,
+        "audit_required": true,
+        "version_compatibility": "semver"
+    },
+    "erp_context": {
+        "ai_features": true,
+        "workflow_automation": true,
+        "data_visualization": true,
+        "multi_tenant": true,
+        "mobile_first": true,
+        "performance_optimization": true,
+        "accessibility_compliance": true,
+        "icon_policy": {
+            "main_modules_3d": true,
+            "main_modules_list": [
+                "Finance",
+                "Warehouse",
+                "Sales",
+                "Purchase",
+                "Manufacturing",
+                "HR",
+                "Project",
+                "Asset",
+                "Report",
+                "Retail",
+                "Logistics",
+                "E-commerce",
+                "Dashboard",
+                "Quality Assurance",
+                "Research & Development",
+                "Central Kitchen",
+                "Franchise",
+                "F&B",
+                "Bakery",
+                "Cafe",
+                "Plantation",
+                "Trading",
+                "Metadata Studio",
+                "Kernel",
+                "AI-BOS",
+                "Lynx"
+            ],
+            "other_modules_heroicons": true,
+            "policy_document": "packages/ui/src/components/shared/primitives/icons/ERP-ICON-POLICY.md"
+        }
+    },
+    "related_mcp_files": [
+        "packages/ui/mcp/ui-globals-css.mcp.json",
+        "packages/ui/mcp/ui-token-theme.mcp.json",
+        "packages/ui/mcp/ui-components.mcp.json",
+        "packages/ui/mcp/ui-testing.mcp.json"
+    ]
+}

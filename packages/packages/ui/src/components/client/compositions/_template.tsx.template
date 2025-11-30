@@ -1,0 +1,230 @@
+/**
+ * {{COMPONENT_NAME}} Component - Layer 2 Radix Composition
+ *
+ * A {{COMPONENT_DESCRIPTION}} built on Radix UI {{RADIX_PRIMITIVE}} primitive,
+ * integrated with Layer 1 Typography components and AI-BOS design tokens.
+ *
+ * Features:
+ * - {{FEATURE_1}}
+ * - {{FEATURE_2}}
+ * - ARIA attributes for accessibility
+ * - Customizable size and visual variants
+ * - Layer 1 Typography integration
+ * - WCAG 2.1 AA/AAA compliant
+ * - MCP validated Client Component
+ *
+ * @module {{COMPONENT_NAME}}
+ * @layer 2
+ * @radixPrimitive @radix-ui/react-{{RADIX_PACKAGE}}
+ * @category {{CATEGORY}} (overlay | navigation | selection | feedback)
+ * @mcp-validated true
+ * @wcag-compliant AA/AAA
+ */
+
+'use client'
+
+import * as {{COMPONENT_NAME}}Primitive from '@radix-ui/react-{{RADIX_PACKAGE}}'
+import * as React from 'react'
+
+// Layer 1 Typography Integration (if needed)
+// import { Heading } from '../../../../shared/typography/heading'
+// import { Text } from '../../../../shared/typography/text'
+
+// Design System - Import only what you need
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from '../../../../../design/tokens/tokens'
+import { cn } from '../../../../../design/utilities/cn'
+
+// Types - Separate file for type definitions
+import type {
+  {{COMPONENT_NAME}}ContentProps,
+  {{COMPONENT_NAME}}RootProps,
+  {{COMPONENT_NAME}}Size,
+  {{COMPONENT_NAME}}TriggerProps,
+  {{COMPONENT_NAME}}Variant,
+} from './{{COMPONENT_LOWER}}.types'
+
+// ============================================================================
+// Variant Definitions
+// ============================================================================
+
+/**
+ * Size variants using design tokens
+ */
+const {{COMPONENT_LOWER}}SizeVariants: Record<{{COMPONENT_NAME}}Size, string> = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+  xl: 'max-w-xl',
+}
+
+/**
+ * Visual variants using design tokens
+ */
+const {{COMPONENT_LOWER}}VariantStyles: Record<{{COMPONENT_NAME}}Variant, string> = {
+  default: cn(
+    colorTokens.bgElevated,
+    colorTokens.fg,
+    shadowTokens.md,
+    'border-transparent'
+  ),
+  elevated: cn(
+    colorTokens.bgElevated,
+    colorTokens.fg,
+    shadowTokens.lg,
+    'border-transparent'
+  ),
+  bordered: cn(
+    colorTokens.bgElevated,
+    colorTokens.fg,
+    shadowTokens.sm,
+    `border ${colorTokens.borderSubtle}`
+  ),
+}
+
+// ============================================================================
+// Root Component
+// ============================================================================
+
+/**
+ * {{COMPONENT_NAME}} Root - Container for all {{COMPONENT_LOWER}} parts
+ *
+ * @example
+ * ```tsx
+ * <{{COMPONENT_NAME}}>
+ *   <{{COMPONENT_NAME}}Trigger>Open</{{COMPONENT_NAME}}Trigger>
+ *   <{{COMPONENT_NAME}}Content>Content here</{{COMPONENT_NAME}}Content>
+ * </{{COMPONENT_NAME}}>
+ * ```
+ */
+export const {{COMPONENT_NAME}} = {{COMPONENT_NAME}}Primitive.Root
+
+// ============================================================================
+// Trigger Component
+// ============================================================================
+
+/**
+ * {{COMPONENT_NAME}} Trigger - Element that triggers the {{COMPONENT_LOWER}}
+ */
+export const {{COMPONENT_NAME}}Trigger = {{COMPONENT_NAME}}Primitive.Trigger
+
+// ============================================================================
+// Portal Component (if applicable)
+// ============================================================================
+
+/**
+ * {{COMPONENT_NAME}} Portal - Portals content to document.body
+ */
+export const {{COMPONENT_NAME}}Portal = {{COMPONENT_NAME}}Primitive.Portal
+
+// ============================================================================
+// Content Component
+// ============================================================================
+
+/**
+ * {{COMPONENT_NAME}} Content - Main content container
+ *
+ * @example
+ * ```tsx
+ * <{{COMPONENT_NAME}}Content size="md" variant="default">
+ *   Your content here
+ * </{{COMPONENT_NAME}}Content>
+ * ```
+ */
+export const {{COMPONENT_NAME}}Content = React.forwardRef<
+  React.ElementRef<typeof {{COMPONENT_NAME}}Primitive.Content>,
+  {{COMPONENT_NAME}}ContentProps
+>(
+  (
+    {
+      className,
+      children,
+      size = 'md',
+      variant = 'default',
+      testId,
+      ...props
+    },
+    ref
+  ) => (
+    <{{COMPONENT_NAME}}Portal>
+      <{{COMPONENT_NAME}}Primitive.Content
+        ref={ref}
+        data-testid={testId}
+        data-mcp-validated="true"
+        data-constitution-compliant="layer2-radix-composition"
+        data-layer="2"
+        className={cn(
+          // Base styles
+          'relative',
+          // Size variant
+          {{COMPONENT_LOWER}}SizeVariants[size],
+          // Visual variant
+          {{COMPONENT_LOWER}}VariantStyles[variant],
+          // Spacing
+          'p-4',
+          radiusTokens.lg,
+          // Animation
+          'data-[state=open]:animate-in data-[state=closed]:animate-out',
+          'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+          // Focus styles
+          'focus:outline-none',
+          // MCP marker
+          'mcp-client-interactive',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </{{COMPONENT_NAME}}Primitive.Content>
+    </{{COMPONENT_NAME}}Portal>
+  )
+)
+{{COMPONENT_NAME}}Content.displayName = '{{COMPONENT_NAME}}Content'
+
+// ============================================================================
+// Close Component (if applicable)
+// ============================================================================
+
+/**
+ * {{COMPONENT_NAME}} Close - Button to close the {{COMPONENT_LOWER}}
+ */
+export const {{COMPONENT_NAME}}Close = {{COMPONENT_NAME}}Primitive.Close
+
+// ============================================================================
+// Exports
+// ============================================================================
+
+export type {
+  {{COMPONENT_NAME}}ContentProps,
+  {{COMPONENT_NAME}}RootProps,
+  {{COMPONENT_NAME}}Size,
+  {{COMPONENT_NAME}}TriggerProps,
+  {{COMPONENT_NAME}}Variant,
+}
+
+// Export variant definitions for external use
+export { {{COMPONENT_LOWER}}SizeVariants, {{COMPONENT_LOWER}}VariantStyles }
+
+// Default export
+export default {{COMPONENT_NAME}}
+
+// ============================================================================
+// Layer 2 Composition Compliance Checklist
+// ============================================================================
+// ✅ 'use client' directive at top
+// ✅ Radix UI primitive imported and wrapped
+// ✅ Layer 1 Typography integration (where applicable)
+// ✅ Design tokens used exclusively (no hardcoded colors)
+// ✅ Size variants defined (sm, md, lg, xl)
+// ✅ Visual variants defined (default, elevated, bordered)
+// ✅ MCP validation markers included
+// ✅ data-layer="2" attribute for layer identification
+// ✅ Accessibility attributes (ARIA)
+// ✅ TypeScript strict mode compatible
+// ✅ Separate types file ({{COMPONENT_LOWER}}.types.ts)
+// ✅ Examples file ({{COMPONENT_LOWER}}.examples.tsx)
+// ✅ Index file for exports (index.ts)
+

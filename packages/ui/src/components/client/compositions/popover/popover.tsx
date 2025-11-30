@@ -20,18 +20,13 @@
  * @wcag-compliant AA/AAA
  */
 
-'use client'
+"use client";
 
-import * as PopoverPrimitive from '@radix-ui/react-popover'
-import * as React from 'react'
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+import * as React from "react";
 
 // Design System
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-} from '../../../../design/tokens/tokens'
-import { cn } from '../../../../design/utilities/cn'
+import { cn } from "../../../../design/utilities/cn";
 
 // Types
 import type {
@@ -42,7 +37,7 @@ import type {
   PopoverSize,
   PopoverTriggerProps,
   PopoverVariant,
-} from './popover.types'
+} from "./popover.types";
 
 // ============================================================================
 // Variant Definitions
@@ -52,35 +47,36 @@ import type {
  * Popover size variants
  */
 const popoverSizeVariants: Record<PopoverSize, string> = {
-  sm: 'w-64',
-  md: 'w-80',
-  lg: 'w-96',
-  auto: 'w-auto',
-}
+  sm: "w-64",
+  md: "w-80",
+  lg: "w-96",
+  auto: "w-auto",
+};
 
 /**
- * Popover visual variants using design tokens
+ * Popover visual variants using Tailwind classes
+ * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
  */
 const popoverVariantStyles: Record<PopoverVariant, string> = {
   default: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.md,
-    'border-transparent'
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-md)]", // References --shadow-md
+    "border-transparent"
   ),
   elevated: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.lg,
-    'border-transparent'
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-lg)]", // References --shadow-lg
+    "border-transparent"
   ),
   bordered: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.sm,
-    `border ${colorTokens.borderSubtle}`
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-sm)]", // References --shadow-sm
+    "border border-border-subtle" // References --color-border-subtle
   ),
-}
+};
 
 // ============================================================================
 // Popover Root Component
@@ -99,7 +95,7 @@ const popoverVariantStyles: Record<PopoverVariant, string> = {
  * </Popover>
  * ```
  */
-export const Popover = PopoverPrimitive.Root
+export const Popover = PopoverPrimitive.Root;
 
 // ============================================================================
 // Popover Trigger Component
@@ -115,7 +111,7 @@ export const Popover = PopoverPrimitive.Root
  * </PopoverTrigger>
  * ```
  */
-export const PopoverTrigger = PopoverPrimitive.Trigger
+export const PopoverTrigger = PopoverPrimitive.Trigger;
 
 // ============================================================================
 // Popover Anchor Component
@@ -124,7 +120,7 @@ export const PopoverTrigger = PopoverPrimitive.Trigger
 /**
  * Popover Anchor - Element to anchor the popover to
  */
-export const PopoverAnchor = PopoverPrimitive.Anchor
+export const PopoverAnchor = PopoverPrimitive.Anchor;
 
 // ============================================================================
 // Popover Content Component
@@ -151,10 +147,10 @@ export const PopoverContent = React.forwardRef<
     {
       className,
       children,
-      size = 'md',
-      variant = 'default',
-      side = 'bottom',
-      align = 'center',
+      size = "md",
+      variant = "default",
+      side = "bottom",
+      align = "center",
       sideOffset = 8,
       showArrow = false,
       testId,
@@ -177,26 +173,26 @@ export const PopoverContent = React.forwardRef<
           // Visual variant
           popoverVariantStyles[variant],
           // Spacing and borders
-          'px-4 py-3',
-          radiusTokens.md,
-          'border',
+          "px-4 py-3",
+          "rounded-[var(--radius-md)]", // References --radius-md
+          "border",
           // Max height for scrolling
-          'max-h-[var(--radix-popover-content-available-height)]',
-          'overflow-y-auto',
+          "max-h-[var(--radix-popover-content-available-height)]",
+          "overflow-y-auto",
           // Z-index
-          'z-50',
+          "z-50",
           // Animation
-          'data-[state=open]:animate-in data-[state=closed]:animate-out',
-          'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-          'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-          'data-[side=bottom]:slide-in-from-top-2',
-          'data-[side=left]:slide-in-from-right-2',
-          'data-[side=right]:slide-in-from-left-2',
-          'data-[side=top]:slide-in-from-bottom-2',
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[side=bottom]:slide-in-from-top-2",
+          "data-[side=left]:slide-in-from-right-2",
+          "data-[side=right]:slide-in-from-left-2",
+          "data-[side=top]:slide-in-from-bottom-2",
           // Focus styles
-          'focus:outline-none',
+          "focus:outline-none",
           // MCP marker
-          'mcp-client-interactive',
+          "mcp-client-interactive",
           className
         )}
         {...props}
@@ -205,17 +201,17 @@ export const PopoverContent = React.forwardRef<
         {showArrow && (
           <PopoverPrimitive.Arrow
             className={cn(
-              colorTokens.bgElevated,
-              'fill-current',
-              variant === 'bordered' && `stroke-${colorTokens.borderSubtle}`
+              "bg-bg-elevated", // References --color-bg-elevated
+              "fill-current",
+              variant === "bordered" && "stroke-border-subtle" // References --color-border-subtle
             )}
           />
         )}
       </PopoverPrimitive.Content>
     </PopoverPrimitive.Portal>
   )
-)
-PopoverContent.displayName = 'PopoverContent'
+);
+PopoverContent.displayName = "PopoverContent";
 
 // ============================================================================
 // Popover Close Component
@@ -231,7 +227,7 @@ PopoverContent.displayName = 'PopoverContent'
  * </PopoverClose>
  * ```
  */
-export const PopoverClose = PopoverPrimitive.Close
+export const PopoverClose = PopoverPrimitive.Close;
 
 // ============================================================================
 // Exports
@@ -245,7 +241,7 @@ export type {
   PopoverSize,
   PopoverTriggerProps,
   PopoverVariant,
-}
+};
 
 // Default export for convenience
-export default Popover
+export default Popover;

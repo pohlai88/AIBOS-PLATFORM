@@ -8,6 +8,9 @@
 This UI package is architected for **Next.js 16+ App Router** with **MCP (Model Context Protocol)**
 integration and **AI-BOS Constitution Framework** governance.
 
+> **📊 Current Status:** See [`UI-PACKAGE-STATUS.md`](./UI-PACKAGE-STATUS.md) for consolidated implementation status.  
+> **🗺️ Implementation Plan:** See [`IMPLEMENTATION-ROADMAP.md`](./IMPLEMENTATION-ROADMAP.md) for roadmap.
+
 ### 📁 Directory Structure
 
 ```
@@ -81,14 +84,14 @@ packages/ui/
 ```tsx
 // ✅ Good - Server Component (no 'use client')
 export default async function UserProfile({ userId }: { userId: string }) {
-  const user = await getUser(userId) // ✅ Direct data fetching
+  const user = await getUser(userId); // ✅ Direct data fetching
 
   return (
     <div>
       <h1>{user.name}</h1>
       <p>{user.email}</p>
     </div>
-  )
+  );
 }
 ```
 
@@ -102,20 +105,20 @@ export default async function UserProfile({ userId }: { userId: string }) {
 #### ✅ **Client Components** (`src/components/client/`)
 
 ```tsx
-'use client' // ✅ Required directive
+"use client"; // ✅ Required directive
 
-import { useState } from 'react'
+import { useState } from "react";
 
 export default function Counter() {
-  const [count, setCount] = useState(0) // ✅ React hooks allowed
+  const [count, setCount] = useState(0); // ✅ React hooks allowed
 
   return (
     <button onClick={() => setCount(count + 1)}>
-      {' '}
+      {" "}
       {/* ✅ Event handlers */}
       Count: {count}
     </button>
-  )
+  );
 }
 ```
 
@@ -131,12 +134,16 @@ export default function Counter() {
 ```tsx
 // ✅ Good - No 'use client' directive
 interface ButtonProps {
-  children: React.ReactNode
-  onClick?: () => void // ✅ Optional - parent provides
-  variant?: 'primary' | 'secondary'
+  children: React.ReactNode;
+  onClick?: () => void; // ✅ Optional - parent provides
+  variant?: "primary" | "secondary";
 }
 
-export function Button({ children, onClick, variant = 'primary' }: ButtonProps) {
+export function Button({
+  children,
+  onClick,
+  variant = "primary",
+}: ButtonProps) {
   return (
     <button
       onClick={onClick} // ✅ Works in client, ignored on server
@@ -144,7 +151,7 @@ export function Button({ children, onClick, variant = 'primary' }: ButtonProps) 
     >
       {children}
     </button>
-  )
+  );
 }
 ```
 
@@ -159,20 +166,20 @@ export function Button({ children, onClick, variant = 'primary' }: ButtonProps) 
 
 ```typescript
 // Server Components (default)
-import { UserProfile, DataTable } from '@aibos/ui/server'
+import { UserProfile, DataTable } from "@aibos/ui/server";
 
 // Client Components (explicit)
-import { Button, Modal } from '@aibos/ui/client'
+import { Button, Modal } from "@aibos/ui/client";
 
 // Shared Components
-import { Badge, Card } from '@aibos/ui'
+import { Badge, Card } from "@aibos/ui";
 
 // MCP Integration
-import { McpProvider, useMcpValidation } from '@aibos/ui/mcp'
+import { McpProvider, useMcpValidation } from "@aibos/ui/mcp";
 
 // Design Tokens
-import { serverTokens } from '@aibos/ui/design/tokens/server'
-import { clientTokens } from '@aibos/ui/design/tokens/client'
+import { serverTokens } from "@aibos/ui/design/tokens/server";
+import { clientTokens } from "@aibos/ui/design/tokens/client";
 ```
 
 ## 🔧 Integration Steps
@@ -226,13 +233,13 @@ import { clientTokens } from '@aibos/ui/design/tokens/client'
 
 ```tsx
 // Server-safe tokens
-import { serverTokens } from '@aibos/ui/design/tokens/server'
+import { serverTokens } from "@aibos/ui/design/tokens/server";
 
 // Client-reactive tokens
-import { clientTokens } from '@aibos/ui/design/tokens/client'
+import { clientTokens } from "@aibos/ui/design/tokens/client";
 
 // Token utilities
-import { tokenHelpers } from '@aibos/ui/design/utilities/token-helpers'
+import { tokenHelpers } from "@aibos/ui/design/utilities/token-helpers";
 ```
 
 ### Theme Support
@@ -247,20 +254,20 @@ import { tokenHelpers } from '@aibos/ui/design/utilities/token-helpers'
 ### Real-time Validation
 
 ```tsx
-import { useMcpValidation } from '@aibos/ui/mcp'
+import { useMcpValidation } from "@aibos/ui/mcp";
 
-const { isValid, violations, suggestions } = useMcpValidation(componentCode)
+const { isValid, violations, suggestions } = useMcpValidation(componentCode);
 ```
 
 ### Component Generation
 
 ```tsx
-import { useMcpComponents } from '@aibos/ui/mcp'
+import { useMcpComponents } from "@aibos/ui/mcp";
 
 const { generateComponent, validateComponent } = useMcpComponents({
-  componentName: 'MyButton',
-  componentType: 'primitive',
-})
+  componentName: "MyButton",
+  componentType: "primitive",
+});
 ```
 
 ### Constitution Enforcement
@@ -270,6 +277,28 @@ const { generateComponent, validateComponent } = useMcpComponents({
 - **Design drift prevention** with visual regression testing
 
 ## 📖 Documentation
+
+### Core GRCD Documents
+
+- **GRCD-UI.md** - Master UI package GRCD (single source of truth)
+- **GRCD-GLOBALS-CSS.md** - CSS variables SSOT layer
+- **GRCD-TOKEN-THEME.md** - Theme management layer
+- **GRCD-COMPONENTS.md** - Component consumption layer
+- **GRCD-ARCHITECTURE-OVERVIEW.md** - Layered architecture overview
+- **GRCD-TESTING.md** - Testing infrastructure GRCD
+
+### Status & Planning
+
+- **UI-PACKAGE-STATUS.md** - Consolidated implementation status
+- **IMPLEMENTATION-ROADMAP.md** - Clean implementation roadmap
+
+### Reference Documents
+
+- **THEME-ARCHITECTURE.md** - Theme architecture details
+- **WCAG-THEME-VALIDATION.md** - WCAG theme validation
+- **COMPONENT-MIGRATION-AUDIT.md** - Migration audit (historical)
+
+### Framework Documentation
 
 - **Constitution Framework**: See `constitution/README.md`
 - **MCP Integration**: See `mcp/README.md`

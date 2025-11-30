@@ -1,0 +1,136 @@
+{
+  "component": "components",
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-27",
+  "intent": "Generate UI components following GRCD-COMPONENTS.md, enforcing theme-first architecture and RSC boundaries",
+  "constraints": [
+    "MUST follow GRCD-COMPONENTS.md structure",
+    "MUST NOT import tokens directly from tokens.ts",
+    "MUST use Tailwind classes that reference CSS variables",
+    "MUST respect RSC boundaries (Server/Client/Shared)",
+    "MUST NOT use hardcoded design values",
+    "MUST ensure ThemeProvider wraps application",
+    "MUST validate component token usage via MCP",
+    "MUST follow directory structure (server/client/shared)",
+    "MUST include JSDoc comments for all exports",
+    "MUST write tests for all components (95% coverage requirement)",
+    "MUST follow accessibility patterns (WCAG 2.2 AA/AAA)"
+  ],
+  "input_sources": [
+    "GRCD-COMPONENTS.md (packages/ui/GRCD-COMPONENTS.md)",
+    "GRCD-TOKEN-THEME.md (packages/ui/GRCD-TOKEN-THEME.md)",
+    "GRCD-GLOBALS-CSS.md (packages/ui/GRCD-GLOBALS-CSS.md)",
+    "globals.css (packages/ui/src/design/tokens/globals.css)",
+    "existing components in packages/ui/src/components/",
+    "ERP-ICON-POLICY.md (packages/ui/src/components/shared/primitives/icons/ERP-ICON-POLICY.md)",
+    "ICON-CREATION-GUIDE.md (packages/ui/src/components/shared/primitives/icons/ICON-CREATION-GUIDE.md)"
+  ],
+  "output_targets": {
+    "code": "packages/ui/src/components/",
+    "tests": "packages/ui/src/components/**/*.test.tsx"
+  },
+  "style": {
+    "normative_language": true,
+    "anti_drift": true,
+    "type_safety": "strict",
+    "theme_first": true,
+    "rsc_compliant": true,
+    "accessibility_first": true
+  },
+  "validation": {
+    "pre_commit": [
+      "TypeScript type check",
+      "RSC boundary validation",
+      "Token usage validation (no direct imports)",
+      "Accessibility validation",
+      "Test coverage check (95% minimum)"
+    ]
+  },
+  "mcp_governance": {
+    "component_validation": true,
+    "token_usage_validation": true,
+    "rsc_boundary_validation": true,
+    "accessibility_validation": true,
+    "test_coverage_enforcement": true
+  },
+  "normative_requirements": [
+    "COMP-MCP-1: Components MUST NOT import tokens directly from tokens.ts",
+    "COMP-MCP-2: Components MUST use Tailwind classes referencing CSS variables",
+    "COMP-MCP-3: Components MUST respect RSC boundaries (Server/Client/Shared)",
+    "COMP-MCP-4: MCP MUST validate component token usage (flag direct imports)",
+    "COMP-MCP-5: Components MUST NOT use hardcoded design values"
+  ],
+  "icon_policy": {
+    "main_erp_modules": {
+      "use_3d_custom_icons": true,
+      "modules": [
+        "Finance",
+        "Warehouse",
+        "Sales",
+        "Purchase",
+        "Manufacturing",
+        "HR",
+        "Project",
+        "Asset",
+        "Report",
+        "Retail",
+        "Logistics",
+        "E-commerce",
+        "Dashboard",
+        "Quality Assurance",
+        "Research & Development",
+        "Central Kitchen",
+        "Franchise",
+        "F&B",
+        "Bakery",
+        "Cafe",
+        "Plantation",
+        "Trading",
+        "Metadata Studio",
+        "Kernel",
+        "AI-BOS",
+        "Lynx"
+      ],
+      "creation_guide": "packages/ui/src/components/shared/primitives/icons/ICON-CREATION-GUIDE.md",
+      "reference_implementation": "packages/ui/src/components/shared/primitives/icons/finance-icon.tsx"
+    },
+    "other_modules": {
+      "use_heroicons": true,
+      "library": "@heroicons/react",
+      "pattern": "Use IconWrapper with HeroIcons for sub-modules, utilities, and secondary features"
+    },
+    "policy_document": "packages/ui/src/components/shared/primitives/icons/ERP-ICON-POLICY.md"
+  },
+  "component_patterns": {
+    "composition": {
+      "compound_components": "allowed",
+      "polymorphic_components": "allowed",
+      "render_props": "allowed",
+      "context_based": "allowed"
+    },
+    "testing": {
+      "framework": "vitest",
+      "coverage_threshold": 95,
+      "required_tests": [
+        "unit_tests",
+        "integration_tests",
+        "accessibility_tests",
+        "token_usage_tests",
+        "theme_tests",
+        "rsc_boundary_tests"
+      ]
+    },
+    "accessibility": {
+      "wcag_level": "AA/AAA",
+      "required_features": [
+        "keyboard_navigation",
+        "screen_reader_support",
+        "focus_management",
+        "aria_attributes",
+        "color_contrast",
+        "reduced_motion"
+      ]
+    }
+  }
+}
+

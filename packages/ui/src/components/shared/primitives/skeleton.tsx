@@ -29,9 +29,8 @@
  * ```
  */
 
-import * as React from 'react'
-import { colorTokens, radiusTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Skeleton Variants
@@ -39,7 +38,7 @@ import { cn } from '../../../design/utilities/cn'
  * - circular: Circular skeleton (for avatars)
  * - text: Text line skeleton
  */
-export type SkeletonVariant = 'default' | 'circular' | 'text'
+export type SkeletonVariant = "default" | "circular" | "text";
 
 /**
  * Skeleton Sizes
@@ -47,7 +46,7 @@ export type SkeletonVariant = 'default' | 'circular' | 'text'
  * - md: Medium skeleton (h-6) [default]
  * - lg: Large skeleton (h-8)
  */
-export type SkeletonSize = 'sm' | 'md' | 'lg'
+export type SkeletonSize = "sm" | "md" | "lg";
 
 /**
  * Skeleton Props
@@ -58,34 +57,34 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
    * Visual variant of the skeleton
    * @default 'default'
    */
-  variant?: SkeletonVariant
+  variant?: SkeletonVariant;
 
   /**
    * Size of the skeleton
    * @default 'md'
    */
-  size?: SkeletonSize
+  size?: SkeletonSize;
 
   /**
    * Custom width (overrides size)
    */
-  width?: string | number
+  width?: string | number;
 
   /**
    * Custom height (overrides size)
    */
-  height?: string | number
+  height?: string | number;
 
   /**
    * Number of skeleton instances to render
    * @default 1
    */
-  count?: number
+  count?: number;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -95,8 +94,8 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
   (
     {
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       width,
       height,
       count = 1,
@@ -107,61 +106,63 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
   ) => {
     /**
      * Base Styles
-     * Core skeleton appearance using AI-BOS tokens
+     * Core skeleton appearance using Tailwind classes
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const baseStyles = cn(
-      // Background - muted surface
-      `bg-[${colorTokens.bgMuted}]`,
+      // Background - muted surface (references CSS variable)
+      "bg-bg-muted",
 
       // Animation - pulse effect for loading state
-      'animate-pulse',
+      "animate-pulse",
 
       // Display - block for proper sizing
-      'block'
-    )
+      "block"
+    );
 
     /**
      * Size Variants
      * Controls default height
      */
     const sizeStyles = {
-      sm: 'h-4', // 16px
-      md: 'h-6', // 24px
-      lg: 'h-8', // 32px
-    }
+      sm: "h-4", // 16px
+      md: "h-6", // 24px
+      lg: "h-8", // 32px
+    };
 
     /**
      * Variant Styles
      * Determines skeleton shape
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const variantStyles = {
       default: cn(
-        // Rectangular with rounded corners
-        radiusTokens.md,
-        !width && 'w-full' // Full width by default
+        // Rectangular with rounded corners (references CSS variable)
+        "rounded-[var(--radius-md)]",
+        !width && "w-full" // Full width by default
       ),
       circular: cn(
         // Circular skeleton
-        'rounded-full',
-        !width && 'w-12', // Default circular size
-        !height && 'h-12'
+        "rounded-full",
+        !width && "w-12", // Default circular size
+        !height && "h-12"
       ),
       text: cn(
-        // Text line skeleton
-        radiusTokens.sm,
-        !width && 'w-full', // Full width by default
-        'h-4' // Fixed text height
+        // Text line skeleton (references CSS variable)
+        "rounded-[var(--radius-sm)]",
+        !width && "w-full", // Full width by default
+        "h-4" // Fixed text height
       ),
-    }
+    };
 
     /**
      * Custom Dimensions
      * Apply custom width/height if provided
      */
     const customStyles = cn(
-      width && typeof width === 'number' ? `w-[${width}px]` : width,
-      height && typeof height === 'number' ? `h-[${height}px]` : height
-    )
+      width && typeof width === "number" ? `w-[${width}px]` : width,
+      height && typeof height === "number" ? `h-[${height}px]` : height
+    );
 
     // If count > 1, render multiple skeletons
     if (count > 1) {
@@ -181,7 +182,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
             />
           ))}
         </div>
-      )
+      );
     }
 
     // Single skeleton
@@ -199,11 +200,11 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
         )}
         {...props}
       />
-    )
+    );
   }
-)
+);
 
-Skeleton.displayName = 'Skeleton'
+Skeleton.displayName = "Skeleton";
 
 /**
  * Usage Examples:

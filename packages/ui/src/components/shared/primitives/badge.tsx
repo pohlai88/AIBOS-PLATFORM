@@ -12,119 +12,119 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  accessibilityTokens,
-  colorTokens,
-  radiusTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
 type BadgeVariant =
-  | 'default'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-type BadgeSize = 'sm' | 'md' | 'lg'
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "danger";
+type BadgeSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const badgeVariants = {
   base: [
-    // Base styles using componentTokens when available
-    'inline-flex items-center gap-1', // Badge layout
-    'font-medium', // Badge typography
-    'overflow-hidden', // Prevent content overflow from rounded corners
-    'transition-all duration-200', // RSC-safe transitions
-    'mcp-shared-component', // MCP validation marker
-    'whitespace-nowrap', // Prevent text wrapping
-  ].join(' '),
+    // Base styles
+    "inline-flex items-center gap-1", // Badge layout
+    "font-medium", // Badge typography
+    "overflow-hidden", // Prevent content overflow from rounded corners
+    "transition-all duration-200", // RSC-safe transitions
+    "mcp-shared-component", // MCP validation marker
+    "whitespace-nowrap", // Prevent text wrapping
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        // Neutral badge
-        colorTokens.bgMuted,
-        colorTokens.text,
-        `border ${colorTokens.borderSubtle}`,
-      ].join(' '),
+        // Neutral badge (references CSS variables)
+        "bg-bg-muted",
+        "text-fg",
+        "border border-border-subtle",
+      ].join(" "),
 
       primary: [
-        // Primary brand badge
-        colorTokens.primarySoftSurface,
-        accessibilityTokens.textOnPrimary,
-        'border border-transparent',
-      ].join(' '),
+        // Primary brand badge (references CSS variables)
+        "bg-primary-soft",
+        "text-primary-foreground",
+        "border border-transparent",
+      ].join(" "),
 
       secondary: [
-        // Secondary badge
-        colorTokens.secondarySoftSurface,
-        accessibilityTokens.textOnSecondary,
-        'border border-transparent',
-      ].join(' '),
+        // Secondary badge (references CSS variables)
+        "bg-secondary-soft",
+        "text-secondary-foreground",
+        "border border-transparent",
+      ].join(" "),
 
       success: [
-        // Success status badge
-        colorTokens.successSoftSurface,
-        accessibilityTokens.textOnSuccess,
-        'border border-transparent',
-      ].join(' '),
+        // Success status badge (references CSS variables)
+        "bg-success-soft",
+        "text-success-foreground",
+        "border border-transparent",
+      ].join(" "),
 
       warning: [
-        // Warning status badge
-        colorTokens.warningSoftSurface,
-        accessibilityTokens.textOnWarning,
-        'border border-transparent',
-      ].join(' '),
+        // Warning status badge (references CSS variables)
+        "bg-warning-soft",
+        "text-warning-foreground",
+        "border border-transparent",
+      ].join(" "),
 
       danger: [
-        // Danger status badge
-        colorTokens.dangerSoftSurface,
-        accessibilityTokens.textOnDanger,
-        'border border-transparent',
-      ].join(' '),
+        // Danger status badge (references CSS variables)
+        "bg-danger-soft",
+        "text-danger-foreground",
+        "border border-transparent",
+      ].join(" "),
     },
     size: {
-      // Uses documented spacing + typography + radius tokens
-      sm: ['px-2 py-0.5', typographyTokens.bodySm, radiusTokens.sm].join(' '),
-      md: [spacingTokens.sm, typographyTokens.bodySm, radiusTokens.md].join(
-        ' '
-      ),
-      lg: [spacingTokens.md, typographyTokens.bodyMd, radiusTokens.lg].join(
-        ' '
-      ),
+      // Direct Tailwind spacing + typography + radius classes
+      sm: [
+        "px-2 py-0.5",
+        "text-sm leading-relaxed",
+        "rounded-[var(--radius-sm)]",
+      ].join(" "),
+      md: [
+        "px-3 py-1.5",
+        "text-sm leading-relaxed",
+        "rounded-[var(--radius-md)]",
+      ].join(" "),
+      lg: [
+        "px-4 py-2",
+        "text-[15px] leading-relaxed",
+        "rounded-[var(--radius-lg)]",
+      ].join(" "),
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   /**
    * Visual variant of the component
    */
-  variant?: BadgeVariant
+  variant?: BadgeVariant;
 
   /**
    * Size of the component
    */
-  size?: BadgeSize
+  size?: BadgeSize;
 
   /**
    * Render as a different element or component
    * Enables composition patterns for advanced use cases
    */
-  asChild?: boolean
+  asChild?: boolean;
 
   /**
    * Test ID for automated testing
    * Follows enterprise testing patterns
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Optional click handler - provided by parent component.
@@ -137,7 +137,7 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
    *   that uses <button> / <a> and extends the corresponding
    *   React.*HTMLAttributes type for proper semantics.
    */
-  onClick?: React.MouseEventHandler<HTMLSpanElement>
+  onClick?: React.MouseEventHandler<HTMLSpanElement>;
 }
 
 /**
@@ -176,8 +176,8 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       asChild = false,
       testId,
       onClick,
@@ -187,25 +187,25 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     ref
   ) => {
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
-    const Comp = asChild ? 'span' : 'span' // Badge is always inline
+    const Comp = asChild ? "span" : "span"; // Badge is always inline
 
     // Build className from variant system
     const variantClasses =
       badgeVariants.variants.variant[variant] ||
-      badgeVariants.variants.variant.default
+      badgeVariants.variants.variant.default;
     const sizeClasses =
-      badgeVariants.variants.size[size] || badgeVariants.variants.size.md
+      badgeVariants.variants.size[size] || badgeVariants.variants.size.md;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
+      "data-testid": testId,
       // MCP Guardian: Constitution compliance markers
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'badge-shared',
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "badge-shared",
       // Badge-specific ARIA attributes
-      role: onClick ? 'button' : undefined,
+      role: onClick ? "button" : undefined,
       tabIndex: onClick ? 0 : undefined,
-    }
+    };
 
     return (
       <Comp
@@ -216,7 +216,7 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
           sizeClasses,
           // Interactive styling if clickable
           onClick &&
-            'focus-visible:ring-ring cursor-pointer hover:opacity-80 focus-visible:ring-2 focus-visible:outline-none',
+            "focus-visible:ring-ring cursor-pointer hover:opacity-80 focus-visible:ring-2 focus-visible:outline-none",
           className
         )}
         onClick={onClick} // Works in client, ignored on server
@@ -226,18 +226,18 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
         {/* 🎯 STEP 6: Component content */}
         {children}
       </Comp>
-    )
+    );
   }
-)
+);
 
-Badge.displayName = 'Badge'
+Badge.displayName = "Badge";
 
 // 🎯 STEP 7: Export types for external consumption
-export { badgeVariants }
-export type { BadgeSize, BadgeVariant }
+export { badgeVariants };
+export type { BadgeSize, BadgeVariant };
 
 // 🎯 STEP 8: Default export for convenience
-export default Badge
+export default Badge;
 
 // 🎯 STEP 9: RSC Compliance Checklist
 // ✅ No 'use client' directive

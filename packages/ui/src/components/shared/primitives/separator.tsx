@@ -26,23 +26,22 @@
  * ```
  */
 
-import * as React from 'react'
-import { colorTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Separator Variants
  * - default: Standard border color
  * - subtle: Subtle border color
  */
-export type SeparatorVariant = 'default' | 'subtle'
+export type SeparatorVariant = "default" | "subtle";
 
 /**
  * Separator Orientation
  * - horizontal: Horizontal divider (default)
  * - vertical: Vertical divider
  */
-export type SeparatorOrientation = 'horizontal' | 'vertical'
+export type SeparatorOrientation = "horizontal" | "vertical";
 
 /**
  * Separator Props
@@ -53,25 +52,25 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
    * Visual variant of the separator
    * @default 'default'
    */
-  variant?: SeparatorVariant
+  variant?: SeparatorVariant;
 
   /**
    * Orientation of the separator
    * @default 'horizontal'
    */
-  orientation?: SeparatorOrientation
+  orientation?: SeparatorOrientation;
 
   /**
    * Whether the separator is purely decorative
    * If true, uses role="none", otherwise role="separator"
    * @default false
    */
-  decorative?: boolean
+  decorative?: boolean;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -81,8 +80,8 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
   (
     {
-      variant = 'default',
-      orientation = 'horizontal',
+      variant = "default",
+      orientation = "horizontal",
       decorative = false,
       className,
       ...props
@@ -95,11 +94,11 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
      */
     const baseStyles = cn(
       // Flexbox - ensure proper sizing
-      'shrink-0',
+      "shrink-0",
 
       // Transition - smooth color changes
-      'transition-colors duration-200'
-    )
+      "transition-colors duration-200"
+    );
 
     /**
      * Orientation Styles
@@ -108,29 +107,30 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
     const orientationStyles = {
       horizontal: cn(
         // Horizontal separator spans full width
-        'w-full',
-        'h-px' // 1px height
+        "w-full",
+        "h-px" // 1px height
       ),
       vertical: cn(
         // Vertical separator spans full height
-        'h-full',
-        'w-px' // 1px width
+        "h-full",
+        "w-px" // 1px width
       ),
-    }
+    };
 
     /**
      * Variant Styles
      * Determines separator color
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const variantStyles = {
-      default: `bg-[${colorTokens.border}]`,
-      subtle: `bg-[${colorTokens.borderSubtle}]`,
-    }
+      default: "bg-border", // References --color-border
+      subtle: "bg-border-subtle", // References --color-border-subtle
+    };
 
     return (
       <div
         ref={ref}
-        role={decorative ? 'none' : 'separator'}
+        role={decorative ? "none" : "separator"}
         aria-orientation={!decorative ? orientation : undefined}
         aria-hidden={decorative}
         className={cn(
@@ -141,11 +141,11 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
         )}
         {...props}
       />
-    )
+    );
   }
-)
+);
 
-Separator.displayName = 'Separator'
+Separator.displayName = "Separator";
 
 /**
  * Usage Examples:

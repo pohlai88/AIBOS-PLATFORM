@@ -1,0 +1,75 @@
+{
+  "mcpServers": {
+    "aibos-a11y-validation": {
+      "command": "node",
+      "args": [".mcp/a11y/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-component-generator": {
+      "command": "node",
+      "args": [".mcp/component-generator/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-convention-validation": {
+      "command": "node",
+      "args": [".mcp/convention-validation/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-designer": {
+      "command": "node",
+      "args": [".mcp/designer/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-documentation": {
+      "command": "node",
+      "args": [".mcp/documentation/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-filesystem": {
+      "command": "node",
+      "args": [".mcp/filesystem/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-landing-page-engine": {
+      "command": "node",
+      "args": [".mcp/landing-page-engine/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-react": {
+      "command": "node",
+      "args": [".mcp/react/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-theme": {
+      "command": "node",
+      "args": [".mcp/theme/server.mjs"],
+      "cwd": "."
+    },
+    "aibos-ui-generator": {
+      "command": "node",
+      "args": [".mcp/ui-generator/server.mjs"],
+      "cwd": "."
+    },
+    "next-devtools": {
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "mcp-git": {
+      "command": "npx",
+      "args": ["-y", "mcp-git@latest"]
+    },
+    "mcp-tests": {
+      "command": "npx",
+      "args": ["-y", "mcp-tests@latest"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    }
+  }
+}
+

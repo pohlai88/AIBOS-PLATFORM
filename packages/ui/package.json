@@ -6,6 +6,8 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
+    "@mdi/js": "^7.4.47",
+    "@mdi/react": "^1.6.1",
     "@radix-ui/react-accessible-icon": "^1.1.8",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -37,15 +39,24 @@
     "@radix-ui/react-toolbar": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@radix-ui/react-visually-hidden": "^1.2.4",
+    "framer-motion": "^12.23.24",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@aibos/config-eslint": "0.1.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.0.0",
     "@types/react": "19.2.4",
     "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "^2.0.0",
+    "@vitest/ui": "^2.0.0",
     "eslint": "^9.39.1",
-    "typescript": "^5.9.3"
+    "jest-axe": "^8.0.0",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0",
@@ -186,6 +197,12 @@
     "format:check": "prettier --check .",
     "lint": "eslint . --config ../../eslint.config.mjs",
     "lint:fix": "eslint . --config ../../eslint.config.mjs --fix",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:a11y": "vitest run --grep a11y",
     "test:exports": "node test-exports.mjs",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",

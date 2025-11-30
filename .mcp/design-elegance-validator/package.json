@@ -1,0 +1,9 @@
+{
+  "name": "@aibos/design-elegance-validator",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  }
+}
+

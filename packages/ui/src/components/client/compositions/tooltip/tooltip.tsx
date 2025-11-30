@@ -24,18 +24,13 @@
  * ```
  */
 
-'use client'
+"use client";
 
-import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import * as React from 'react'
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import * as React from "react";
 
-// Import design tokens
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-} from '../../../../design/tokens/tokens'
-import { cn } from '../../../../design/utilities/cn'
+// Import design utilities
+import { cn } from "../../../../design/utilities/cn";
 
 // Import types
 import type {
@@ -45,7 +40,7 @@ import type {
   TooltipSize,
   TooltipTriggerProps,
   TooltipVariant,
-} from './tooltip.types'
+} from "./tooltip.types";
 
 /**
  * TooltipProvider - Required wrapper for all tooltips
@@ -67,9 +62,9 @@ export function TooltipProvider({
     >
       {children}
     </TooltipPrimitive.Provider>
-  )
+  );
 }
-TooltipProvider.displayName = 'TooltipProvider'
+TooltipProvider.displayName = "TooltipProvider";
 
 /**
  * Tooltip - Root component
@@ -77,8 +72,8 @@ TooltipProvider.displayName = 'TooltipProvider'
  *
  * @mcp-marker client-component-wrapper
  */
-export const Tooltip = TooltipPrimitive.Root
-Tooltip.displayName = 'Tooltip'
+export const Tooltip = TooltipPrimitive.Root;
+Tooltip.displayName = "Tooltip";
 
 /**
  * TooltipTrigger - The element that triggers the tooltip
@@ -92,44 +87,44 @@ export const TooltipTrigger = React.forwardRef<
 >(({ className, children, testId, ...props }, ref) => (
   <TooltipPrimitive.Trigger
     ref={ref}
-    className={cn('mcp-client-interactive', className)}
+    className={cn("mcp-client-interactive", className)}
     data-testid={testId}
     data-mcp-validated="true"
     {...props}
   >
     {children}
   </TooltipPrimitive.Trigger>
-))
-TooltipTrigger.displayName = 'TooltipTrigger'
+));
+TooltipTrigger.displayName = "TooltipTrigger";
 
 /**
  * Size variants for tooltip content
  */
 const tooltipSizeVariants: Record<TooltipSize, string> = {
-  sm: 'max-w-[180px] px-2 py-1 text-xs',
-  md: 'max-w-[240px] px-3 py-1.5 text-sm',
-  lg: 'max-w-[320px] px-4 py-2 text-sm',
-}
+  sm: "max-w-[180px] px-2 py-1 text-xs",
+  md: "max-w-[240px] px-3 py-1.5 text-sm",
+  lg: "max-w-[320px] px-4 py-2 text-sm",
+};
 
 /**
  * Visual style variants for tooltip
  */
 const tooltipVariantStyles: Record<TooltipVariant, string> = {
   default: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    'border border-gray-200',
-    shadowTokens.sm
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "border border-gray-200",
+    "shadow-[var(--shadow-sm)]" // References --shadow-sm
   ),
-  dark: 'bg-gray-900 text-white border-none shadow-lg',
-  light: 'bg-white text-gray-900 border border-gray-200 shadow-md',
+  dark: "bg-gray-900 text-white border-none shadow-lg",
+  light: "bg-white text-gray-900 border border-gray-200 shadow-md",
   bordered: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    'border-primary border-2',
-    shadowTokens.md
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "border-primary border-2",
+    "shadow-[var(--shadow-md)]" // References --shadow-md
   ),
-}
+};
 
 /**
  * TooltipContent - The content displayed when tooltip is open
@@ -145,10 +140,10 @@ export const TooltipContent = React.forwardRef<
     {
       className,
       children,
-      size = 'md',
-      variant = 'default',
-      side = 'top',
-      align = 'center',
+      size = "md",
+      variant = "default",
+      side = "top",
+      align = "center",
       sideOffset = 4,
       showArrow = false,
       testId,
@@ -171,18 +166,18 @@ export const TooltipContent = React.forwardRef<
           // Visual variant
           tooltipVariantStyles[variant],
           // Borders and radius
-          radiusTokens.md,
+          "rounded-[var(--radius-md)]", // References --radius-md
           // Z-index
-          'z-50',
+          "z-50",
           // Animation
-          'animate-in fade-in-0 zoom-in-95',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-          'data-[side=bottom]:slide-in-from-top-2',
-          'data-[side=left]:slide-in-from-right-2',
-          'data-[side=right]:slide-in-from-left-2',
-          'data-[side=top]:slide-in-from-bottom-2',
+          "animate-in fade-in-0 zoom-in-95",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+          "data-[side=bottom]:slide-in-from-top-2",
+          "data-[side=left]:slide-in-from-right-2",
+          "data-[side=right]:slide-in-from-left-2",
+          "data-[side=top]:slide-in-from-bottom-2",
           // MCP marker
-          'mcp-client-interactive',
+          "mcp-client-interactive",
           className
         )}
         {...props}
@@ -192,8 +187,8 @@ export const TooltipContent = React.forwardRef<
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   )
-)
-TooltipContent.displayName = 'TooltipContent'
+);
+TooltipContent.displayName = "TooltipContent";
 
 /**
  * TooltipArrow - Visual arrow pointing to the trigger
@@ -205,7 +200,7 @@ export const TooltipArrow = React.forwardRef<
   TooltipArrowProps & { variant?: TooltipVariant }
 >(
   (
-    { className, variant = 'default', width = 8, height = 4, ...props },
+    { className, variant = "default", width = 8, height = 4, ...props },
     ref
   ) => (
     <TooltipPrimitive.Arrow
@@ -214,17 +209,17 @@ export const TooltipArrow = React.forwardRef<
       height={height}
       className={cn(
         // Arrow color matches variant
-        variant === 'dark' && 'fill-gray-900',
-        variant === 'light' && 'fill-white',
-        variant === 'default' && 'fill-white',
-        variant === 'bordered' && 'fill-white',
+        variant === "dark" && "fill-gray-900",
+        variant === "light" && "fill-white",
+        variant === "default" && "fill-white",
+        variant === "bordered" && "fill-white",
         className
       )}
       {...props}
     />
   )
-)
-TooltipArrow.displayName = 'TooltipArrow'
+);
+TooltipArrow.displayName = "TooltipArrow";
 
 // Default export for convenience
 export default Object.assign(Tooltip, {
@@ -232,4 +227,4 @@ export default Object.assign(Tooltip, {
   Trigger: TooltipTrigger,
   Content: TooltipContent,
   Arrow: TooltipArrow,
-})
+});

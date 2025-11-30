@@ -12,92 +12,89 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  accessibilityTokens,
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type ButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost' | 'danger'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonVariant = "default" | "primary" | "secondary" | "ghost" | "danger";
+type ButtonSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const buttonVariants = {
   base: [
     // Base button styles
-    'inline-flex items-center justify-center gap-2', // Button layout with icon support
-    'font-medium', // Button typography weight
-    'transition-all duration-200', // RSC-safe transitions
-    'mcp-shared-component', // MCP validation marker
-    'whitespace-nowrap', // Prevent text wrapping
-    'select-none', // Prevent text selection
-  ].join(' '),
+    "inline-flex items-center justify-center gap-2", // Button layout with icon support
+    "font-medium", // Button typography weight
+    "transition-all duration-200", // RSC-safe transitions
+    "mcp-shared-component", // MCP validation marker
+    "whitespace-nowrap", // Prevent text wrapping
+    "select-none", // Prevent text selection
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        // Neutral button
-        colorTokens.bgElevated,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-        shadowTokens.xs,
-      ].join(' '),
+        // Neutral button (references CSS variables)
+        "bg-bg-elevated",
+        "text-fg",
+        "border border-border",
+        "shadow-[var(--shadow-xs)]", // References --shadow-xs
+      ].join(" "),
 
       primary: [
-        // Primary action button
-        colorTokens.primarySoftSurface,
-        accessibilityTokens.textOnPrimary,
-        shadowTokens.xs,
-        'border border-transparent',
-      ].join(' '),
+        // Primary action button (references CSS variables)
+        "bg-primary-soft",
+        "text-primary-foreground",
+        "shadow-[var(--shadow-xs)]", // References --shadow-xs
+        "border border-transparent",
+      ].join(" "),
 
       secondary: [
-        // Secondary action button
-        colorTokens.secondarySoftSurface,
-        accessibilityTokens.textOnSecondary,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        // Secondary action button (references CSS variables)
+        "bg-secondary-soft",
+        "text-secondary-foreground",
+        "border border-border",
+      ].join(" "),
 
       ghost: [
-        // Ghost button (minimal style)
-        'bg-transparent',
-        colorTokens.text,
-        'border border-transparent',
-      ].join(' '),
+        // Ghost button (minimal style) (references CSS variable)
+        "bg-transparent",
+        "text-fg",
+        "border border-transparent",
+      ].join(" "),
 
       danger: [
-        // Destructive action button
-        colorTokens.dangerSoftSurface,
-        accessibilityTokens.textOnDanger,
-        shadowTokens.xs,
-        'border border-transparent',
-      ].join(' '),
+        // Destructive action button (references CSS variables)
+        "bg-danger-soft",
+        "text-danger-foreground",
+        "shadow-[var(--shadow-xs)]", // References --shadow-xs
+        "border border-transparent",
+      ].join(" "),
     },
     size: {
-      // Uses documented spacing + typography + radius tokens
-      sm: [spacingTokens.sm, typographyTokens.bodySm, radiusTokens.sm].join(
-        ' '
-      ),
-      md: [spacingTokens.md, typographyTokens.bodyMd, radiusTokens.md].join(
-        ' '
-      ),
-      lg: [spacingTokens.lg, typographyTokens.bodyMd, radiusTokens.lg].join(
-        ' '
-      ),
+      // Direct Tailwind spacing + typography + radius classes
+      sm: [
+        "px-3 py-1.5",
+        "text-sm leading-relaxed",
+        "rounded-[var(--radius-sm)]",
+      ].join(" "),
+      md: [
+        "px-4 py-2",
+        "text-[15px] leading-relaxed",
+        "rounded-[var(--radius-md)]",
+      ].join(" "),
+      lg: [
+        "px-5 py-2.5",
+        "text-[15px] leading-relaxed",
+        "rounded-[var(--radius-lg)]",
+      ].join(" "),
     },
     fullWidth: {
-      true: 'w-full',
-      false: 'w-auto',
+      true: "w-full",
+      false: "w-auto",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface ButtonProps
@@ -105,40 +102,40 @@ export interface ButtonProps
   /**
    * Visual variant of the button
    */
-  variant?: ButtonVariant
+  variant?: ButtonVariant;
 
   /**
    * Size of the button
    */
-  size?: ButtonSize
+  size?: ButtonSize;
 
   /**
    * Whether button should take full width
    */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 
   /**
    * Render as a different element or component
    * Enables composition patterns (e.g., render as Link)
    */
-  asChild?: boolean
+  asChild?: boolean;
 
   /**
    * Loading state indicator
    * Visual only - no client-side logic
    */
-  loading?: boolean
+  loading?: boolean;
 
   /**
    * Test ID for automated testing
    * Follows enterprise testing patterns
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Optional icon to display before children
    */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
 }
 
 /**
@@ -190,8 +187,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       fullWidth = false,
       asChild = false,
       loading = false,
@@ -199,37 +196,37 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       testId,
       icon,
       children,
-      type = 'button', // Default to button type for form safety
+      type = "button", // Default to button type for form safety
       ...props
     },
     ref
   ) => {
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
-    const Comp = asChild ? 'span' : 'button'
-    const isDisabled = disabled || loading
+    const Comp = asChild ? "span" : "button";
+    const isDisabled = disabled || loading;
 
     // Build className from variant system
     const variantClasses =
       buttonVariants.variants.variant[variant] ||
-      buttonVariants.variants.variant.default
+      buttonVariants.variants.variant.default;
     const sizeClasses =
-      buttonVariants.variants.size[size] || buttonVariants.variants.size.md
+      buttonVariants.variants.size[size] || buttonVariants.variants.size.md;
     const fullWidthClasses = fullWidth
       ? buttonVariants.variants.fullWidth.true
-      : buttonVariants.variants.fullWidth.false
+      : buttonVariants.variants.fullWidth.false;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-disabled': isDisabled,
-      'aria-busy': loading,
+      "data-testid": testId,
+      "aria-disabled": isDisabled,
+      "aria-busy": loading,
       // MCP Guardian: Constitution compliance markers
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'button-shared',
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "button-shared",
       // Native button doesn't need role, but keep for consistency
       type: asChild ? undefined : type,
       disabled: asChild ? undefined : isDisabled,
-    }
+    };
 
     return (
       <Comp
@@ -240,13 +237,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           sizeClasses,
           fullWidthClasses,
           // Loading state styling
-          loading && 'relative',
+          loading && "relative",
           // Disabled state styling (native button handles cursor)
-          isDisabled && 'cursor-not-allowed opacity-50',
+          isDisabled && "cursor-not-allowed opacity-50",
           // Focus-visible for keyboard navigation
-          'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
           // Hover state (when not disabled)
-          !isDisabled && 'hover:opacity-90 active:scale-[0.98]',
+          !isDisabled && "hover:opacity-90 active:scale-[0.98]",
           className
         )}
         {...accessibilityProps}
@@ -262,26 +259,26 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {/* 🎯 STEP 7: Button content */}
         <span
           className={cn(
-            'inline-flex items-center gap-2',
-            loading && 'invisible'
+            "inline-flex items-center gap-2",
+            loading && "invisible"
           )}
         >
           {icon && <span className="shrink-0">{icon}</span>}
           {children}
         </span>
       </Comp>
-    )
+    );
   }
-)
+);
 
-Button.displayName = 'Button'
+Button.displayName = "Button";
 
 // 🎯 STEP 8: Export types for external consumption
-export { buttonVariants }
-export type { ButtonSize, ButtonVariant }
+export { buttonVariants };
+export type { ButtonSize, ButtonVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Button
+export default Button;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

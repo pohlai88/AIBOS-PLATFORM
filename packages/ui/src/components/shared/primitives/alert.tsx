@@ -15,91 +15,86 @@
  * compose this with client-side logic in Layer 2 or use 'use client'.
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type AlertVariant = 'info' | 'success' | 'warning' | 'danger'
-type AlertSize = 'sm' | 'md' | 'lg'
+type AlertVariant = "info" | "success" | "warning" | "danger";
+type AlertSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const alertVariants = {
   base: [
-    'relative flex items-start gap-3',
-    'w-full',
-    radiusTokens.md,
-    'mcp-shared-component',
-  ].join(' '),
+    "relative flex items-start gap-3",
+    "w-full",
+    "rounded-[var(--radius-md)]", // References --radius-md
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       info: [
-        colorTokens.primarySoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-primary-soft", // References --color-primary-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       success: [
-        colorTokens.successSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-success-soft", // References --color-success-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       warning: [
-        colorTokens.warningSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-warning-soft", // References --color-warning-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       danger: [
-        colorTokens.dangerSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-danger-soft", // References --color-danger-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
     },
     size: {
-      sm: `p-[${spacingTokens.sm}] ${typographyTokens.bodySm}`,
-      md: `p-[${spacingTokens.md}] ${typographyTokens.bodyMd}`,
-      lg: `p-[${spacingTokens.lg}] ${typographyTokens.bodyMd}`,
+      sm: "px-3 py-1.5 text-sm leading-relaxed", // Direct spacing + typography
+      md: "px-4 py-2 text-[15px] leading-relaxed", // Direct spacing + typography
+      lg: "px-5 py-2.5 text-[15px] leading-relaxed", // Direct spacing + typography
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
-export interface AlertProps extends React.ComponentPropsWithoutRef<'div'> {
+export interface AlertProps extends React.ComponentPropsWithoutRef<"div"> {
   /**
    * Visual variant of the alert
    * @default 'info'
    */
-  variant?: AlertVariant
+  variant?: AlertVariant;
 
   /**
    * Size of the alert
    * @default 'md'
    */
-  size?: AlertSize
+  size?: AlertSize;
 
   /**
    * Optional icon to display
    */
-  icon?: React.ReactNode
+  icon?: React.ReactNode;
 
   /**
    * Optional heading
    */
-  heading?: React.ReactNode
+  heading?: React.ReactNode;
 
   /**
    * Optional action buttons/elements
    */
-  actions?: React.ReactNode
+  actions?: React.ReactNode;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -151,8 +146,8 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   (
     {
       className,
-      variant = 'info',
-      size = 'md',
+      variant = "info",
+      size = "md",
       icon,
       heading,
       actions,
@@ -165,17 +160,17 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const variantClasses =
       alertVariants.variants.variant[variant] ||
-      alertVariants.variants.variant.info
+      alertVariants.variants.variant.info;
     const sizeClasses =
-      alertVariants.variants.size[size] || alertVariants.variants.size.md
+      alertVariants.variants.size[size] || alertVariants.variants.size.md;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      role: 'alert',
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'alert-shared',
-    }
+      "data-testid": testId,
+      role: "alert",
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "alert-shared",
+    };
 
     return (
       <div
@@ -195,28 +190,33 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         {/* Content */}
         <div className="min-w-0 flex-1">
           {heading && (
-            <div className={cn('mb-1 font-semibold', typographyTokens.bodyMd)}>
+            <div
+              className={cn(
+                "mb-1 font-semibold",
+                "text-[15px] leading-relaxed"
+              )}
+            >
               {heading}
             </div>
           )}
-          <div className={cn(typographyTokens.bodySm)}>{children}</div>
+          <div className={cn("text-sm leading-relaxed")}>{children}</div>
         </div>
 
         {/* Actions */}
         {actions && <div className="ml-auto shrink-0">{actions}</div>}
       </div>
-    )
+    );
   }
-)
+);
 
-Alert.displayName = 'Alert'
+Alert.displayName = "Alert";
 
 // 🎯 STEP 8: Export types for external consumption
-export { alertVariants }
-export type { AlertSize, AlertVariant }
+export { alertVariants };
+export type { AlertSize, AlertVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Alert
+export default Alert;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

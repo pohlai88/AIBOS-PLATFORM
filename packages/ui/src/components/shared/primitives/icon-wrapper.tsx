@@ -12,70 +12,69 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-import { colorTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type IconSize = "xs" | "sm" | "md" | "lg" | "xl";
 type IconVariant =
-  | 'default'
-  | 'muted'
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
+  | "default"
+  | "muted"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger";
 
 // 🎯 STEP 2: Create RSC-safe variant system using design tokens
 const iconWrapperVariants = {
   base: [
-    'inline-flex items-center justify-center',
-    'shrink-0',
-    'mcp-shared-component',
-  ].join(' '),
+    "inline-flex items-center justify-center",
+    "shrink-0",
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     size: {
-      xs: 'w-3 h-3', // 12px
-      sm: 'w-4 h-4', // 16px
-      md: 'w-5 h-5', // 20px
-      lg: 'w-6 h-6', // 24px
-      xl: 'w-8 h-8', // 32px
+      xs: "w-3 h-3", // 12px
+      sm: "w-4 h-4", // 16px
+      md: "w-5 h-5", // 20px
+      lg: "w-6 h-6", // 24px
+      xl: "w-8 h-8", // 32px
     },
     variant: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      primary: colorTokens.primarySoftSurface,
-      success: colorTokens.successSoftSurface,
-      warning: colorTokens.warningSoftSurface,
-      danger: colorTokens.dangerSoftSurface,
+      default: "text-fg", // References --color-fg
+      muted: "text-fg-muted", // References --color-fg-muted
+      primary: "text-[var(--color-primary-soft)]", // References CSS variable
+      success: "text-[var(--color-success-soft)]", // References CSS variable
+      warning: "text-[var(--color-warning-soft)]", // References CSS variable
+      danger: "text-[var(--color-danger-soft)]", // References CSS variable
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface IconWrapperProps
-  extends React.ComponentPropsWithoutRef<'span'> {
+  extends React.ComponentPropsWithoutRef<"span"> {
   /**
    * Size of the icon
    * @default 'md'
    */
-  size?: IconSize
+  size?: IconSize;
 
   /**
    * Color variant of the icon
    * @default 'default'
    */
-  variant?: IconVariant
+  variant?: IconVariant;
 
   /**
    * ARIA label for standalone icons
    */
-  label?: string
+  label?: string;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -133,8 +132,8 @@ export const IconWrapper = React.forwardRef<HTMLSpanElement, IconWrapperProps>(
   (
     {
       className,
-      size = 'md',
-      variant = 'default',
+      size = "md",
+      variant = "default",
       label,
       testId,
       children,
@@ -145,20 +144,20 @@ export const IconWrapper = React.forwardRef<HTMLSpanElement, IconWrapperProps>(
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const sizeClasses =
       iconWrapperVariants.variants.size[size] ||
-      iconWrapperVariants.variants.size.md
+      iconWrapperVariants.variants.size.md;
     const variantClasses =
       iconWrapperVariants.variants.variant[variant] ||
-      iconWrapperVariants.variants.variant.default
+      iconWrapperVariants.variants.variant.default;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-label': label,
-      'aria-hidden': label ? undefined : true,
-      role: label ? 'img' : undefined,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'iconwrapper-shared',
-    }
+      "data-testid": testId,
+      "aria-label": label,
+      "aria-hidden": label ? undefined : true,
+      role: label ? "img" : undefined,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "iconwrapper-shared",
+    };
 
     return (
       <span
@@ -174,18 +173,20 @@ export const IconWrapper = React.forwardRef<HTMLSpanElement, IconWrapperProps>(
       >
         {children}
       </span>
-    )
+    );
   }
-)
+);
 
-IconWrapper.displayName = 'IconWrapper'
+IconWrapper.displayName = "IconWrapper";
 
 // 🎯 STEP 8: Export types for external consumption
-export { iconWrapperVariants }
-export type { IconSize, IconVariant }
+export { iconWrapperVariants };
+export type { IconSize, IconVariant };
+// Export alias for consistency with component naming
+export type IconWrapperSize = IconSize;
 
 // 🎯 STEP 9: Default export for convenience
-export default IconWrapper
+export default IconWrapper;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

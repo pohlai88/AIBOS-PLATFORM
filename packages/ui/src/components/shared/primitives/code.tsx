@@ -12,75 +12,71 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type CodeVariant = 'default' | 'success' | 'warning' | 'danger'
-type CodeSize = 'sm' | 'md'
+type CodeVariant = "default" | "success" | "warning" | "danger";
+type CodeSize = "sm" | "md";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const codeVariants = {
   base: [
-    'inline-block',
-    'font-mono',
-    radiusTokens.sm,
-    'px-1.5 py-0.5',
-    'mcp-shared-component',
-  ].join(' '),
+    "inline-block",
+    "font-mono",
+    "rounded-[var(--radius-sm)]", // References --radius-sm
+    "px-1.5 py-0.5",
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgMuted,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       success: [
-        colorTokens.successSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-success-soft", // References --color-success-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       warning: [
-        colorTokens.warningSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-warning-soft", // References --color-warning-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
       danger: [
-        colorTokens.dangerSoftSurface,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-      ].join(' '),
+        "bg-danger-soft", // References --color-danger-soft
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+      ].join(" "),
     },
     size: {
-      sm: typographyTokens.bodySm,
-      md: typographyTokens.bodyMd,
+      sm: "text-sm leading-relaxed", // bodySm equivalent
+      md: "text-[15px] leading-relaxed", // bodyMd equivalent
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
-export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
+export interface CodeProps extends React.ComponentPropsWithoutRef<"code"> {
   /**
    * Visual variant of the code
    * @default 'default'
    */
-  variant?: CodeVariant
+  variant?: CodeVariant;
 
   /**
    * Size of the code text
    * @default 'sm'
    */
-  size?: CodeSize
+  size?: CodeSize;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -128,22 +124,22 @@ export interface CodeProps extends React.ComponentPropsWithoutRef<'code'> {
  */
 export const Code = React.forwardRef<HTMLElement, CodeProps>(
   (
-    { className, variant = 'default', size = 'sm', testId, children, ...props },
+    { className, variant = "default", size = "sm", testId, children, ...props },
     ref
   ) => {
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const variantClasses =
       codeVariants.variants.variant[variant] ||
-      codeVariants.variants.variant.default
+      codeVariants.variants.variant.default;
     const sizeClasses =
-      codeVariants.variants.size[size] || codeVariants.variants.size.sm
+      codeVariants.variants.size[size] || codeVariants.variants.size.sm;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'code-shared',
-    }
+      "data-testid": testId,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "code-shared",
+    };
 
     return (
       <code
@@ -159,18 +155,18 @@ export const Code = React.forwardRef<HTMLElement, CodeProps>(
       >
         {children}
       </code>
-    )
+    );
   }
-)
+);
 
-Code.displayName = 'Code'
+Code.displayName = "Code";
 
 // 🎯 STEP 8: Export types for external consumption
-export { codeVariants }
-export type { CodeSize, CodeVariant }
+export { codeVariants };
+export type { CodeSize, CodeVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Code
+export default Code;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

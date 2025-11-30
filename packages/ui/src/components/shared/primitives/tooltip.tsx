@@ -15,80 +15,74 @@
  * compose this with client-side logic or use Radix UI Tooltip in Layer 2.
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type TooltipSide = 'top' | 'right' | 'bottom' | 'left'
-type TooltipSize = 'sm' | 'md' | 'lg'
+type TooltipSide = "top" | "right" | "bottom" | "left";
+type TooltipSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const tooltipVariants = {
   base: [
-    'absolute z-50',
-    'px-3 py-1.5',
-    colorTokens.bgElevated,
-    colorTokens.text,
-    `border ${colorTokens.border}`,
-    shadowTokens.md,
-    radiusTokens.md,
-    typographyTokens.bodySm,
-    'whitespace-nowrap',
-    'mcp-shared-component',
-    'pointer-events-none',
-  ].join(' '),
+    "absolute z-50",
+    "px-3 py-1.5",
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "border border-border", // References --color-border
+    "shadow-[var(--shadow-md)]", // References --shadow-md
+    "rounded-[var(--radius-md)]", // References --radius-md
+    "text-sm leading-relaxed", // bodySm equivalent
+    "whitespace-nowrap",
+    "mcp-shared-component",
+    "pointer-events-none",
+  ].join(" "),
   variants: {
     side: {
-      top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-      right: 'left-full top-1/2 -translate-y-1/2 ml-2',
-      bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-      left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+      top: "bottom-full left-1/2 -translate-x-1/2 mb-2",
+      right: "left-full top-1/2 -translate-y-1/2 ml-2",
+      bottom: "top-full left-1/2 -translate-x-1/2 mt-2",
+      left: "right-full top-1/2 -translate-y-1/2 mr-2",
     },
     size: {
-      sm: `px-[${spacingTokens.sm}] py-[${spacingTokens.xs}] ${typographyTokens.bodySm}`,
-      md: `px-[${spacingTokens.md}] py-[${spacingTokens.sm}] ${typographyTokens.bodyMd}`,
-      lg: `px-[${spacingTokens.lg}] py-[${spacingTokens.md}] ${typographyTokens.bodyMd}`,
+      sm: "px-3 py-1 text-sm leading-relaxed", // Direct spacing + typography
+      md: "px-4 py-1.5 text-[15px] leading-relaxed", // Direct spacing + typography
+      lg: "px-5 py-2 text-[15px] leading-relaxed", // Direct spacing + typography
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface TooltipProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'content'> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "content"> {
   /**
    * Tooltip content
    */
-  content: React.ReactNode
+  content: React.ReactNode;
 
   /**
    * Position of the tooltip relative to trigger
    * @default 'top'
    */
-  side?: TooltipSide
+  side?: TooltipSide;
 
   /**
    * Size of the tooltip
    * @default 'md'
    */
-  size?: TooltipSize
+  size?: TooltipSize;
 
   /**
    * Whether to show arrow indicator
    * @default true
    */
-  arrow?: boolean
+  arrow?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -130,8 +124,8 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
     {
       className,
       content,
-      side = 'top',
-      size = 'md',
+      side = "top",
+      size = "md",
       arrow = true,
       testId,
       children,
@@ -141,17 +135,17 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
   ) => {
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const sideClasses =
-      tooltipVariants.variants.side[side] || tooltipVariants.variants.side.top
+      tooltipVariants.variants.side[side] || tooltipVariants.variants.side.top;
     const sizeClasses =
-      tooltipVariants.variants.size[size] || tooltipVariants.variants.size.md
+      tooltipVariants.variants.size[size] || tooltipVariants.variants.size.md;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      role: 'tooltip',
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'tooltip-shared',
-    }
+      "data-testid": testId,
+      role: "tooltip",
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "tooltip-shared",
+    };
 
     return (
       <div
@@ -161,8 +155,8 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
           sideClasses,
           sizeClasses,
           // Hidden by default - show via CSS (e.g., group-hover:opacity-100)
-          'opacity-0 transition-opacity duration-150',
-          'group-hover:opacity-100 group-focus-visible:opacity-100',
+          "opacity-0 transition-opacity duration-150",
+          "group-hover:opacity-100 group-focus-visible:opacity-100",
           className
         )}
         {...accessibilityProps}
@@ -175,37 +169,37 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
         {arrow && (
           <div
             className={cn(
-              'absolute h-2 w-2',
-              colorTokens.bgElevated,
-              `border-t ${colorTokens.border}`,
-              `border-l ${colorTokens.border}`,
-              'rotate-45',
+              "absolute h-2 w-2",
+              "bg-bg-elevated", // References --color-bg-elevated
+              "border-t border-border", // References --color-border
+              "border-l border-border", // References --color-border
+              "rotate-45",
               {
-                '-bottom-1 left-1/2 -translate-x-1/2 border-t-0 border-r border-b border-l-0':
-                  side === 'top',
-                'top-1/2 -left-1 -translate-y-1/2 border-t-0 border-r border-b border-l-0':
-                  side === 'right',
-                '-top-1 left-1/2 -translate-x-1/2': side === 'bottom',
-                'top-1/2 -right-1 -translate-y-1/2 border-r-0 border-b-0':
-                  side === 'left',
+                "-bottom-1 left-1/2 -translate-x-1/2 border-t-0 border-r border-b border-l-0":
+                  side === "top",
+                "top-1/2 -left-1 -translate-y-1/2 border-t-0 border-r border-b border-l-0":
+                  side === "right",
+                "-top-1 left-1/2 -translate-x-1/2": side === "bottom",
+                "top-1/2 -right-1 -translate-y-1/2 border-r-0 border-b-0":
+                  side === "left",
               }
             )}
             aria-hidden="true"
           />
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Tooltip.displayName = 'Tooltip'
+Tooltip.displayName = "Tooltip";
 
 // 🎯 STEP 8: Export types for external consumption
-export { tooltipVariants }
-export type { TooltipSide, TooltipSize }
+export { tooltipVariants };
+export type { TooltipSide, TooltipSize };
 
 // 🎯 STEP 9: Default export for convenience
-export default Tooltip
+export default Tooltip;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

@@ -1,0 +1,53 @@
+{
+  "component": "token-theme",
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-27",
+  "intent": "Maintain token and theme layer following GRCD-TOKEN-THEME.md, enforcing theme-first architecture",
+  "constraints": [
+    "MUST follow GRCD-TOKEN-THEME.md structure",
+    "MUST provide ThemeProvider to control CSS variables",
+    "MUST NOT allow components to import tokens directly from tokens.ts",
+    "MUST enforce theme-first architecture (CSS variables → ThemeProvider → Components)",
+    "MUST validate all component token usage via MCP",
+    "MUST support tenant customization through theme layer",
+    "MUST support WCAG themes through theme layer",
+    "MUST support safe mode through theme layer",
+    "tokens.ts MUST only be used for MCP validation, not component imports"
+  ],
+  "input_sources": [
+    "GRCD-TOKEN-THEME.md (packages/ui/GRCD-TOKEN-THEME.md)",
+    "GRCD-GLOBALS-CSS.md (packages/ui/GRCD-GLOBALS-CSS.md)",
+    "ThemeProvider.tsx (packages/ui/mcp/providers/ThemeProvider.tsx)",
+    "tokens.ts (packages/ui/src/design/tokens/tokens.ts)"
+  ],
+  "output_targets": {
+    "code": "packages/ui/mcp/providers/",
+    "tokens": "packages/ui/src/design/tokens/"
+  },
+  "style": {
+    "normative_language": true,
+    "anti_drift": true,
+    "theme_first": true,
+    "no_direct_imports": true
+  },
+  "validation": {
+    "pre_commit": [
+      "ThemeProvider validation",
+      "Token import validation (no direct imports in components)",
+      "Theme layer compliance check"
+    ]
+  },
+  "mcp_governance": {
+    "theme_provider_validation": true,
+    "token_import_validation": true,
+    "theme_layer_enforcement": true
+  },
+  "normative_requirements": [
+    "THEME-MCP-1: ThemeProvider MUST control CSS variables via DOM attributes",
+    "THEME-MCP-2: Components MUST NOT import tokens directly from tokens.ts",
+    "THEME-MCP-3: Components MUST use Tailwind classes referencing CSS variables",
+    "THEME-MCP-4: MCP MUST validate component token usage (flag direct imports)",
+    "THEME-MCP-5: ThemeProvider MUST wrap application root"
+  ]
+}
+

@@ -12,76 +12,74 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, radiusTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type ProgressVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger'
-type ProgressSize = 'sm' | 'md' | 'lg'
+type ProgressVariant = "default" | "primary" | "success" | "warning" | "danger";
+type ProgressSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const progressVariants = {
   track: [
     // Progress track (background)
-    'relative w-full overflow-hidden',
-    colorTokens.bgMuted,
-    'mcp-shared-component',
-  ].join(' '),
+    "relative w-full overflow-hidden",
+    "bg-bg-muted", // References --color-bg-muted
+    "mcp-shared-component",
+  ].join(" "),
   bar: [
     // Progress bar (foreground)
-    'h-full transition-all duration-300 ease-in-out',
-  ].join(' '),
+    "h-full transition-all duration-300 ease-in-out",
+  ].join(" "),
   variants: {
     variant: {
-      default: colorTokens.text,
-      primary: `bg-[${colorTokens.primarySoftSurface}]`,
-      success: `bg-[${colorTokens.successSoftSurface}]`,
-      warning: `bg-[${colorTokens.warningSoftSurface}]`,
-      danger: `bg-[${colorTokens.dangerSoftSurface}]`,
+      default: "bg-fg", // References --color-fg
+      primary: "bg-[var(--color-primary-soft)]", // References CSS variable
+      success: "bg-[var(--color-success-soft)]", // References CSS variable
+      warning: "bg-[var(--color-warning-soft)]", // References CSS variable
+      danger: "bg-[var(--color-danger-soft)]", // References CSS variable
     },
     size: {
-      sm: ['h-1', radiusTokens.full].join(' '),
-      md: ['h-2', radiusTokens.full].join(' '),
-      lg: ['h-3', radiusTokens.full].join(' '),
+      sm: ["h-1", "rounded-[var(--radius-full)]"].join(" "), // References --radius-full
+      md: ["h-2", "rounded-[var(--radius-full)]"].join(" "), // References --radius-full
+      lg: ["h-3", "rounded-[var(--radius-full)]"].join(" "), // References --radius-full
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Visual variant of the progress bar
    */
-  variant?: ProgressVariant
+  variant?: ProgressVariant;
 
   /**
    * Size of the progress bar
    */
-  size?: ProgressSize
+  size?: ProgressSize;
 
   /**
    * Progress value (0-100)
    * If not provided, shows indeterminate progress
    */
-  value?: number
+  value?: number;
 
   /**
    * Maximum value (default: 100)
    */
-  max?: number
+  max?: number;
 
   /**
    * Show percentage label
    */
-  showLabel?: boolean
+  showLabel?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -125,8 +123,8 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
   (
     {
       className,
-      variant = 'primary',
-      size = 'md',
+      variant = "primary",
+      size = "md",
       value,
       max = 100,
       showLabel = false,
@@ -139,18 +137,18 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
     const percentage =
       value !== undefined
         ? Math.min(100, Math.max(0, (value / max) * 100))
-        : undefined
+        : undefined;
 
     // Build variant classes
     const variantClasses =
       progressVariants.variants.variant[variant] ||
-      progressVariants.variants.variant.primary
+      progressVariants.variants.variant.primary;
     const sizeClasses =
-      progressVariants.variants.size[size] || progressVariants.variants.size.md
+      progressVariants.variants.size[size] || progressVariants.variants.size.md;
 
     // Indeterminate animation
     const indeterminateClass =
-      value === undefined ? 'animate-progress-indeterminate' : ''
+      value === undefined ? "animate-progress-indeterminate" : "";
 
     return (
       <div className="w-full">
@@ -163,7 +161,7 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
           aria-label={
             value !== undefined
               ? `${percentage?.toFixed(0)}% complete`
-              : 'Loading...'
+              : "Loading..."
           }
           data-testid={testId}
           data-mcp-validated="true"
@@ -178,7 +176,7 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
               indeterminateClass
             )}
             style={{
-              width: percentage !== undefined ? `${percentage}%` : '100%',
+              width: percentage !== undefined ? `${percentage}%` : "100%",
             }}
           />
         </div>
@@ -190,18 +188,18 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
           </div>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Progress.displayName = 'Progress'
+Progress.displayName = "Progress";
 
 // 🎯 STEP 8: Export types for external consumption
-export { progressVariants }
-export type { ProgressSize, ProgressVariant }
+export { progressVariants };
+export type { ProgressSize, ProgressVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Progress
+export default Progress;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

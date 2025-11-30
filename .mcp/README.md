@@ -482,12 +482,13 @@ Governance metadata integrates with:
 | Server | Status | Tools | Purpose |
 |--------|--------|-------|---------|
 | `aibos-filesystem` | ✅ Active | 4 | Optimized filesystem access |
-| `react-validation` | ✅ Active | 4 | React component validation |
+| `aibos-react` | ✅ Active | 4 | React component validation |
 | `aibos-theme` | ✅ Active | 5 | Theme/token management |
 | `aibos-documentation` | ✅ Active | 4 | Documentation automation |
-| `aibos-ui-generator` | ✅ Active | 1 | UI generation from prompts |
 | `aibos-component-generator` | ✅ Active | 1 | Component generation (86 rules) |
 | `aibos-a11y-validation` | ✅ Active | 2 | Accessibility validation |
+| `aibos-landing-page-engine` | ✅ Active | 4 | Landing page generation |
+| `aibos-convention-validation` | ✅ Active | 8 | Convention validation |
 
 ### External Servers
 

@@ -12,153 +12,153 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type RadioVariant = 'default' | 'primary' | 'success' | 'danger'
-type RadioSize = 'sm' | 'md' | 'lg'
+type RadioVariant = "default" | "primary" | "success" | "danger";
+type RadioSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const radioVariants = {
   base: [
-    // Base styles using componentTokens
-    'inline-flex items-center justify-center',
-    'border-2',
-    'rounded-full', // Always circular for radio buttons
-    'transition-all duration-200',
-    'cursor-pointer',
-    'flex-shrink-0',
-    'relative',
-    'mcp-shared-component',
-  ].join(' '),
+    // Base styles
+    "inline-flex items-center justify-center",
+    "border-2",
+    "rounded-full", // Always circular for radio buttons
+    "transition-all duration-200",
+    "cursor-pointer",
+    "flex-shrink-0",
+    "relative",
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        'checked:border-current',
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:border-current",
+      ].join(" "),
 
       primary: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.primarySoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:border-[var(--color-primary-soft)]", // References CSS variable
+      ].join(" "),
 
       success: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.successSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:border-[var(--color-success-soft)]", // References CSS variable
+      ].join(" "),
 
       danger: [
-        colorTokens.bgElevated,
-        `border-[${colorTokens.border}]`,
-        `checked:border-[${colorTokens.dangerSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "border-border", // References --color-border
+        "checked:border-[var(--color-danger-soft)]", // References CSS variable
+      ].join(" "),
     },
     size: {
-      sm: 'h-4 w-4',
-      md: 'h-5 w-5',
-      lg: 'h-6 w-6',
+      sm: "h-4 w-4",
+      md: "h-5 w-5",
+      lg: "h-6 w-6",
     },
   },
-}
+};
 
 // Inner dot variant system
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const dotVariants = {
   base: [
-    'absolute',
-    'rounded-full',
-    'transition-all duration-200',
-    'opacity-0',
-    'checked:opacity-100',
-  ].join(' '),
+    "absolute",
+    "rounded-full",
+    "transition-all duration-200",
+    "opacity-0",
+    "checked:opacity-100",
+  ].join(" "),
   variants: {
     variant: {
-      default: colorTokens.text,
-      primary: `bg-[${colorTokens.primarySoftSurface}]`,
-      success: `bg-[${colorTokens.successSoftSurface}]`,
-      danger: `bg-[${colorTokens.dangerSoftSurface}]`,
+      default: "bg-fg", // References --color-fg
+      primary: "bg-[var(--color-primary-soft)]", // References CSS variable
+      success: "bg-[var(--color-success-soft)]", // References CSS variable
+      danger: "bg-[var(--color-danger-soft)]", // References CSS variable
     },
     size: {
-      sm: 'h-2 w-2',
-      md: 'h-2.5 w-2.5',
-      lg: 'h-3 w-3',
+      sm: "h-2 w-2",
+      md: "h-2.5 w-2.5",
+      lg: "h-3 w-3",
     },
   },
-}
+};
 
 // Label variant system
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const labelVariants = {
   base: [
-    'inline-flex items-center gap-2',
-    'cursor-pointer',
-    'select-none',
-    colorTokens.text,
-  ].join(' '),
+    "inline-flex items-center gap-2",
+    "cursor-pointer",
+    "select-none",
+    "text-fg", // References --color-fg
+  ].join(" "),
   size: {
-    sm: typographyTokens.bodySm,
-    md: typographyTokens.bodyMd,
-    lg: typographyTokens.headingMd,
+    sm: "text-sm leading-relaxed", // bodySm equivalent
+    md: "text-[15px] leading-relaxed", // bodyMd equivalent
+    lg: "text-base font-semibold", // headingMd equivalent
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface RadioProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   /**
    * Visual variant of the radio button
    */
-  variant?: RadioVariant
+  variant?: RadioVariant;
 
   /**
    * Size of the radio button
    */
-  size?: RadioSize
+  size?: RadioSize;
 
   /**
    * Label text for the radio button
    * If provided, renders a label element
    */
-  label?: React.ReactNode
+  label?: React.ReactNode;
 
   /**
    * Error state indicator
    * Shows error styling when true
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Error message to display
    * Only shown when error is true
    */
-  errorMessage?: string
+  errorMessage?: string;
 
   /**
    * Helper text to display below the radio button
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Wrapper className for the container
    */
-  wrapperClassName?: string
+  wrapperClassName?: string;
 
   /**
    * Optional change handler - provided by parent component
    * Only works in Client Components
    */
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 /**
@@ -209,8 +209,8 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       label,
       error = false,
       errorMessage,
@@ -225,35 +225,35 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
     ref
   ) => {
     // Generate unique ID unconditionally (RSC-safe)
-    const generatedId = React.useId()
-    const radioId = id || `radio-${generatedId}`
+    const generatedId = React.useId();
+    const radioId = id || `radio-${generatedId}`;
 
     // Build variant classes
     const variantClasses =
       radioVariants.variants.variant[variant] ||
-      radioVariants.variants.variant.default
+      radioVariants.variants.variant.default;
     const sizeClasses =
-      radioVariants.variants.size[size] || radioVariants.variants.size.md
+      radioVariants.variants.size[size] || radioVariants.variants.size.md;
     const dotVariantClasses =
       dotVariants.variants.variant[variant] ||
-      dotVariants.variants.variant.default
+      dotVariants.variants.variant.default;
     const dotSizeClasses =
-      dotVariants.variants.size[size] || dotVariants.variants.size.md
-    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md
+      dotVariants.variants.size[size] || dotVariants.variants.size.md;
+    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md;
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-describedby':
+      "data-testid": testId,
+      "aria-describedby":
         error && errorMessage
           ? `${radioId}-error`
           : helperText
             ? `${radioId}-helper`
             : undefined,
-      'aria-invalid': error,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'radio-shared',
-    }
+      "aria-invalid": error,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "radio-shared",
+    };
 
     // Radio input element with custom dot indicator
     const radioElement = (
@@ -268,18 +268,18 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             radioVariants.base,
             variantClasses,
             sizeClasses,
-            // Error state styling
+            // Error state styling (references CSS variables)
             error &&
               [
-                `border-[${colorTokens.dangerSoftSurface}]`,
-                `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
-              ].join(' '),
+                "border-[var(--color-danger-soft)]",
+                "focus-visible:ring-[var(--color-danger-soft)]",
+              ].join(" "),
             // Focus styling (WCAG 2.1 required)
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
             // Disabled state styling
-            disabled && 'cursor-not-allowed opacity-50',
+            disabled && "cursor-not-allowed opacity-50",
             // Hide default radio appearance
-            'appearance-none',
+            "appearance-none",
             className
           )}
           {...accessibilityProps}
@@ -291,29 +291,25 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             dotVariants.base,
             dotVariantClasses,
             dotSizeClasses,
-            'pointer-events-none',
-            'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+            "pointer-events-none",
+            "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           )}
           aria-hidden="true"
         />
       </div>
-    )
+    );
 
     // If no label, return just the radio button
     if (!label) {
       return (
-        <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+        <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
           {radioElement}
 
           {/* Helper text */}
           {helperText && !error && (
             <span
               id={`${radioId}-helper`}
-              className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
-                'mt-1'
-              )}
+              className={cn("text-sm leading-relaxed", "text-fg-muted", "mt-1")}
             >
               {helperText}
             </span>
@@ -324,9 +320,9 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             <span
               id={`${radioId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`,
-                'mt-1'
+                "text-sm leading-relaxed",
+                "text-[var(--color-danger-soft)]", // References CSS variable
+                "mt-1"
               )}
               role="alert"
             >
@@ -334,18 +330,18 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             </span>
           )}
         </div>
-      )
+      );
     }
 
     // Return radio button with label
     return (
-      <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+      <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
         <label
           htmlFor={radioId}
           className={cn(
             labelVariants.base,
             labelSizeClasses,
-            disabled && 'cursor-not-allowed opacity-50'
+            disabled && "cursor-not-allowed opacity-50"
           )}
         >
           {radioElement}
@@ -356,11 +352,7 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
         {helperText && !error && (
           <span
             id={`${radioId}-helper`}
-            className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
-              'ml-7'
-            )}
+            className={cn("text-sm leading-relaxed", "text-fg-muted", "ml-7")}
           >
             {helperText}
           </span>
@@ -371,9 +363,9 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           <span
             id={`${radioId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`,
-              'ml-7'
+              "text-sm leading-relaxed",
+              "text-[var(--color-danger-soft)]", // References CSS variable
+              "ml-7"
             )}
             role="alert"
           >
@@ -381,18 +373,18 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
           </span>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Radio.displayName = 'Radio'
+Radio.displayName = "Radio";
 
 // 🎯 STEP 8: Export types for external consumption
-export { radioVariants }
-export type { RadioSize, RadioVariant }
+export { radioVariants };
+export type { RadioSize, RadioVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Radio
+export default Radio;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

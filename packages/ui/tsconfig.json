@@ -25,6 +25,6 @@
       "@aibos/ui/mcp/types": ["./mcp/types/mcp.ts"]
     }
   },
-  "include": ["src/**/*", "mcp/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
+  "include": ["src/**/*", "mcp/**/*", "tests/**/*", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist", "coverage"]
 }

@@ -120,10 +120,6 @@ const KNOWN_CSS_VARIABLES = {
   '--font-mono':
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace',
 
-  // Extended spacing tokens
-  '--spacing-8xl': '90rem',
-  '--spacing-9xl': '105rem',
-  '--spacing-10xl': '120rem',
 } as const
 
 // MCP Guardian: Token validation utilities

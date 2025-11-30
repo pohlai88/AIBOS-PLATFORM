@@ -1,0 +1,55 @@
+{
+  "component": "ui-testing",
+  "version": "1.0.0",
+  "intent": "Generate test code following GRCD-TESTING.md specifications, ensuring 95% coverage, accessibility compliance, and standardized test patterns",
+  "constraints": [
+    "MUST follow GRCD structure from packages/ui/GRCD-TESTING.md",
+    "MUST save test files only under allowed directories (see GRCD Section 4)",
+    "MUST respect dependency matrix (see GRCD Section 5)",
+    "MUST use TypeScript with strict mode",
+    "MUST use kebab-case for test file names",
+    "MUST NOT create test files in root directory",
+    "MUST NOT introduce dependencies not in compatibility matrix",
+    "MUST achieve 95% test coverage minimum",
+    "MUST include accessibility tests (axe-core)",
+    "MUST follow standardized test patterns (see GRCD Section 3.3)",
+    "MUST use test utilities (render helpers, theme providers)",
+    "MUST NOT use 'any' types in test code"
+  ],
+  "input_sources": [
+    "GRCD docs (packages/ui/GRCD-TESTING.md)",
+    "codebase (packages/ui/src/)",
+    "existing test patterns in packages/ui/tests/",
+    "ARCHITECTURE-ANALYSIS.md (testing gap analysis)"
+  ],
+  "output_targets": {
+    "tests": "packages/ui/tests/",
+    "test_utils": "packages/ui/tests/utils/",
+    "fixtures": "packages/ui/tests/fixtures/",
+    "coverage": "packages/ui/coverage/"
+  },
+  "style": {
+    "normative_language": true,
+    "anti_drift": true,
+    "type_safety": "strict",
+    "test_patterns": "standardized",
+    "coverage_enforcement": true,
+    "accessibility_testing": true
+  },
+  "validation": {
+    "pre_commit": [
+      "TypeScript type check",
+      "Test execution (all tests must pass)",
+      "Coverage threshold check (95% minimum)",
+      "Accessibility test execution",
+      "Test pattern validation"
+    ]
+  },
+  "mcp_governance": {
+    "test_pattern_validation": true,
+    "coverage_enforcement": true,
+    "accessibility_validation": true,
+    "test_utility_usage": true
+  }
+}
+

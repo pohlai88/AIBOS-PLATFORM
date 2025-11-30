@@ -1,0 +1,30 @@
+{
+    "name": "@aibos/devtools",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "build": "next build",
+        "dev": "next dev -p 3001",
+        "lint": "eslint . --config ../../eslint.config.mjs",
+        "start": "next start -p 3001"
+    },
+    "dependencies": {
+        "next": "16.0.3",
+        "react": "19.2.0",
+        "react-dom": "19.2.0"
+    },
+    "devDependencies": {
+        "@aibos/config-eslint": "0.1.0",
+        "@types/node": "^22.19.1",
+        "@types/react": "19.2.4",
+        "@types/react-dom": "19.2.3",
+        "eslint": "^9.39.1",
+        "eslint-config-next": "16.0.3",
+        "typescript": "^5.9.3"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@8.15.0"
+}

@@ -4,12 +4,13 @@ This document describes how to use the MCP UI generator and enforce the UI Const
 
 ## 🎯 Overview
 
-The AI-BOS UI generator uses:
-- **MCP System Prompt** (`.mcp/ui-generator/prompt.md`) - Design system rules
-- **MCP Server** (`.mcp/ui-generator/server.mjs`) - LLM integration
-- **Generated Prompt** (`.mcp/ui-generator/prompt.generated.mjs`) - Synced JavaScript
-- **CLI Script** (`.mcp/ui-generator/tools/generate-component.ts`) - Component generation
+The AI-BOS component generator uses:
+- **MCP Server** (`.mcp/component-generator/server.mjs`) - LLM integration with 86 constitution rules
+- **Constitution Files** (`packages/ui/constitution/*.yml`) - Design system rules
 - **Validator** (`.mcp/component-generator/tools/validate-constitution.ts`) - Rule enforcement
+- **Validation Pipeline** (`.mcp/component-generator/tools/validators/`) - Comprehensive validation
+
+**Note:** `ui-generator` was removed (2025-11-29). Use `component-generator` instead.
 
 ## 📋 Quick Start
 
@@ -25,16 +26,14 @@ pnpm lint:ui-constitution
 
 ### 2. Generate a Component
 
-**Option A: Using CLI (Recommended)**
+**Option A: Using MCP Component Generator (Recommended)**
 ```bash
-# Install dependencies first (one-time)
-pnpm add @ai-sdk/openai ai
-
-# Set API key
-export OPENAI_API_KEY=your-key-here  # or add to .env
-
-# Generate component
-pnpm generate:ui tabs "A tabs component with multiple panels"
+# Use via Cursor MCP or direct server call
+# The component-generator MCP server provides:
+# - generate_component tool with 86 constitution rules
+# - Design drift detection
+# - Comprehensive validation
+# - Governance scoring
 ```
 
 **Option B: Using API Route (Dev Only)**
@@ -116,21 +115,23 @@ git add packages/ui/src/components/dialog.tsx
 git commit -m "feat: add dialog component"
 ```
 
-### Updating System Prompt
+### Updating Constitution Rules
 
 ```bash
-# 1. Edit the prompt
-vim .mcp/ui-generator/prompt.md
+# 1. Edit constitution files
+vim packages/ui/constitution/tokens.yml
+vim packages/ui/constitution/rsc.yml
+vim packages/ui/constitution/components.yml
 
-# 2. Sync to generated file
-pnpm sync-mcp-prompt
+# 2. Test component generation
+# Use component-generator MCP server to generate a test component
 
-# 3. Verify sync
-git status  # Should show .mcp/ui-generator/prompt.generated.mjs
+# 3. Verify validation
+# The generator automatically validates against all 86 rules
 
-# 4. Commit both files
-git add .mcp/ui-generator/prompt.md .mcp/ui-generator/prompt.generated.mjs
-git commit -m "docs: update MCP system prompt"
+# 4. Commit changes
+git add packages/ui/constitution/*.yml
+git commit -m "docs: update constitution rules"
 ```
 
 ### Refactoring Existing Code
@@ -179,10 +180,10 @@ git add .mcp/ui-generator/prompt.generated.mjs
 
 ## 📚 Related Files
 
-- `.mcp/ui-generator/prompt.md` - System prompt (source of truth)
-- `.mcp/ui-generator/server.mjs` - MCP server implementation
-- `.mcp/ui-generator/tools/generate-component.ts` - CLI generator
+- `.mcp/component-generator/server.mjs` - MCP server implementation (86 rules)
+- `packages/ui/constitution/*.yml` - Constitution rules (source of truth)
 - `.mcp/component-generator/tools/validate-constitution.ts` - Validator
+- `.mcp/component-generator/tools/validators/` - Validation pipeline
 - `packages/ui/src/design/tokens.ts` - Token definitions
 - `packages/ui/src/design/globals.css` - Design system CSS tokens
 - `.github/workflows/ui-constitution.yml` - CI workflow (if exists)

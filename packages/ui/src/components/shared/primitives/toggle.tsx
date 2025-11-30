@@ -12,150 +12,145 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  colorTokens,
-  radiusTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type ToggleVariant = 'default' | 'primary' | 'success' | 'danger'
-type ToggleSize = 'sm' | 'md' | 'lg'
+type ToggleVariant = "default" | "primary" | "success" | "danger";
+type ToggleSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const toggleVariants = {
   base: [
     // Base switch track styles
-    'relative inline-flex items-center',
-    'transition-all duration-200',
-    'cursor-pointer',
-    'flex-shrink-0',
-    radiusTokens.full,
-    'mcp-shared-component',
-  ].join(' '),
+    "relative inline-flex items-center",
+    "transition-all duration-200",
+    "cursor-pointer",
+    "flex-shrink-0",
+    "rounded-[var(--radius-full)]", // References --radius-full
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.primarySoftSurface}]`,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "checked:bg-[var(--color-primary-soft)]", // References CSS variable
+      ].join(" "),
 
       primary: [
-        `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.primarySoftSurface}]`,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "checked:bg-[var(--color-primary-soft)]", // References CSS variable
+      ].join(" "),
 
       success: [
-        `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.successSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "checked:bg-[var(--color-success-soft)]", // References CSS variable
+      ].join(" "),
 
       danger: [
-        `bg-[${colorTokens.bgMuted}]`,
-        `checked:bg-[${colorTokens.dangerSoftSurface}]`,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "checked:bg-[var(--color-danger-soft)]", // References CSS variable
+      ].join(" "),
     },
     size: {
-      sm: 'h-5 w-9',
-      md: 'h-6 w-11',
-      lg: 'h-7 w-13',
+      sm: "h-5 w-9",
+      md: "h-6 w-11",
+      lg: "h-7 w-13",
     },
   },
-}
+};
 
 // Thumb (sliding circle) variant system
 const thumbVariants = {
   base: [
-    'absolute',
-    'bg-white',
-    'transition-all duration-200',
-    'rounded-full',
-    'shadow-sm',
-    'pointer-events-none',
-  ].join(' '),
+    "absolute",
+    "bg-white",
+    "transition-all duration-200",
+    "rounded-full",
+    "shadow-sm",
+    "pointer-events-none",
+  ].join(" "),
   size: {
-    sm: 'h-4 w-4 left-0.5 checked:translate-x-4',
-    md: 'h-5 w-5 left-0.5 checked:translate-x-5',
-    lg: 'h-6 w-6 left-0.5 checked:translate-x-6',
+    sm: "h-4 w-4 left-0.5 checked:translate-x-4",
+    md: "h-5 w-5 left-0.5 checked:translate-x-5",
+    lg: "h-6 w-6 left-0.5 checked:translate-x-6",
   },
-}
+};
 
 // Label variant system
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const labelVariants = {
   base: [
-    'inline-flex items-center gap-2',
-    'cursor-pointer',
-    'select-none',
-    colorTokens.text,
-  ].join(' '),
+    "inline-flex items-center gap-2",
+    "cursor-pointer",
+    "select-none",
+    "text-fg", // References --color-fg
+  ].join(" "),
   size: {
-    sm: typographyTokens.bodySm,
-    md: typographyTokens.bodyMd,
-    lg: typographyTokens.headingMd,
+    sm: "text-sm leading-relaxed", // bodySm equivalent
+    md: "text-[15px] leading-relaxed", // bodyMd equivalent
+    lg: "text-base font-semibold", // headingMd equivalent
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface ToggleProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'type'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "type"> {
   /**
    * Visual variant of the toggle
    */
-  variant?: ToggleVariant
+  variant?: ToggleVariant;
 
   /**
    * Size of the toggle
    */
-  size?: ToggleSize
+  size?: ToggleSize;
 
   /**
    * Label text for the toggle
    * If provided, renders a label element
    */
-  label?: React.ReactNode
+  label?: React.ReactNode;
 
   /**
    * Error state indicator
    * Shows error styling when true
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Error message to display
    * Only shown when error is true
    */
-  errorMessage?: string
+  errorMessage?: string;
 
   /**
    * Helper text to display below the toggle
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Loading state indicator
    * Visual only - no client-side logic
    */
-  loading?: boolean
+  loading?: boolean;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Wrapper className for the container
    */
-  wrapperClassName?: string
+  wrapperClassName?: string;
 
   /**
    * Optional change handler - provided by parent component
    * Only works in Client Components
    */
-  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 /**
@@ -209,8 +204,8 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       label,
       error = false,
       errorMessage,
@@ -226,35 +221,35 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
     ref
   ) => {
     // Generate unique ID unconditionally (RSC-safe)
-    const generatedId = React.useId()
-    const toggleId = id || `toggle-${generatedId}`
+    const generatedId = React.useId();
+    const toggleId = id || `toggle-${generatedId}`;
 
-    const isDisabled = disabled || loading
+    const isDisabled = disabled || loading;
 
     // Build variant classes
     const variantClasses =
       toggleVariants.variants.variant[variant] ||
-      toggleVariants.variants.variant.default
+      toggleVariants.variants.variant.default;
     const sizeClasses =
-      toggleVariants.variants.size[size] || toggleVariants.variants.size.md
-    const thumbSizeClasses = thumbVariants.size[size] || thumbVariants.size.md
-    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md
+      toggleVariants.variants.size[size] || toggleVariants.variants.size.md;
+    const thumbSizeClasses = thumbVariants.size[size] || thumbVariants.size.md;
+    const labelSizeClasses = labelVariants.size[size] || labelVariants.size.md;
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      role: 'switch', // WCAG 2.1 required for toggle switches
-      'aria-describedby':
+      "data-testid": testId,
+      role: "switch", // WCAG 2.1 required for toggle switches
+      "aria-describedby":
         error && errorMessage
           ? `${toggleId}-error`
           : helperText
             ? `${toggleId}-helper`
             : undefined,
-      'aria-invalid': error,
-      'aria-busy': loading,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'toggle-shared',
-    }
+      "aria-invalid": error,
+      "aria-busy": loading,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "toggle-shared",
+    };
 
     // Toggle element with thumb
     const toggleElement = (
@@ -270,17 +265,17 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             variantClasses,
             sizeClasses,
             // Hide default checkbox
-            'appearance-none',
-            // Error state styling
+            "appearance-none",
+            // Error state styling (references CSS variables)
             error &&
               [
-                `border-2 border-[${colorTokens.dangerSoftSurface}]`,
-                `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
-              ].join(' '),
+                "border-2 border-[var(--color-danger-soft)]",
+                "focus-visible:ring-[var(--color-danger-soft)]",
+              ].join(" "),
             // Focus styling (WCAG 2.1 required)
-            'focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
             // Disabled state styling
-            isDisabled && 'cursor-not-allowed opacity-50',
+            isDisabled && "cursor-not-allowed opacity-50",
             className
           )}
           {...accessibilityProps}
@@ -291,28 +286,24 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
           className={cn(
             thumbVariants.base,
             thumbSizeClasses,
-            loading && 'animate-pulse'
+            loading && "animate-pulse"
           )}
           aria-hidden="true"
         />
       </div>
-    )
+    );
 
     // If no label, return just the toggle
     if (!label) {
       return (
-        <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+        <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
           {toggleElement}
 
           {/* Helper text */}
           {helperText && !error && (
             <span
               id={`${toggleId}-helper`}
-              className={cn(
-                typographyTokens.bodySm,
-                colorTokens.textMuted,
-                'mt-1'
-              )}
+              className={cn("text-sm leading-relaxed", "text-fg-muted", "mt-1")}
             >
               {helperText}
             </span>
@@ -323,9 +314,9 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             <span
               id={`${toggleId}-error`}
               className={cn(
-                typographyTokens.bodySm,
-                `text-[${colorTokens.dangerSoftSurface}]`,
-                'mt-1'
+                "text-sm leading-relaxed",
+                "text-[var(--color-danger-soft)]", // References CSS variable
+                "mt-1"
               )}
               role="alert"
             >
@@ -333,18 +324,18 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
             </span>
           )}
         </div>
-      )
+      );
     }
 
     // Return toggle with label
     return (
-      <div className={cn('inline-flex flex-col gap-1', wrapperClassName)}>
+      <div className={cn("inline-flex flex-col gap-1", wrapperClassName)}>
         <label
           htmlFor={toggleId}
           className={cn(
             labelVariants.base,
             labelSizeClasses,
-            isDisabled && 'cursor-not-allowed opacity-50'
+            isDisabled && "cursor-not-allowed opacity-50"
           )}
         >
           {toggleElement}
@@ -355,11 +346,7 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
         {helperText && !error && (
           <span
             id={`${toggleId}-helper`}
-            className={cn(
-              typographyTokens.bodySm,
-              colorTokens.textMuted,
-              'ml-14'
-            )}
+            className={cn("text-sm leading-relaxed", "text-fg-muted", "ml-14")}
           >
             {helperText}
           </span>
@@ -370,9 +357,9 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
           <span
             id={`${toggleId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`,
-              'ml-14'
+              "text-sm leading-relaxed",
+              "text-[var(--color-danger-soft)]", // References CSS variable
+              "ml-14"
             )}
             role="alert"
           >
@@ -380,18 +367,18 @@ export const Toggle = React.forwardRef<HTMLInputElement, ToggleProps>(
           </span>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Toggle.displayName = 'Toggle'
+Toggle.displayName = "Toggle";
 
 // 🎯 STEP 8: Export types for external consumption
-export { toggleVariants }
-export type { ToggleSize, ToggleVariant }
+export { toggleVariants };
+export type { ToggleSize, ToggleVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Toggle
+export default Toggle;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

@@ -12,126 +12,119 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import {
-  colorTokens,
-  radiusTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type SelectVariant = 'default' | 'filled' | 'outlined'
-type SelectSize = 'sm' | 'md' | 'lg'
+type SelectVariant = "default" | "filled" | "outlined";
+type SelectSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const selectVariants = {
   base: [
     // Base styles
-    'w-full',
-    'transition-all duration-200',
-    'cursor-pointer',
-    'appearance-none', // Remove default browser styling
-    'mcp-shared-component',
-  ].join(' '),
+    "w-full",
+    "transition-all duration-200",
+    "cursor-pointer",
+    "appearance-none", // Remove default browser styling
+    "mcp-shared-component",
+  ].join(" "),
   variants: {
     variant: {
       default: [
-        colorTokens.bgElevated,
-        colorTokens.text,
-        `border ${colorTokens.border}`,
-        radiusTokens.md,
-      ].join(' '),
+        "bg-bg-elevated", // References --color-bg-elevated
+        "text-fg", // References --color-fg
+        "border border-border", // References --color-border
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
 
       filled: [
-        colorTokens.bgMuted,
-        colorTokens.text,
-        'border-0',
-        radiusTokens.md,
-      ].join(' '),
+        "bg-bg-muted", // References --color-bg-muted
+        "text-fg", // References --color-fg
+        "border-0",
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
 
       outlined: [
-        'bg-transparent',
-        colorTokens.text,
-        `border-2 ${colorTokens.border}`,
-        radiusTokens.md,
-      ].join(' '),
+        "bg-transparent",
+        "text-fg", // References --color-fg
+        "border-2 border-border", // References --color-border
+        "rounded-[var(--radius-md)]", // References --radius-md
+      ].join(" "),
     },
     size: {
-      sm: [spacingTokens.sm, typographyTokens.bodySm, 'h-9'].join(' '),
-      md: [spacingTokens.md, typographyTokens.bodyMd, 'h-11'].join(' '),
-      lg: [spacingTokens.lg, typographyTokens.headingMd, 'h-13'].join(' '),
+      sm: ["px-3 py-1.5", "text-sm leading-relaxed", "h-9"].join(" "), // spacingTokens.sm + bodySm
+      md: ["px-4 py-2", "text-[15px] leading-relaxed", "h-11"].join(" "), // spacingTokens.md + bodyMd
+      lg: ["px-5 py-2.5", "text-base font-semibold", "h-13"].join(" "), // spacingTokens.lg + headingMd
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
 export interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   /**
    * Visual variant of the select
    */
-  variant?: SelectVariant
+  variant?: SelectVariant;
 
   /**
    * Size of the select
    */
-  size?: SelectSize
+  size?: SelectSize;
 
   /**
    * Label text for the select
    */
-  label?: string
+  label?: string;
 
   /**
    * Whether the field is required
    */
-  required?: boolean
+  required?: boolean;
 
   /**
    * Error state indicator
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Error message to display
    */
-  errorMessage?: string
+  errorMessage?: string;
 
   /**
    * Helper text to display below the select
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Placeholder option text
    * When provided, adds a disabled first option
    */
-  placeholder?: string
+  placeholder?: string;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 
   /**
    * Wrapper className for the container
    */
-  wrapperClassName?: string
+  wrapperClassName?: string;
 
   /**
    * Optional change handler - provided by parent component
    * Only works in Client Components
    */
-  onChange?: React.ChangeEventHandler<HTMLSelectElement>
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 
   /**
    * Children should be <option> elements
    */
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 /**
@@ -189,8 +182,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   (
     {
       className,
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       label,
       required = false,
       error = false,
@@ -208,49 +201,47 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     ref
   ) => {
     // Generate unique ID unconditionally (RSC-safe)
-    const generatedId = React.useId()
-    const selectId = id || `select-${generatedId}`
+    const generatedId = React.useId();
+    const selectId = id || `select-${generatedId}`;
 
     // Build variant classes
     const variantClasses =
       selectVariants.variants.variant[variant] ||
-      selectVariants.variants.variant.default
+      selectVariants.variants.variant.default;
     const sizeClasses =
-      selectVariants.variants.size[size] || selectVariants.variants.size.md
+      selectVariants.variants.size[size] || selectVariants.variants.size.md;
 
     // 🎯 STEP 4: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'aria-describedby':
+      "data-testid": testId,
+      "aria-describedby":
         error && errorMessage
           ? `${selectId}-error`
           : helperText
             ? `${selectId}-helper`
             : undefined,
-      'aria-invalid': error,
-      'aria-required': required,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'select-shared',
-    }
+      "aria-invalid": error,
+      "aria-required": required,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "select-shared",
+    };
 
     return (
-      <div className={cn('flex flex-col gap-1.5', wrapperClassName)}>
+      <div className={cn("flex flex-col gap-1.5", wrapperClassName)}>
         {/* Label */}
         {label && (
           <label
             htmlFor={selectId}
             className={cn(
-              typographyTokens.bodySm,
-              'font-medium',
-              colorTokens.text,
-              disabled && 'opacity-50'
+              "text-sm leading-relaxed", // bodySm equivalent
+              "font-medium",
+              "text-fg", // References --color-fg
+              disabled && "opacity-50"
             )}
           >
             {label}
             {required && (
-              <span className={`text-[${colorTokens.dangerSoftSurface}] ml-1`}>
-                *
-              </span>
+              <span className="text-[var(--color-danger-soft)] ml-1">*</span>
             )}
           </label>
         )}
@@ -267,18 +258,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               variantClasses,
               sizeClasses,
               // Add padding for chevron icon
-              'pr-10',
-              // Error state styling
+              "pr-10",
+              // Error state styling (references CSS variables)
               error &&
                 [
-                  `border-[${colorTokens.dangerSoftSurface}]`,
-                  `focus:border-[${colorTokens.dangerSoftSurface}]`,
-                  `focus:ring-[${colorTokens.dangerSoftSurface}]`,
-                ].join(' '),
+                  "border-[var(--color-danger-soft)]",
+                  "focus:border-[var(--color-danger-soft)]",
+                  "focus:ring-[var(--color-danger-soft)]",
+                ].join(" "),
               // Focus styling (WCAG 2.1 required)
-              'focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none',
+              "focus:ring-ring focus:ring-2 focus:ring-offset-1 focus:outline-none",
               // Disabled state styling
-              disabled && 'cursor-not-allowed opacity-50',
+              disabled && "cursor-not-allowed opacity-50",
               className
             )}
             {...accessibilityProps}
@@ -296,9 +287,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           {/* Chevron icon */}
           <div
             className={cn(
-              'absolute top-1/2 right-3 -translate-y-1/2',
-              'pointer-events-none',
-              colorTokens.textMuted
+              "absolute top-1/2 right-3 -translate-y-1/2",
+              "pointer-events-none",
+              "text-fg-muted" // References --color-fg-muted
             )}
             aria-hidden="true"
           >
@@ -324,7 +315,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {!error && helperText && (
           <span
             id={`${selectId}-helper`}
-            className={cn(typographyTokens.bodySm, colorTokens.textMuted)}
+            className={cn("text-sm leading-relaxed", "text-fg-muted")}
           >
             {helperText}
           </span>
@@ -334,8 +325,8 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           <span
             id={`${selectId}-error`}
             className={cn(
-              typographyTokens.bodySm,
-              `text-[${colorTokens.dangerSoftSurface}]`
+              "text-sm leading-relaxed",
+              "text-[var(--color-danger-soft)]" // References CSS variable
             )}
             role="alert"
           >
@@ -343,18 +334,18 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           </span>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Select.displayName = 'Select'
+Select.displayName = "Select";
 
 // 🎯 STEP 8: Export types for external consumption
-export { selectVariants }
-export type { SelectSize, SelectVariant }
+export { selectVariants };
+export type { SelectSize, SelectVariant };
 
 // 🎯 STEP 9: Default export for convenience
-export default Select
+export default Select;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

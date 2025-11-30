@@ -28,16 +28,15 @@
  * ```
  */
 
-import * as React from 'react'
-import { colorTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Label Variants
  * - default: Standard label text
  * - required: Label with required indicator
  */
-export type LabelVariant = 'default' | 'required'
+export type LabelVariant = "default" | "required";
 
 /**
  * Label Sizes
@@ -45,7 +44,7 @@ export type LabelVariant = 'default' | 'required'
  * - md: Medium label (13px font) [default]
  * - lg: Large label (14px font)
  */
-export type LabelSize = 'sm' | 'md' | 'lg'
+export type LabelSize = "sm" | "md" | "lg";
 
 /**
  * Label Props
@@ -57,29 +56,29 @@ export interface LabelProps
    * Visual variant of the label
    * @default 'default'
    */
-  variant?: LabelVariant
+  variant?: LabelVariant;
 
   /**
    * Size of the label
    * @default 'md'
    */
-  size?: LabelSize
+  size?: LabelSize;
 
   /**
    * Shows required indicator (*)
    * @default false
    */
-  required?: boolean
+  required?: boolean;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 
   /**
    * Child elements
    */
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 /**
@@ -89,8 +88,8 @@ export interface LabelProps
 export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   (
     {
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       required = false,
       className,
       children,
@@ -100,46 +99,47 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   ) => {
     /**
      * Base Styles
-     * Core label appearance using AI-BOS tokens
+     * Core label appearance using Tailwind classes
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const baseStyles = cn(
       // Typography - medium weight for readability
-      'font-medium',
+      "font-medium",
 
-      // Colors - standard text color
-      `text-[${colorTokens.text}]`,
+      // Colors - standard text color (references CSS variable)
+      "text-fg",
 
       // Spacing - small margin bottom
-      'mb-1.5',
+      "mb-1.5",
 
       // Cursor - pointer when hovering label
-      'cursor-pointer',
+      "cursor-pointer",
 
       // User select - allow text selection
-      'select-none'
-    )
+      "select-none"
+    );
 
     /**
      * Size Variants
      * Controls font size
      */
     const sizeStyles = {
-      sm: 'text-xs', // 11px
-      md: 'text-sm', // 13px
-      lg: 'text-[14px]', // 14px
-    }
+      sm: "text-xs", // 11px
+      md: "text-sm", // 13px
+      lg: "text-[14px]", // 14px
+    };
 
     /**
      * Variant Styles
      * Determines label appearance based on state
      */
     const variantStyles = {
-      default: '',
-      required: '', // Required indicator added separately
-    }
+      default: "",
+      required: "", // Required indicator added separately
+    };
 
     // Use required variant if required prop is true
-    const activeVariant = required ? 'required' : variant
+    const activeVariant = required ? "required" : variant;
 
     return (
       <label
@@ -156,9 +156,9 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
         {required && (
           <span
             className={cn(
-              'ml-1',
-              `text-[${colorTokens.dangerSoftSurface}]`,
-              'font-bold'
+              "ml-1",
+              "text-[var(--color-danger-soft)]", // References CSS variable
+              "font-bold"
             )}
             aria-label="required"
             aria-hidden="false"
@@ -167,11 +167,11 @@ export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
           </span>
         )}
       </label>
-    )
+    );
   }
-)
+);
 
-Label.displayName = 'Label'
+Label.displayName = "Label";
 
 /**
  * Usage Examples:

@@ -12,69 +12,68 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type FieldGroupSize = 'sm' | 'md' | 'lg'
+type FieldGroupSize = "sm" | "md" | "lg";
 
 // 🎯 STEP 2: Create RSC-safe variant system using design tokens
 const fieldGroupVariants = {
-  base: ['flex flex-col', 'mcp-shared-component'].join(' '),
+  base: ["flex flex-col", "mcp-shared-component"].join(" "),
   variants: {
     size: {
-      sm: 'gap-1', // 4px
-      md: 'gap-1.5', // 6px
-      lg: 'gap-2', // 8px
+      sm: "gap-1", // 4px
+      md: "gap-1.5", // 6px
+      lg: "gap-2", // 8px
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interface
-export interface FieldGroupProps extends React.ComponentPropsWithoutRef<'div'> {
+export interface FieldGroupProps extends React.ComponentPropsWithoutRef<"div"> {
   /**
    * Label for the field
    */
-  label?: React.ReactNode
+  label?: React.ReactNode;
 
   /**
    * Whether the field is required
    * @default false
    */
-  required?: boolean
+  required?: boolean;
 
   /**
    * Helper text below the field
    */
-  helper?: React.ReactNode
+  helper?: React.ReactNode;
 
   /**
    * Error message (takes precedence over helper)
    */
-  error?: React.ReactNode
+  error?: React.ReactNode;
 
   /**
    * Size of spacing between elements
    * @default 'md'
    */
-  size?: FieldGroupSize
+  size?: FieldGroupSize;
 
   /**
    * Whether to disable the field group
    * @default false
    */
-  disabled?: boolean
+  disabled?: boolean;
 
   /**
    * ID for the control element (used for label association)
    */
-  htmlFor?: string
+  htmlFor?: string;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -137,7 +136,7 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
       required = false,
       helper,
       error,
-      size = 'md',
+      size = "md",
       disabled = false,
       htmlFor,
       testId,
@@ -149,18 +148,18 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
     // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
     const sizeClasses =
       fieldGroupVariants.variants.size[size] ||
-      fieldGroupVariants.variants.size.md
+      fieldGroupVariants.variants.size.md;
 
     // Use error if provided, otherwise use helper
-    const helperText = error || helper
-    const isError = !!error
+    const helperText = error || helper;
+    const isError = !!error;
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'fieldgroup-shared',
-    }
+      "data-testid": testId,
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "fieldgroup-shared",
+    };
 
     return (
       <div
@@ -168,7 +167,7 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
         className={cn(
           fieldGroupVariants.base,
           sizeClasses,
-          disabled && 'pointer-events-none opacity-50',
+          disabled && "pointer-events-none opacity-50",
           className
         )}
         {...accessibilityProps}
@@ -179,16 +178,16 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
           <label
             htmlFor={htmlFor}
             className={cn(
-              typographyTokens.bodySm,
-              'font-medium',
-              colorTokens.text,
-              disabled && colorTokens.textMuted
+              "text-sm leading-relaxed", // bodySm equivalent
+              "font-medium",
+              "text-fg", // References --color-fg
+              disabled && "text-fg-muted" // References --color-fg-muted
             )}
           >
             {label}
             {required && (
               <span
-                className={cn('ml-1', colorTokens.dangerSoftSurface)}
+                className={cn("ml-1", "text-[var(--color-danger-soft)]")} // References CSS variable
                 aria-label="required"
               >
                 *
@@ -204,27 +203,27 @@ export const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
         {helperText && (
           <p
             className={cn(
-              typographyTokens.bodySm,
-              isError ? colorTokens.dangerSoftSurface : colorTokens.textMuted
+              "text-sm leading-relaxed", // bodySm equivalent
+              isError ? "text-[var(--color-danger-soft)]" : "text-fg-muted" // References CSS variables
             )}
-            role={isError ? 'alert' : undefined}
+            role={isError ? "alert" : undefined}
           >
             {helperText}
           </p>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-FieldGroup.displayName = 'FieldGroup'
+FieldGroup.displayName = "FieldGroup";
 
 // 🎯 STEP 8: Export types for external consumption
-export { fieldGroupVariants }
-export type { FieldGroupSize }
+export { fieldGroupVariants };
+export type { FieldGroupSize };
 
 // 🎯 STEP 9: Default export for convenience
-export default FieldGroup
+export default FieldGroup;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

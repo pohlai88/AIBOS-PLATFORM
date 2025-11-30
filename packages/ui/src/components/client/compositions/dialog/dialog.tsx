@@ -45,23 +45,18 @@ DialogTitle.displayName = 'DialogTitle' Customizable size and visual variants
  * @wcag-compliant AA/AAA
  */
 
-'use client'
+"use client";
 
-import { XMarkIcon } from '@heroicons/react/24/outline'
-import * as DialogPrimitive from '@radix-ui/react-dialog'
-import * as React from 'react'
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import * as React from "react";
 
 // Layer 1 Typography Integration
-import { Heading } from '../../../shared/typography/heading'
-import { Text } from '../../../shared/typography/text'
+import { Heading } from "../../../shared/typography/heading";
+import { Text } from "../../../shared/typography/text";
 
 // Design System
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-} from '../../../../design/tokens/tokens'
-import { cn } from '../../../../design/utilities/cn'
+import { cn } from "../../../../design/utilities/cn";
 
 // Types
 import type {
@@ -76,7 +71,7 @@ import type {
   DialogTitleProps,
   DialogTriggerProps,
   DialogVariant,
-} from './dialog.types'
+} from "./dialog.types";
 
 // ============================================================================
 // Variant Definitions
@@ -86,46 +81,47 @@ import type {
  * Dialog size variants with responsive breakpoints
  */
 const dialogSizeVariants: Record<DialogSize, string> = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  full: 'max-w-[95vw] max-h-[95vh]',
-}
+  sm: "max-w-sm",
+  md: "max-w-md",
+  lg: "max-w-lg",
+  xl: "max-w-xl",
+  full: "max-w-[95vw] max-h-[95vh]",
+};
 
 /**
- * Dialog visual variants using design tokens
+ * Dialog visual variants using Tailwind classes
+ * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
  */
 const dialogVariantStyles: Record<DialogVariant, string> = {
   default: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.lg,
-    'border-transparent'
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-lg)]", // References --shadow-lg
+    "border-transparent"
   ),
   elevated: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.lg,
-    'border-transparent'
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-lg)]", // References --shadow-lg
+    "border-transparent"
   ),
   bordered: cn(
-    colorTokens.bgElevated,
-    colorTokens.text,
-    shadowTokens.md,
-    `border ${colorTokens.borderSubtle}`
+    "bg-bg-elevated", // References --color-bg-elevated
+    "text-fg", // References --color-fg
+    "shadow-[var(--shadow-md)]", // References --shadow-md
+    "border border-border-subtle" // References --color-border-subtle
   ),
-}
+};
 
 /**
  * Overlay blur intensity variants
  */
 const overlayBlurVariants: Record<DialogOverlayBlur, string> = {
-  none: 'backdrop-blur-none',
-  light: 'backdrop-blur-sm',
-  medium: 'backdrop-blur-md',
-  heavy: 'backdrop-blur-lg',
-}
+  none: "backdrop-blur-none",
+  light: "backdrop-blur-sm",
+  medium: "backdrop-blur-md",
+  heavy: "backdrop-blur-lg",
+};
 
 // ============================================================================
 // Dialog Root Component
@@ -147,7 +143,7 @@ const overlayBlurVariants: Record<DialogOverlayBlur, string> = {
  * </Dialog>
  * ```
  */
-export const Dialog = DialogPrimitive.Root
+export const Dialog = DialogPrimitive.Root;
 
 // ============================================================================
 // Dialog Trigger Component
@@ -163,7 +159,7 @@ export const Dialog = DialogPrimitive.Root
  * </DialogTrigger>
  * ```
  */
-export const DialogTrigger = DialogPrimitive.Trigger
+export const DialogTrigger = DialogPrimitive.Trigger;
 
 // ============================================================================
 // Dialog Portal Component
@@ -172,7 +168,7 @@ export const DialogTrigger = DialogPrimitive.Trigger
 /**
  * Dialog Portal - Portals the dialog content to document.body
  */
-export const DialogPortal = DialogPrimitive.Portal
+export const DialogPortal = DialogPrimitive.Portal;
 
 // ============================================================================
 // Dialog Overlay Component
@@ -184,29 +180,29 @@ export const DialogPortal = DialogPrimitive.Portal
 export const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
-    blur?: DialogOverlayBlur
+    blur?: DialogOverlayBlur;
   }
->(({ className, blur = 'medium', ...props }, ref) => (
+>(({ className, blur = "medium", ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
       // Base overlay styles
-      'fixed inset-0 z-50',
+      "fixed inset-0 z-50",
       // Background with opacity
-      'bg-black/50',
+      "bg-black/50",
       // Blur effect
       overlayBlurVariants[blur],
       // Animation
-      'data-[state=open]:animate-in data-[state=closed]:animate-out',
-      'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      "data-[state=open]:animate-in data-[state=closed]:animate-out",
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       // MCP marker
-      'mcp-client-interactive',
+      "mcp-client-interactive",
       className
     )}
     {...props}
   />
-))
-DialogOverlay.displayName = 'DialogOverlay'
+));
+DialogOverlay.displayName = "DialogOverlay";
 
 // ============================================================================
 // Dialog Content Component
@@ -235,9 +231,9 @@ export const DialogContent = React.forwardRef<
     {
       className,
       children,
-      size = 'md',
-      variant = 'default',
-      overlayBlur = 'medium',
+      size = "md",
+      variant = "default",
+      overlayBlur = "medium",
       showCloseButton = true,
       testId,
       overlayClassName,
@@ -254,29 +250,29 @@ export const DialogContent = React.forwardRef<
         data-constitution-compliant="client-component-interactive"
         className={cn(
           // Positioning
-          'fixed top-[50%] left-[50%] z-50',
-          'translate-x-[-50%] translate-y-[-50%]',
+          "fixed top-[50%] left-[50%] z-50",
+          "translate-x-[-50%] translate-y-[-50%]",
           // Size
-          'w-full',
+          "w-full",
           dialogSizeVariants[size],
           // Visual variant
           dialogVariantStyles[variant],
           // Spacing and borders
-          'px-6 py-6',
-          radiusTokens.lg,
-          'border',
+          "px-6 py-6",
+          "rounded-[var(--radius-lg)]", // References --radius-lg
+          "border",
           // Max height for scrolling
-          'max-h-[85vh] overflow-y-auto',
+          "max-h-[85vh] overflow-y-auto",
           // Animation
-          'data-[state=open]:animate-in data-[state=closed]:animate-out',
-          'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-          'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-          'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
-          'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
+          "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
           // Focus styles
-          'focus:outline-none',
+          "focus:outline-none",
           // MCP marker
-          'mcp-client-interactive',
+          "mcp-client-interactive",
           className
         )}
         {...props}
@@ -285,14 +281,14 @@ export const DialogContent = React.forwardRef<
         {showCloseButton && (
           <DialogPrimitive.Close
             className={cn(
-              'absolute top-4 right-4',
-              'rounded-sm opacity-70',
-              'ring-offset-background transition-opacity',
-              'hover:opacity-100',
-              'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
-              'disabled:pointer-events-none',
-              colorTokens.textMuted,
-              'data-[state=open]:bg-accent data-[state=open]:text-muted-foreground'
+              "absolute top-4 right-4",
+              "rounded-sm opacity-70",
+              "ring-offset-background transition-opacity",
+              "hover:opacity-100",
+              "focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none",
+              "disabled:pointer-events-none",
+              "text-fg-muted", // References --color-fg-muted
+              "data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
             )}
           >
             <XMarkIcon className="h-4 w-4" />
@@ -302,8 +298,8 @@ export const DialogContent = React.forwardRef<
       </DialogPrimitive.Content>
     </DialogPortal>
   )
-)
-DialogContent.displayName = 'DialogContent'
+);
+DialogContent.displayName = "DialogContent";
 
 // ============================================================================
 // Dialog Header Component
@@ -327,15 +323,15 @@ export const DialogHeader: React.FC<DialogHeaderProps> = ({
 }) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
+      "flex flex-col space-y-1.5 text-center sm:text-left",
       className
     )}
     {...props}
   >
     {children}
   </div>
-)
-DialogHeader.displayName = 'DialogHeader'
+);
+DialogHeader.displayName = "DialogHeader";
 
 // ============================================================================
 // Dialog Title Component
@@ -362,14 +358,14 @@ export const DialogTitle = React.forwardRef<
       <Heading
         level={2}
         size="lg"
-        className={cn('font-semibold tracking-tight', className)}
+        className={cn("font-semibold tracking-tight", className)}
       >
         {children}
       </Heading>
     )}
   </DialogPrimitive.Title>
-))
-DialogTitle.displayName = 'DialogTitle'
+));
+DialogTitle.displayName = "DialogTitle";
 
 // ============================================================================
 // Dialog Description Component
@@ -398,14 +394,14 @@ export const DialogDescription = React.forwardRef<
       <Text
         size="sm"
         color="muted"
-        className={cn('leading-relaxed', className)}
+        className={cn("leading-relaxed", className)}
       >
         {children}
       </Text>
     )}
   </DialogPrimitive.Description>
-))
-DialogDescription.displayName = 'DialogDescription'
+));
+DialogDescription.displayName = "DialogDescription";
 
 // ============================================================================
 // Dialog Footer Component
@@ -429,15 +425,15 @@ export const DialogFooter: React.FC<DialogFooterProps> = ({
 }) => (
   <div
     className={cn(
-      'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2',
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
       className
     )}
     {...props}
   >
     {children}
   </div>
-)
-DialogFooter.displayName = 'DialogFooter'
+);
+DialogFooter.displayName = "DialogFooter";
 
 // ============================================================================
 // Dialog Close Component
@@ -453,7 +449,7 @@ DialogFooter.displayName = 'DialogFooter'
  * </DialogClose>
  * ```
  */
-export const DialogClose = DialogPrimitive.Close
+export const DialogClose = DialogPrimitive.Close;
 
 // ============================================================================
 // Exports
@@ -471,7 +467,7 @@ export type {
   DialogTitleProps,
   DialogTriggerProps,
   DialogVariant,
-}
+};
 
 // Default export for convenience
-export default Dialog
+export default Dialog;

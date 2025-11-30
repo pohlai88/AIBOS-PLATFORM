@@ -1,5 +1,75 @@
 {
   "mcpServers": {
+    "aibos-a11y": {
+      "command": "node",
+      "args": [
+        ".mcp/a11y/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-component-generator": {
+      "command": "node",
+      "args": [
+        ".mcp/component-generator/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-convention-validation": {
+      "command": "node",
+      "args": [
+        ".mcp/convention-validation/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-design-elegance-validator": {
+      "command": "node",
+      "args": [
+        ".mcp/design-elegance-validator/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-documentation": {
+      "command": "node",
+      "args": [
+        ".mcp/documentation/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-filesystem": {
+      "command": "node",
+      "args": [
+        ".mcp/filesystem/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-landing-page-engine": {
+      "command": "node",
+      "args": [
+        ".mcp/landing-page-engine/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-react": {
+      "command": "node",
+      "args": [
+        ".mcp/react/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-theme": {
+      "command": "node",
+      "args": [
+        ".mcp/theme/server.mjs"
+      ],
+      "cwd": "."
+    },
+    "aibos-ui-testing": {
+      "command": "node",
+      "args": [
+        ".mcp/ui-testing/server.mjs"
+      ],
+      "cwd": "."
+    },
     "next-devtools": {
       "command": "npx",
       "args": [
@@ -7,102 +77,35 @@
         "next-devtools-mcp@latest"
       ]
     },
-    "supabase": {
-      "url": "https://mcp.supabase.com/mcp"
-    },
-    "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
-    },
-    "git": {
+    "mcp-git": {
       "command": "npx",
       "args": [
         "-y",
         "mcp-git@latest"
       ]
     },
-    "shell": {
+    "mcp-tests": {
       "command": "npx",
       "args": [
         "-y",
-        "mcp-shell@latest"
+        "mcp-tests@latest"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
       ],
-      "permissions": {
-        "allowedCommands": [
-          "pnpm install",
-          "pnpm run lint",
-          "pnpm run build",
-          "npx tailwindcss",
-          "turbo run dev",
-          "turbo run build",
-          "turbo run lint"
-        ]
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your_token_here"
       }
     },
     "playwright": {
       "command": "npx",
       "args": [
         "-y",
-        "mcp-playwright@latest"
-      ]
-    },
-    "react-validation": {
-      "args": [
-        ".mcp/react/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-theme": {
-      "args": [
-        ".mcp/theme/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-filesystem": {
-      "args": [
-        ".mcp/filesystem/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-documentation": {
-      "command": "node",
-      "args": [
-        ".mcp/documentation/server.mjs"
-      ],
-      "cwd": "D:\\AIBOS-PLATFORM"
-    },
-    "aibos-ui-generator": {
-      "args": [
-        ".mcp/ui-generator/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-component-generator": {
-      "args": [
-        ".mcp/component-generator/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-a11y-validation": {
-      "args": [
-        ".mcp/a11y/server.mjs"
-      ],
-      "command": "node"
-    },
-    "aibos-convention-validation": {
-      "command": "node",
-      "args": [
-        ".mcp/convention-validation/server.mjs"
+        "@executeautomation/playwright-mcp-server"
       ]
     }
   }

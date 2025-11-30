@@ -12,17 +12,31 @@
 
 // 🚀 Layer 3 components will be exported here as they are implemented
 
-// Example structure (to be uncommented as components are built):
-// export * from './form-field'
-// export * from './card'
-// export * from './badge'
-// export * from './table'
-// export * from './tabs'
-// export * from './accordion'
-// export * from './alert'
-// export * from './toast'
-// export * from './progress'
-// export * from './skeleton'
+// Phase 1: Forms
+export * from './form-field'
+export * from './form-section'
+export * from './form-wizard'
+
+// Phase 2: Data Display
+export * from './card'
+export * from './badge'
+export * from './data-table'
+
+// Phase 3: Navigation
+export * from './tabs'
+export * from './accordion'
+export * from './breadcrumb'
+export * from './navigation-menu'
+
+// Phase 4: Feedback
+export * from './alert'
+export * from './toast'
+export * from './progress'
+export * from './skeleton'
+
+// Phase 5: Layout
+export * from './stack'
+export * from './grid'
 
 /**
  * Layer 3 Status: UNLOCKED 🔓
@@ -44,7 +58,7 @@
 export const LAYER3_STATUS = {
   unlocked: true,
   unlockDate: '2025-11-25',
-  componentsImplemented: 0,
-  componentsPlanned: 15,
+  componentsImplemented: 16,
+  componentsPlanned: 16,
   readyToBuild: true,
 } as const

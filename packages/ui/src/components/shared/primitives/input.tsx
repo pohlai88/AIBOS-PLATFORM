@@ -27,21 +27,15 @@
  * ```
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Input Variants
  * - default: Standard input with border
  * - error: Error state with danger color
  */
-export type InputVariant = 'default' | 'error'
+export type InputVariant = "default" | "error";
 
 /**
  * Input Sizes
@@ -49,41 +43,41 @@ export type InputVariant = 'default' | 'error'
  * - md: Medium input (12px vertical padding) [default]
  * - lg: Large input (16px vertical padding)
  */
-export type InputSize = 'sm' | 'md' | 'lg'
+export type InputSize = "sm" | "md" | "lg";
 
 /**
  * Input Props
  * Extends native HTML input attributes for full compatibility
  */
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   /**
    * Visual variant of the input
    * @default 'default'
    */
-  variant?: InputVariant
+  variant?: InputVariant;
 
   /**
    * Size of the input
    * @default 'md'
    */
-  size?: InputSize
+  size?: InputSize;
 
   /**
    * Error state - shows error styling
    * @default false
    */
-  error?: boolean
+  error?: boolean;
 
   /**
    * Helper or error text displayed below input
    */
-  helperText?: string
+  helperText?: string;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -93,90 +87,93 @@ export interface InputProps
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       error = false,
       helperText,
       disabled = false,
       className,
       id,
-      'aria-invalid': ariaInvalid,
-      'aria-describedby': ariaDescribedby,
+      "aria-invalid": ariaInvalid,
+      "aria-describedby": ariaDescribedby,
       ...props
     },
     ref
   ) => {
     // Generate unique ID for helper text if helperText exists
-    const helperId = helperText && id ? `${id}-helper` : undefined
+    const helperId = helperText && id ? `${id}-helper` : undefined;
 
     // Combine aria-describedby with helper text ID
     const describedBy =
       helperId && ariaDescribedby
         ? `${ariaDescribedby} ${helperId}`
-        : helperId || ariaDescribedby
+        : helperId || ariaDescribedby;
 
     /**
      * Base Styles
-     * Core input appearance using AI-BOS tokens
+     * Core input appearance using Tailwind classes referencing CSS variables
+     * ✅ GRCD Compliant: No direct token imports, uses Tailwind classes
      */
     const baseStyles = cn(
       // Typography - semantic font sizing
-      typographyTokens.bodySm,
+      "text-sm leading-relaxed",
 
-      // Colors - elevated background with border
-      `bg-[${colorTokens.bgElevated}]`,
-      `text-[${colorTokens.text}]`,
-      `border border-[${colorTokens.border}]`,
+      // Colors - elevated background with border (references CSS variables)
+      "bg-bg-elevated",
+      "text-fg",
+      "border border-border",
 
       // Spacing - comfortable input padding
-      `px-[${spacingTokens.md}]`,
+      "px-4",
 
-      // Border radius - consistent with design system
-      `rounded-[${radiusTokens.md}]`,
+      // Border radius - consistent with design system (references CSS variable)
+      "rounded-[var(--radius-md)]",
 
       // Transition - smooth color changes
-      'transition-colors duration-200',
+      "transition-colors duration-200",
 
-      // Placeholder - muted color
-      `placeholder:text-[${colorTokens.textMuted}]`,
+      // Placeholder - muted color (references CSS variable)
+      "placeholder:text-fg-muted",
 
       // Focus - WCAG 2.1 compliant focus indicator
-      'focus:outline-none',
-      'focus-visible:ring-2',
-      'focus-visible:ring-ring',
-      'focus-visible:ring-offset-2',
-      `focus-visible:border-[${colorTokens.primarySoftSurface}]`,
+      "focus:outline-none",
+      "focus-visible:ring-2",
+      "focus-visible:ring-ring",
+      "focus-visible:ring-offset-2",
+      "focus-visible:border-[var(--color-primary-soft)]",
 
       // Disabled - reduced opacity and no pointer events
-      disabled && ['opacity-50', 'cursor-not-allowed']
-    )
+      disabled && ["opacity-50", "cursor-not-allowed"]
+    );
 
     /**
      * Size Variants
      * Controls vertical padding
+     * ✅ GRCD Compliant: Direct Tailwind spacing utilities
      */
     const sizeStyles = {
-      sm: `py-[${spacingTokens.sm}]`, // 8px
-      md: `py-[${spacingTokens.md}]`, // 12px
-      lg: `py-[${spacingTokens.lg}]`, // 16px
-    }
+      sm: "py-1.5", // 6px (0.375rem)
+      md: "py-2", // 8px (0.5rem)
+      lg: "py-2.5", // 10px (0.625rem)
+    };
 
     /**
      * Variant Styles
      * Determines input appearance based on state
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const variantStyles = {
-      default: '',
+      default: "",
       error: cn(
-        // Error colors
-        `border-[${colorTokens.dangerSoftSurface}]`,
-        `focus-visible:ring-[${colorTokens.dangerSoftSurface}]`,
-        `focus-visible:border-[${colorTokens.dangerSoftSurface}]`
+        // Error colors (references CSS variables via arbitrary values)
+        "border-[var(--color-danger-soft)]",
+        "focus-visible:ring-[var(--color-danger-soft)]",
+        "focus-visible:border-[var(--color-danger-soft)]"
       ),
-    }
+    };
 
     // Use error variant if error prop is true
-    const activeVariant = error ? 'error' : variant
+    const activeVariant = error ? "error" : variant;
 
     return (
       <div className="w-full">
@@ -200,23 +197,23 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p
             id={helperId}
             className={cn(
-              'text-xs',
-              `mt-[${spacingTokens.xs}]`,
+              "text-xs",
+              "mt-1", // Small spacing (0.25rem)
               error
-                ? `text-[${colorTokens.dangerSoftSurface}]`
-                : `text-[${colorTokens.textMuted}]`
+                ? "text-[var(--color-danger-soft)]" // Error text color (references CSS variable)
+                : "text-fg-muted" // Helper text color (references CSS variable)
             )}
-            role={error ? 'alert' : undefined}
+            role={error ? "alert" : undefined}
           >
             {helperText}
           </p>
         )}
       </div>
-    )
+    );
   }
-)
+);
 
-Input.displayName = 'Input'
+Input.displayName = "Input";
 
 /**
  * Usage Examples:

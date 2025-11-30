@@ -1,0 +1,238 @@
+/**
+ * [TYPOGRAPHY_COMPONENT] - RSC-Compatible Typography Template
+ *
+ * Environment: Server & Client Compatible (NO 'use client' directive)
+ * MCP Validation: Enabled with compliance markers
+ * Design System: AI-BOS Typography Tokens (exclusive usage)
+ * Accessibility: WCAG 2.1 AA/AAA compliant semantic HTML
+ * Architecture: Next.js RSC Official Pattern
+ *
+ * @template Use this template for all shared typography components
+ * @version 2.0.0 - RSC Compliant
+ * @mcp-validated true
+ */
+
+import * as React from 'react'
+
+// Import design tokens (server-safe)
+import {
+  colorTokens,
+  typographyTokens,
+} from '../../../design/tokens/tokens'
+import { cn } from '../../../design/utilities/cn'
+
+// 🎯 STEP 1: Define typography variant types
+type [TYPOGRAPHY_COMPONENT]Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+type [TYPOGRAPHY_COMPONENT]Weight = 'normal' | 'medium' | 'semibold' | 'bold'
+type [TYPOGRAPHY_COMPONENT]Color = 'default' | 'muted' | 'subtle' | 'primary' | 'success' | 'warning' | 'danger'
+type [TYPOGRAPHY_COMPONENT]Align = 'left' | 'center' | 'right' | 'justify'
+
+// 🎯 STEP 2: Create RSC-safe typography variant system
+const [TYPOGRAPHY_COMPONENT_LOWER]Variants = {
+  base: [
+    "mcp-shared-typography", // MCP validation marker
+    // Add base typography styles here
+  ].join(" "),
+  variants: {
+    size: {
+      xs: typographyTokens.labelSm,
+      sm: typographyTokens.bodySm,
+      md: typographyTokens.bodyMd,
+      lg: typographyTokens.h6,
+      xl: typographyTokens.h5,
+      '2xl': typographyTokens.headingLg,
+      '3xl': typographyTokens.headingLg, // Extend as needed
+    },
+    weight: {
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
+    },
+    color: {
+      default: colorTokens.fg,
+      muted: colorTokens.fgMuted,
+      subtle: colorTokens.textSubtle,
+      primary: "text-primary",
+      success: "text-success",
+      warning: "text-warning",
+      danger: "text-danger",
+    },
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+      justify: "text-justify",
+    },
+  },
+}
+
+// 🎯 STEP 3: Define RSC-compatible typography props interface
+export interface [TYPOGRAPHY_COMPONENT]Props
+  extends React.HTMLAttributes<HTMLElement> {
+  /**
+   * Semantic HTML element to render
+   * Ensures proper accessibility and SEO
+   */
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div' | 'label' | 'legend'
+
+  /**
+   * Typography size (visual, independent of semantic element)
+   */
+  size?: [TYPOGRAPHY_COMPONENT]Size
+
+  /**
+   * Font weight
+   */
+  weight?: [TYPOGRAPHY_COMPONENT]Weight
+
+  /**
+   * Text color using design tokens
+   */
+  color?: [TYPOGRAPHY_COMPONENT]Color
+
+  /**
+   * Text alignment
+   */
+  align?: [TYPOGRAPHY_COMPONENT]Align
+
+  /**
+   * Truncate text with ellipsis
+   */
+  truncate?: boolean
+
+  /**
+   * Render as a different component (polymorphic)
+   * Enables composition patterns
+   */
+  asChild?: boolean
+
+  /**
+   * Test ID for automated testing
+   */
+  testId?: string
+
+  /**
+   * Optional click handler - provided by parent component
+   * Works in Client Components, ignored in Server Components
+   */
+  onClick?: () => void
+}
+
+/**
+ * [TYPOGRAPHY_COMPONENT] - RSC-Compatible Typography Component
+ *
+ * Features:
+ * - Works in both Server and Client Components
+ * - Semantic HTML with accessibility support
+ * - Visual size independent of semantic level
+ * - Full design token integration
+ * - RSC-safe implementation (no hooks, no client APIs)
+ * - MCP validation enabled
+ *
+ * @example
+ * ```tsx
+ * // Server Component usage - semantic heading
+ * <[TYPOGRAPHY_COMPONENT] as="h1" size="2xl">
+ *   Page Title
+ * </[TYPOGRAPHY_COMPONENT]>
+ *
+ * // Client Component usage - with interaction
+ * <[TYPOGRAPHY_COMPONENT]
+ *   as="p"
+ *   size="md"
+ *   color="muted"
+ *   onClick={handleClick}
+ * >
+ *   Interactive text
+ * </[TYPOGRAPHY_COMPONENT]>
+ *
+ * // Visual heading without semantic level
+ * <[TYPOGRAPHY_COMPONENT] as="div" size="xl" weight="bold">
+ *   Visual Heading
+ * </[TYPOGRAPHY_COMPONENT]>
+ * ```
+ */
+export const [TYPOGRAPHY_COMPONENT] = React.forwardRef<HTMLElement, [TYPOGRAPHY_COMPONENT]Props>(
+  (
+    {
+      as = 'p', // Default semantic element
+      size = 'md',
+      weight = 'normal',
+      color = 'default',
+      align = 'left',
+      truncate = false,
+      asChild = false,
+      testId,
+      onClick,
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    // 🎯 STEP 4: RSC-safe component logic (no hooks, no client APIs)
+    const Comp = asChild ? "span" : as
+
+    // Build className from variant system
+    const sizeClasses = [TYPOGRAPHY_COMPONENT_LOWER]Variants.variants.size[size]
+    const weightClasses = [TYPOGRAPHY_COMPONENT_LOWER]Variants.variants.weight[weight]
+    const colorClasses = [TYPOGRAPHY_COMPONENT_LOWER]Variants.variants.color[color]
+    const alignClasses = [TYPOGRAPHY_COMPONENT_LOWER]Variants.variants.align[align]
+
+    // 🎯 STEP 5: RSC-safe accessibility props
+    const accessibilityProps = {
+      "data-testid": testId,
+      // MCP Guardian: Constitution compliance markers
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "[typography-component]-typography",
+      // Add typography-specific ARIA attributes here
+    }
+
+    return (
+      <Comp
+        ref={ref}
+        className={cn(
+          [TYPOGRAPHY_COMPONENT_LOWER]Variants.base,
+          sizeClasses,
+          weightClasses,
+          colorClasses,
+          alignClasses,
+          truncate && "truncate",
+          className
+        )}
+        onClick={onClick} // Works in client, ignored on server
+        {...accessibilityProps}
+        {...props}
+      >
+        {children}
+      </Comp>
+    )
+  }
+)
+
+[TYPOGRAPHY_COMPONENT].displayName = "[TYPOGRAPHY_COMPONENT]"
+
+// 🎯 STEP 6: Export types for external consumption
+export type {
+  [TYPOGRAPHY_COMPONENT]Size,
+  [TYPOGRAPHY_COMPONENT]Weight,
+  [TYPOGRAPHY_COMPONENT]Color,
+  [TYPOGRAPHY_COMPONENT]Align
+}
+export { [TYPOGRAPHY_COMPONENT_LOWER]Variants }
+
+// 🎯 STEP 7: Default export for convenience
+export default [TYPOGRAPHY_COMPONENT]
+
+// 🎯 STEP 8: RSC Compliance Checklist
+// ✅ No 'use client' directive
+// ✅ No React hooks (useState, useEffect, useCallback, etc.)
+// ✅ No browser APIs (window, localStorage, document, etc.)
+// ✅ Event handlers accepted as optional props
+// ✅ Typography tokens used exclusively
+// ✅ Semantic HTML elements supported
+// ✅ MCP validation markers included
+// ✅ Accessibility compliant
+// ✅ Works in both Server and Client contexts
+// ✅ TypeScript strict mode compatible

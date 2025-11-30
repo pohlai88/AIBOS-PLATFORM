@@ -12,76 +12,74 @@
  * @mcp-validated true
  */
 
-import * as React from 'react'
-
-// Import design tokens (server-safe)
-import { colorTokens, typographyTokens } from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define typography variant types
-type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
-type HeadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
-type HeadingWeight = 'normal' | 'medium' | 'semibold' | 'bold'
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeadingSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+type HeadingWeight = "normal" | "medium" | "semibold" | "bold";
 type HeadingColor =
-  | 'default'
-  | 'muted'
-  | 'subtle'
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-type HeadingAlign = 'left' | 'center' | 'right' | 'justify'
+  | "default"
+  | "muted"
+  | "subtle"
+  | "primary"
+  | "success"
+  | "warning"
+  | "danger";
+type HeadingAlign = "left" | "center" | "right" | "justify";
 
 // 🎯 STEP 2: Create RSC-safe typography variant system
 const headingVariants = {
   base: [
-    'mcp-shared-typography', // MCP validation marker
-    'block', // Heading display
-  ].join(' '),
+    "mcp-shared-typography", // MCP validation marker
+    "block", // Heading display
+  ].join(" "),
   variants: {
     // Default size based on semantic level
+    // ✅ GRCD Compliant: Direct Tailwind classes (typography tokens are already Tailwind)
     level: {
-      1: typographyTokens.h1, // 36px (text-4xl)
-      2: typographyTokens.h2, // 30px (text-3xl)
-      3: typographyTokens.h3, // 24px (text-2xl)
-      4: typographyTokens.h4, // 20px (text-xl)
-      5: typographyTokens.h5, // 18px (text-lg)
-      6: typographyTokens.h6, // 16px (text-base)
+      1: "text-4xl font-semibold leading-tight", // h1 equivalent
+      2: "text-3xl font-semibold leading-tight", // h2 equivalent
+      3: "text-2xl font-semibold leading-normal", // h3 equivalent
+      4: "text-xl font-semibold leading-normal", // h4 equivalent
+      5: "text-lg font-semibold leading-normal", // h5 equivalent
+      6: "text-base font-semibold leading-normal", // h6 equivalent
     },
     // Visual size override (independent of semantic level)
     size: {
-      xs: typographyTokens.headingSm, // 14px font-semibold
-      sm: typographyTokens.headingMd, // 16px font-semibold
-      md: typographyTokens.headingLg, // 18px font-semibold
-      lg: 'text-xl font-semibold leading-normal', // 20px
-      xl: 'text-2xl font-semibold leading-normal', // 24px
-      '2xl': 'text-3xl font-semibold leading-tight', // 30px
-      '3xl': 'text-4xl font-semibold leading-tight', // 36px
-      '4xl': typographyTokens.display, // 48px font-bold (display/hero)
+      xs: "text-sm font-semibold", // headingSm equivalent
+      sm: "text-base font-semibold", // headingMd equivalent
+      md: "text-lg font-semibold", // headingLg equivalent
+      lg: "text-xl font-semibold leading-normal", // 20px
+      xl: "text-2xl font-semibold leading-normal", // 24px
+      "2xl": "text-3xl font-semibold leading-tight", // 30px
+      "3xl": "text-4xl font-semibold leading-tight", // 36px
+      "4xl": "text-5xl font-bold leading-none", // display equivalent
     },
     weight: {
-      normal: 'font-normal',
-      medium: 'font-medium',
-      semibold: 'font-semibold',
-      bold: 'font-bold',
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
     },
     color: {
-      default: colorTokens.text,
-      muted: colorTokens.textMuted,
-      subtle: colorTokens.textSubtle,
-      primary: 'text-primary',
-      success: 'text-success',
-      warning: 'text-warning',
-      danger: 'text-danger',
+      default: "text-fg", // References --color-fg
+      muted: "text-fg-muted", // References --color-fg-muted
+      subtle: "text-fg-subtle", // References --color-fg-subtle
+      primary: "text-primary",
+      success: "text-success",
+      warning: "text-warning",
+      danger: "text-danger",
     },
     align: {
-      left: 'text-left',
-      center: 'text-center',
-      right: 'text-right',
-      justify: 'text-justify',
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+      justify: "text-justify",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible typography props interface
 export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -90,49 +88,49 @@ export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
    * Determines the actual HTML element (h1-h6)
    * @required
    */
-  level: HeadingLevel
+  level: HeadingLevel;
 
   /**
    * Visual size (can differ from semantic level)
    * If not specified, defaults to level-appropriate size
    * @default undefined (uses level-based sizing)
    */
-  size?: HeadingSize
+  size?: HeadingSize;
 
   /**
    * Font weight
    * @default 'semibold'
    */
-  weight?: HeadingWeight
+  weight?: HeadingWeight;
 
   /**
    * Text color using design tokens
    * @default 'default'
    */
-  color?: HeadingColor
+  color?: HeadingColor;
 
   /**
    * Text alignment
    * @default 'left'
    */
-  align?: HeadingAlign
+  align?: HeadingAlign;
 
   /**
    * Truncate text with ellipsis
    * @default false
    */
-  truncate?: boolean
+  truncate?: boolean;
 
   /**
    * Polymorphic override (use with caution - breaks semantics)
    * Only use when visual heading without semantic meaning
    */
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'span'
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span";
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 /**
@@ -195,9 +193,9 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     {
       level,
       size,
-      weight = 'semibold',
-      color = 'default',
-      align = 'left',
+      weight = "semibold",
+      color = "default",
+      align = "left",
       truncate = false,
       as,
       testId,
@@ -211,27 +209,27 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 
     // Determine the actual HTML element to render
     const Component =
-      as || (`h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6')
+      as || (`h${level}` as "h1" | "h2" | "h3" | "h4" | "h5" | "h6");
 
     // Use custom size if provided, otherwise use level-based sizing
     const sizeClasses = size
       ? headingVariants.variants.size[size]
-      : headingVariants.variants.level[level]
+      : headingVariants.variants.level[level];
 
     // Build className from variant system
-    const weightClasses = headingVariants.variants.weight[weight]
-    const colorClasses = headingVariants.variants.color[color]
-    const alignClasses = headingVariants.variants.align[align]
+    const weightClasses = headingVariants.variants.weight[weight];
+    const colorClasses = headingVariants.variants.color[color];
+    const alignClasses = headingVariants.variants.align[align];
 
     // 🎯 STEP 5: RSC-safe accessibility props
     const accessibilityProps = {
-      'data-testid': testId,
+      "data-testid": testId,
       // MCP Guardian: Constitution compliance markers
-      'data-mcp-validated': 'true',
-      'data-constitution-compliant': 'heading-typography',
+      "data-mcp-validated": "true",
+      "data-constitution-compliant": "heading-typography",
       // Accessibility: Indicate semantic level
-      'aria-level': level,
-    }
+      "aria-level": level,
+    };
 
     return (
       <Component
@@ -242,7 +240,7 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
           weightClasses,
           colorClasses,
           alignClasses,
-          truncate && 'truncate',
+          truncate && "truncate",
           className
         )}
         {...accessibilityProps}
@@ -250,24 +248,24 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
       >
         {children}
       </Component>
-    )
+    );
   }
-)
+);
 
-Heading.displayName = 'Heading'
+Heading.displayName = "Heading";
 
 // 🎯 STEP 6: Export types for external consumption
-export { headingVariants }
+export { headingVariants };
 export type {
   HeadingAlign,
   HeadingColor,
   HeadingLevel,
   HeadingSize,
   HeadingWeight,
-}
+};
 
 // 🎯 STEP 7: Default export for convenience
-export default Heading
+export default Heading;
 
 // 🎯 STEP 8: RSC Compliance Checklist
 // ✅ No 'use client' directive

@@ -1,0 +1,154 @@
+/**
+ * [COMPONENT_NAME] Types - Layer 3 Functional Component
+ * @module [COMPONENT_NAME]Types
+ * @layer 3
+ * @category [CATEGORY]
+ * @library [LIBRARY_NAME]
+ */
+
+import type * as React from 'react'
+
+// ============================================================================
+// Size & Variant Types
+// ============================================================================
+
+export type [COMPONENT_NAME]Size = 'sm' | 'md' | 'lg'
+export type [COMPONENT_NAME]Variant = 'default' | 'bordered' | 'elevated'
+
+// ============================================================================
+// Library-Specific Types (customize per library)
+// ============================================================================
+
+// For TanStack Table:
+// export interface ColumnDef<TData> {
+//   id: string
+//   header: string | ((props: any) => React.ReactNode)
+//   cell: (props: { row: TData }) => React.ReactNode
+//   accessorKey?: keyof TData
+// }
+
+// For Recharts:
+// export interface DataPoint {
+//   name: string
+//   value: number
+//   [key: string]: string | number
+// }
+
+// For React Flow:
+// export interface NodeData {
+//   id: string
+//   label: string
+//   type?: string
+// }
+
+// ============================================================================
+// Main Component Props
+// ============================================================================
+
+export interface [COMPONENT_NAME]Props
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  /**
+   * Size variant
+   * @default 'md'
+   */
+  size?: [COMPONENT_NAME]Size
+
+  /**
+   * Visual variant
+   * @default 'default'
+   */
+  variant?: [COMPONENT_NAME]Variant
+
+  /**
+   * Test ID for automated testing
+   */
+  testId?: string
+
+  /**
+   * Data source for the component
+   * Type depends on library:
+   * - TanStack Table: TData[]
+   * - Recharts: DataPoint[]
+   * - React Flow: Node[]
+   */
+  data?: unknown[]
+
+  /**
+   * Column definitions (for tables)
+   */
+  columns?: unknown[]
+
+  /**
+   * Loading state
+   */
+  loading?: boolean
+
+  /**
+   * Empty state message
+   */
+  emptyMessage?: string
+
+  /**
+   * Error state
+   */
+  error?: Error | null
+
+  /**
+   * Callback when data changes
+   */
+  onDataChange?: (data: unknown[]) => void
+
+  /**
+   * Callback for row/item selection
+   */
+  onSelectionChange?: (selection: unknown[]) => void
+
+  /**
+   * ARIA label for accessibility
+   */
+  'aria-label'?: string
+
+  /**
+   * ARIA described by for accessibility
+   */
+  'aria-describedby'?: string
+}
+
+// ============================================================================
+// Sub-Component Props (if applicable)
+// ============================================================================
+
+export interface [COMPONENT_NAME]HeaderProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Header title
+   */
+  title?: string
+}
+
+export interface [COMPONENT_NAME]ToolbarProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Show search input
+   */
+  showSearch?: boolean
+
+  /**
+   * Show filter controls
+   */
+  showFilters?: boolean
+}
+
+export interface [COMPONENT_NAME]FooterProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Show pagination
+   */
+  showPagination?: boolean
+
+  /**
+   * Total item count
+   */
+  totalCount?: number
+}
+

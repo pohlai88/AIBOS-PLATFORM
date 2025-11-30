@@ -16,102 +16,96 @@
  * or use Radix UI AlertDialog.
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-  spacingTokens,
-  typographyTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 // 🎯 STEP 1: Define variant types for type safety
-type AlertDialogVariant = 'default' | 'danger'
-type AlertDialogSize = 'sm' | 'md' | 'lg'
+type AlertDialogVariant = "default" | "danger";
+type AlertDialogSize = "sm" | "md" | "lg";
 
-// 🎯 STEP 2: Create RSC-safe variant system using design tokens
+// 🎯 STEP 2: Create RSC-safe variant system using Tailwind classes
+// ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
 const alertDialogVariants = {
   overlay: [
-    'fixed inset-0 z-50',
-    'bg-black/50',
-    'backdrop-blur-sm',
-    'mcp-shared-component',
-  ].join(' '),
+    "fixed inset-0 z-50",
+    "bg-black/50",
+    "backdrop-blur-sm",
+    "mcp-shared-component",
+  ].join(" "),
   content: [
-    'fixed left-1/2 top-1/2 z-50',
-    '-translate-x-1/2 -translate-y-1/2',
-    'w-full max-w-lg',
-    colorTokens.bgElevated,
-    `border ${colorTokens.border}`,
-    shadowTokens.lg,
-    radiusTokens.lg,
-    'mcp-shared-component',
-  ].join(' '),
-  header: [`p-[${spacingTokens.lg}]`, 'flex flex-col gap-2'].join(' '),
+    "fixed left-1/2 top-1/2 z-50",
+    "-translate-x-1/2 -translate-y-1/2",
+    "w-full max-w-lg",
+    "bg-bg-elevated", // References --color-bg-elevated
+    "border border-border", // References --color-border
+    "shadow-[var(--shadow-lg)]", // References --shadow-lg
+    "rounded-[var(--radius-lg)]", // References --radius-lg
+    "mcp-shared-component",
+  ].join(" "),
+  header: ["p-6", "flex flex-col gap-2"].join(" "), // Direct spacing (1.5rem)
   body: [
-    `px-[${spacingTokens.lg}]`,
-    `pb-[${spacingTokens.lg}]`,
-    colorTokens.textMuted,
-    typographyTokens.bodySm,
-  ].join(' '),
+    "px-6", // Direct spacing (1.5rem)
+    "pb-6", // Direct spacing (1.5rem)
+    "text-fg-muted", // References --color-fg-muted
+    "text-sm leading-relaxed", // bodySm equivalent
+  ].join(" "),
   footer: [
-    `p-[${spacingTokens.lg}]`,
-    'flex flex-row-reverse gap-2',
-    `border-t ${colorTokens.border}`,
-  ].join(' '),
+    "p-6", // Direct spacing (1.5rem)
+    "flex flex-row-reverse gap-2",
+    "border-t border-border", // References --color-border
+  ].join(" "),
   variants: {
     variant: {
-      default: '',
-      danger: '',
+      default: "",
+      danger: "",
     },
     size: {
-      sm: 'max-w-sm',
-      md: 'max-w-lg',
-      lg: 'max-w-2xl',
+      sm: "max-w-sm",
+      md: "max-w-lg",
+      lg: "max-w-2xl",
     },
   },
-}
+};
 
 // 🎯 STEP 3: Define RSC-compatible props interfaces
 
 export interface AlertDialogOverlayProps
-  extends React.ComponentPropsWithoutRef<'div'> {}
+  extends React.ComponentPropsWithoutRef<"div"> {}
 
 export interface AlertDialogContentProps
-  extends React.ComponentPropsWithoutRef<'div'> {
+  extends React.ComponentPropsWithoutRef<"div"> {
   /**
    * Visual variant of the dialog
    * @default 'default'
    */
-  variant?: AlertDialogVariant
+  variant?: AlertDialogVariant;
 
   /**
    * Size of the dialog
    * @default 'md'
    */
-  size?: AlertDialogSize
+  size?: AlertDialogSize;
 
   /**
    * Test ID for automated testing
    */
-  testId?: string
+  testId?: string;
 }
 
 export interface AlertDialogHeaderProps
-  extends React.ComponentPropsWithoutRef<'div'> {}
+  extends React.ComponentPropsWithoutRef<"div"> {}
 
 export interface AlertDialogTitleProps
-  extends React.ComponentPropsWithoutRef<'h2'> {}
+  extends React.ComponentPropsWithoutRef<"h2"> {}
 
 export interface AlertDialogDescriptionProps
-  extends React.ComponentPropsWithoutRef<'p'> {}
+  extends React.ComponentPropsWithoutRef<"p"> {}
 
 export interface AlertDialogBodyProps
-  extends React.ComponentPropsWithoutRef<'div'> {}
+  extends React.ComponentPropsWithoutRef<"div"> {}
 
 export interface AlertDialogFooterProps
-  extends React.ComponentPropsWithoutRef<'div'> {}
+  extends React.ComponentPropsWithoutRef<"div"> {}
 
 /**
  * AlertDialogOverlay - Modal overlay backdrop
@@ -132,9 +126,9 @@ export const AlertDialogOverlay = React.forwardRef<
     data-constitution-compliant="alertdialog-overlay-shared"
     {...props}
   />
-))
+));
 
-AlertDialogOverlay.displayName = 'AlertDialogOverlay'
+AlertDialogOverlay.displayName = "AlertDialogOverlay";
 
 /**
  * AlertDialogContent - Dialog content container
@@ -154,13 +148,13 @@ AlertDialogOverlay.displayName = 'AlertDialogOverlay'
 export const AlertDialogContent = React.forwardRef<
   HTMLDivElement,
   AlertDialogContentProps
->(({ className, variant = 'default', size = 'md', testId, ...props }, ref) => {
+>(({ className, variant = "default", size = "md", testId, ...props }, ref) => {
   const variantClasses =
     alertDialogVariants.variants.variant[variant] ||
-    alertDialogVariants.variants.variant.default
+    alertDialogVariants.variants.variant.default;
   const sizeClasses =
     alertDialogVariants.variants.size[size] ||
-    alertDialogVariants.variants.size.md
+    alertDialogVariants.variants.size.md;
 
   return (
     <div
@@ -178,10 +172,10 @@ export const AlertDialogContent = React.forwardRef<
       )}
       {...props}
     />
-  )
-})
+  );
+});
 
-AlertDialogContent.displayName = 'AlertDialogContent'
+AlertDialogContent.displayName = "AlertDialogContent";
 
 /**
  * AlertDialogHeader - Dialog header section
@@ -203,9 +197,9 @@ export const AlertDialogHeader = React.forwardRef<
     className={cn(alertDialogVariants.header, className)}
     {...props}
   />
-))
+));
 
-AlertDialogHeader.displayName = 'AlertDialogHeader'
+AlertDialogHeader.displayName = "AlertDialogHeader";
 
 /**
  * AlertDialogTitle - Dialog title
@@ -222,16 +216,16 @@ export const AlertDialogTitle = React.forwardRef<
   <h2
     ref={ref}
     className={cn(
-      typographyTokens.headingMd,
-      colorTokens.text,
-      'font-semibold',
+      "text-base font-semibold", // headingMd equivalent
+      "text-fg", // References --color-fg
+      "font-semibold",
       className
     )}
     {...props}
   />
-))
+));
 
-AlertDialogTitle.displayName = 'AlertDialogTitle'
+AlertDialogTitle.displayName = "AlertDialogTitle";
 
 /**
  * AlertDialogDescription - Dialog description text
@@ -250,16 +244,16 @@ export const AlertDialogDescription = React.forwardRef<
   <p
     ref={ref}
     className={cn(
-      typographyTokens.bodySm,
-      colorTokens.textMuted,
-      'leading-relaxed',
+      "text-sm leading-relaxed", // bodySm equivalent
+      "text-fg-muted", // References --color-fg-muted
+      "leading-relaxed",
       className
     )}
     {...props}
   />
-))
+));
 
-AlertDialogDescription.displayName = 'AlertDialogDescription'
+AlertDialogDescription.displayName = "AlertDialogDescription";
 
 /**
  * AlertDialogBody - Dialog body section
@@ -280,9 +274,9 @@ export const AlertDialogBody = React.forwardRef<
     className={cn(alertDialogVariants.body, className)}
     {...props}
   />
-))
+));
 
-AlertDialogBody.displayName = 'AlertDialogBody'
+AlertDialogBody.displayName = "AlertDialogBody";
 
 /**
  * AlertDialogFooter - Dialog footer with action buttons
@@ -304,16 +298,16 @@ export const AlertDialogFooter = React.forwardRef<
     className={cn(alertDialogVariants.footer, className)}
     {...props}
   />
-))
+));
 
-AlertDialogFooter.displayName = 'AlertDialogFooter'
+AlertDialogFooter.displayName = "AlertDialogFooter";
 
 // 🎯 STEP 8: Export types for external consumption
-export { alertDialogVariants }
-export type { AlertDialogSize, AlertDialogVariant }
+export { alertDialogVariants };
+export type { AlertDialogSize, AlertDialogVariant };
 
 // 🎯 STEP 9: Default exports for convenience
-export default AlertDialogContent
+export default AlertDialogContent;
 
 // 🎯 STEP 10: RSC Compliance Checklist
 // ✅ No 'use client' directive

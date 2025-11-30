@@ -41,13 +41,8 @@
  * ```
  */
 
-import * as React from 'react'
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-} from '../../../design/tokens/tokens'
-import { cn } from '../../../design/utilities/cn'
+import * as React from "react";
+import { cn } from "../../../design/utilities/cn";
 
 /**
  * Card Variants
@@ -56,7 +51,7 @@ import { cn } from '../../../design/utilities/cn'
  * - outlined: Standard background with border
  * - ghost: Transparent background
  */
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'ghost'
+export type CardVariant = "default" | "elevated" | "outlined" | "ghost";
 
 /**
  * Card Sizes
@@ -64,7 +59,7 @@ export type CardVariant = 'default' | 'elevated' | 'outlined' | 'ghost'
  * - md: Medium padding (p-4) [default]
  * - lg: Large padding (p-6)
  */
-export type CardSize = 'sm' | 'md' | 'lg'
+export type CardSize = "sm" | "md" | "lg";
 
 /**
  * Card Props
@@ -75,30 +70,30 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
    * Visual variant of the card
    * @default 'default'
    */
-  variant?: CardVariant
+  variant?: CardVariant;
 
   /**
    * Size of the card (padding)
    * @default 'md'
    */
-  size?: CardSize
+  size?: CardSize;
 
   /**
    * Whether the card is interactive (clickable)
    * Adds hover/focus states and accessibility attributes
    * @default false
    */
-  interactive?: boolean
+  interactive?: boolean;
 
   /**
    * Additional CSS classes
    */
-  className?: string
+  className?: string;
 
   /**
    * Child elements
    */
-  children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
 /**
@@ -108,8 +103,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   (
     {
-      variant = 'default',
-      size = 'md',
+      variant = "default",
+      size = "md",
       interactive = false,
       className,
       children,
@@ -120,61 +115,63 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
     ref
   ) => {
     // Determine if card is actually interactive
-    const isInteractive = interactive || !!onClick
+    const isInteractive = interactive || !!onClick;
 
     /**
      * Base Styles
-     * Core card appearance using AI-BOS tokens
+     * Core card appearance using Tailwind classes
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const baseStyles = cn(
-      // Border radius - consistent rounded corners
-      radiusTokens.lg,
+      // Border radius - consistent rounded corners (references CSS variable)
+      "rounded-[var(--radius-lg)]",
 
       // Transition - smooth state changes
-      'transition-all duration-200'
-    )
+      "transition-all duration-200"
+    );
 
     /**
      * Size Variants
      * Controls padding
      */
     const sizeStyles = {
-      sm: 'p-3', // 12px
-      md: 'p-4', // 16px
-      lg: 'p-6', // 24px
-    }
+      sm: "p-3", // 12px
+      md: "p-4", // 16px
+      lg: "p-6", // 24px
+    };
 
     /**
      * Variant Styles
      * Determines card appearance
+     * ✅ GRCD Compliant: Direct Tailwind classes referencing CSS variables
      */
     const variantStyles = {
       default: cn(
-        // Elevated background with subtle border
-        `bg-[${colorTokens.bgElevated}]`,
-        `text-[${colorTokens.text}]`,
-        `border border-[${colorTokens.borderSubtle}]`
+        // Elevated background with subtle border (references CSS variables)
+        "bg-bg-elevated",
+        "text-fg",
+        "border border-border-subtle"
       ),
       elevated: cn(
-        // Elevated background with shadow
-        `bg-[${colorTokens.bgElevated}]`,
-        `text-[${colorTokens.text}]`,
-        shadowTokens.md,
-        'border border-transparent'
+        // Elevated background with shadow (references CSS variables)
+        "bg-bg-elevated",
+        "text-fg",
+        "shadow-[var(--shadow-md)]", // References --shadow-md
+        "border border-transparent"
       ),
       outlined: cn(
-        // Standard background with prominent border
-        `bg-[${colorTokens.bg}]`,
-        `text-[${colorTokens.text}]`,
-        `border border-[${colorTokens.border}]`
+        // Standard background with prominent border (references CSS variables)
+        "bg-bg",
+        "text-fg",
+        "border border-border"
       ),
       ghost: cn(
-        // Transparent background
-        'bg-transparent',
-        `text-[${colorTokens.text}]`,
-        'border border-transparent'
+        // Transparent background (references CSS variable)
+        "bg-transparent",
+        "text-fg",
+        "border border-transparent"
       ),
-    }
+    };
 
     /**
      * Interactive Styles
@@ -183,33 +180,33 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const interactiveStyles = isInteractive
       ? cn(
           // Cursor - pointer to indicate interactivity
-          'cursor-pointer',
+          "cursor-pointer",
 
           // Hover - subtle opacity change
-          'hover:opacity-95',
+          "hover:opacity-95",
 
           // Focus - WCAG 2.1 compliant focus ring
-          'focus-visible:outline-none',
-          'focus-visible:ring-2',
-          'focus-visible:ring-ring'
+          "focus-visible:outline-none",
+          "focus-visible:ring-2",
+          "focus-visible:ring-ring"
         )
-      : ''
+      : "";
 
     return (
       <div
         ref={ref}
-        role={isInteractive ? 'button' : undefined}
+        role={isInteractive ? "button" : undefined}
         tabIndex={isInteractive ? 0 : undefined}
         onClick={onClick}
         onKeyDown={
           isInteractive
-            ? e => {
+            ? (e) => {
                 // Handle keyboard interaction (Enter/Space)
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  onClick?.(e as any)
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onClick?.(e as any);
                 }
-                onKeyDown?.(e)
+                onKeyDown?.(e);
               }
             : onKeyDown
         }
@@ -224,11 +221,11 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       >
         {children}
       </div>
-    )
+    );
   }
-)
+);
 
-Card.displayName = 'Card'
+Card.displayName = "Card";
 
 /**
  * Usage Examples:
