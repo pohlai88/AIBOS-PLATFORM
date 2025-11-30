@@ -2,6 +2,7 @@
  * Field Alias Repository
  *
  * CRUD operations for Field Aliases + implements FieldAliasLookup interface.
+ * GRCD v4.1.0 Compliant: Uses canonical_key
  */
 
 import { getDB } from "../../storage/db";
@@ -26,7 +27,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
     const res = await db.query<FieldAlias>(
       `
       INSERT INTO kernel_field_aliases (
-        tenant_id, alias_raw, alias_normalized, canonical_slug,
+        tenant_id, alias_raw, alias_normalized, canonical_key,
         source, confidence, approved_by, approved_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING
@@ -34,7 +35,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenant_id AS "tenantId",
         alias_raw AS "aliasRaw",
         alias_normalized AS "aliasNormalized",
-        canonical_slug AS "canonicalSlug",
+        canonical_key AS "canonicalKey",
         source,
         confidence,
         approved_by AS "approvedBy",
@@ -46,7 +47,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         validated.tenantId,
         validated.aliasRaw,
         aliasNormalized,
-        validated.canonicalSlug,
+        validated.canonicalKey,
         validated.source,
         validated.confidence,
         validated.approvedBy,
@@ -75,7 +76,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenant_id AS "tenantId",
         alias_raw AS "aliasRaw",
         alias_normalized AS "aliasNormalized",
-        canonical_slug AS "canonicalSlug",
+        canonical_key AS "canonicalKey",
         source,
         confidence,
         approved_by AS "approvedBy",
@@ -100,17 +101,17 @@ export class FieldAliasRepository implements FieldAliasLookup {
 
   /**
    * FieldAliasLookup interface implementation.
-   * Find canonical slug by normalized alias.
+   * Find canonical_key by normalized alias.
    */
-  async findCanonicalSlugByAlias(
+  async findCanonicalKeyByAlias(
     tenantId: string | null,
     aliasNormalized: string,
   ): Promise<string | null> {
     const db = getDB().getClient();
 
-    const res = await db.query<{ canonicalSlug: string }>(
+    const res = await db.query<{ canonicalKey: string }>(
       `
-      SELECT canonical_slug AS "canonicalSlug"
+      SELECT canonical_key AS "canonicalKey"
       FROM kernel_field_aliases
       WHERE tenant_id IS NOT DISTINCT FROM $1
         AND alias_normalized = $2
@@ -120,15 +121,26 @@ export class FieldAliasRepository implements FieldAliasLookup {
     );
 
     if (res.rowCount === 0) return null;
-    return res.rows[0].canonicalSlug;
+    return res.rows[0].canonicalKey;
   }
 
   /**
-   * Find all aliases for a canonical slug.
+   * Legacy method for backward compatibility (deprecated).
+   * @deprecated Use findCanonicalKeyByAlias instead
    */
-  async findByCanonicalSlug(
+  async findCanonicalSlugByAlias(
     tenantId: string | null,
-    canonicalSlug: string,
+    aliasNormalized: string,
+  ): Promise<string | null> {
+    return this.findCanonicalKeyByAlias(tenantId, aliasNormalized);
+  }
+
+  /**
+   * Find all aliases for a canonical_key.
+   */
+  async findByCanonicalKey(
+    tenantId: string | null,
+    canonicalKey: string,
   ): Promise<FieldAlias[]> {
     const db = getDB().getClient();
 
@@ -139,7 +151,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenant_id AS "tenantId",
         alias_raw AS "aliasRaw",
         alias_normalized AS "aliasNormalized",
-        canonical_slug AS "canonicalSlug",
+        canonical_key AS "canonicalKey",
         source,
         confidence,
         approved_by AS "approvedBy",
@@ -148,10 +160,10 @@ export class FieldAliasRepository implements FieldAliasLookup {
         updated_at AS "updatedAt"
       FROM kernel_field_aliases
       WHERE tenant_id IS NOT DISTINCT FROM $1
-        AND canonical_slug = $2
+        AND canonical_key = $2
       ORDER BY alias_raw ASC
       `,
-      [tenantId, canonicalSlug],
+      [tenantId, canonicalKey],
     );
 
     return res.rows.map((row) =>
@@ -162,6 +174,17 @@ export class FieldAliasRepository implements FieldAliasLookup {
         updatedAt: new Date(row.updatedAt),
       }),
     );
+  }
+
+  /**
+   * Legacy method for backward compatibility (deprecated).
+   * @deprecated Use findByCanonicalKey instead
+   */
+  async findByCanonicalSlug(
+    tenantId: string | null,
+    canonicalSlug: string,
+  ): Promise<FieldAlias[]> {
+    return this.findByCanonicalKey(tenantId, canonicalSlug);
   }
 
   /**
@@ -180,7 +203,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenant_id AS "tenantId",
         alias_raw AS "aliasRaw",
         alias_normalized AS "aliasNormalized",
-        canonical_slug AS "canonicalSlug",
+        canonical_key AS "canonicalKey",
         source,
         confidence,
         approved_by AS "approvedBy",
@@ -232,7 +255,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenant_id AS "tenantId",
         alias_raw AS "aliasRaw",
         alias_normalized AS "aliasNormalized",
-        canonical_slug AS "canonicalSlug",
+        canonical_key AS "canonicalKey",
         source,
         confidence,
         approved_by AS "approvedBy",
@@ -272,7 +295,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
    */
   async bulkCreate(
     tenantId: string | null,
-    aliases: Array<{ aliasRaw: string; canonicalSlug: string; source?: string }>,
+    aliases: Array<{ aliasRaw: string; canonicalKey: string; source?: string }>,
   ): Promise<number> {
     if (aliases.length === 0) return 0;
 
@@ -290,7 +313,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
         tenantId,
         alias.aliasRaw,
         normalizeRawName(alias.aliasRaw),
-        alias.canonicalSlug,
+        alias.canonicalKey,
         alias.source ?? "import",
       );
     });
@@ -298,7 +321,7 @@ export class FieldAliasRepository implements FieldAliasLookup {
     const res = await db.query(
       `
       INSERT INTO kernel_field_aliases (
-        tenant_id, alias_raw, alias_normalized, canonical_slug, source
+        tenant_id, alias_raw, alias_normalized, canonical_key, source
       ) VALUES ${placeholders.join(", ")}
       ON CONFLICT (tenant_id, alias_normalized) DO NOTHING
       `,
@@ -310,4 +333,3 @@ export class FieldAliasRepository implements FieldAliasLookup {
 }
 
 export const fieldAliasRepository = new FieldAliasRepository();
-

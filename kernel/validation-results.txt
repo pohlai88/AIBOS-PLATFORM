@@ -1,0 +1,5 @@
+﻿
+> @aibos/kernel@0.1.0 metadata:validate-phase3 D:\AIBOS-PLATFORM\kernel
+> tsx metadata/__tests__/validate-phase3.ts
+
+[dotenv@17.2.3] injecting env (26) from .env -- tip: Γ£à audit secrets and track compliance: https://dotenvx.com/ops

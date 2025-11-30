@@ -5,57 +5,57 @@
 -- 1. BUSINESS TERMS (IFRS-aligned terminology)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-INSERT INTO kernel_business_terms (tenant_id, slug, label, description, domain, synonyms, status)
+INSERT INTO kernel_business_terms (tenant_id, canonical_key, label, description, domain, synonyms, governance_tier)
 VALUES
   -- Journal Date
   (NULL, 'journal_date', 'Journal Date',
    'Date on which the journal entry is recognized in the ledger. Per MFRS 101.',
-   'finance', '["posting date", "entry date", "transaction date"]', 'active'),
+   'finance', '["posting date", "entry date", "transaction date"]', 'tier_1'),
 
   -- GL Account Code
   (NULL, 'gl_account_code', 'GL Account Code',
    'Code of the general ledger account being debited or credited. Per MFRS 101/102.',
-   'finance', '["account code", "gl code", "coa code", "ledger account"]', 'active'),
+   'finance', '["account code", "gl code", "coa code", "ledger account"]', 'tier_1'),
 
   -- Debit Amount
   (NULL, 'debit_amount', 'Debit Amount',
    'Debit amount in transaction currency. Per MFRS 101.',
-   'finance', '["debit", "dr", "dr amount"]', 'active'),
+   'finance', '["debit", "dr", "dr amount"]', 'tier_1'),
 
   -- Credit Amount
   (NULL, 'credit_amount', 'Credit Amount',
    'Credit amount in transaction currency. Per MFRS 101.',
-   'finance', '["credit", "cr", "cr amount"]', 'active'),
+   'finance', '["credit", "cr", "cr amount"]', 'tier_1'),
 
   -- Line Description
   (NULL, 'line_description', 'Line Description',
    'Description for the journal line item.',
-   'finance', '["description", "narration", "memo", "remarks"]', 'active'),
+   'finance', '["description", "narration", "memo", "remarks"]', 'tier_2'),
 
   -- Document Number
   (NULL, 'document_number', 'Document Number',
    'External document number or reference for the journal entry.',
-   'finance', '["doc number", "reference", "ref no", "voucher number"]', 'active'),
+   'finance', '["doc number", "reference", "ref no", "voucher number"]', 'tier_2'),
 
   -- Currency Code
   (NULL, 'currency_code', 'Currency Code',
    'ISO 4217 currency code for the transaction (e.g. MYR, USD). Per MFRS 121.',
-   'finance', '["currency", "ccy", "curr"]', 'active'),
+   'finance', '["currency", "ccy", "curr"]', 'tier_1'),
 
   -- Created By
   (NULL, 'created_by', 'Created By',
    'User who created the journal entry.',
-   'system', '["creator", "author", "entered by"]', 'active')
+   'system', '["creator", "author", "entered by"]', 'tier_3')
 
-ON CONFLICT (tenant_id, slug) DO NOTHING;
+ON CONFLICT (tenant_id, canonical_key) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. DATA CONTRACT (Journal Entries dataset)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 INSERT INTO kernel_data_contracts (
-  tenant_id, slug, name, description, version, owner, source_system,
-  classification, sensitivity, status, schema
+  tenant_id, canonical_key, name, description, version, owner, source_system,
+  classification, sensitivity, governance_tier, schema
 )
 VALUES (
   NULL,
@@ -67,7 +67,7 @@ VALUES (
   'aibos.kernel',
   'financial',
   'confidential',
-  'active',
+  'tier_1',
   jsonb_build_object(
     'type', 'object',
     'required', ARRAY['journal_date', 'lines'],
@@ -92,7 +92,7 @@ VALUES (
     )
   )
 )
-ON CONFLICT (tenant_id, slug) DO NOTHING;
+ON CONFLICT (tenant_id, canonical_key) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. FIELD DICTIONARY (Fields for Journal Entries contract)
@@ -114,73 +114,73 @@ BEGIN
   -- Get contract ID
   SELECT id INTO v_contract_id
   FROM kernel_data_contracts
-  WHERE slug = 'journal_entries' AND tenant_id IS NULL;
+  WHERE canonical_key = 'journal_entries' AND tenant_id IS NULL;
 
   -- Get business term IDs
-  SELECT id INTO v_bt_journal_date FROM kernel_business_terms WHERE slug = 'journal_date' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_gl_account FROM kernel_business_terms WHERE slug = 'gl_account_code' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_debit FROM kernel_business_terms WHERE slug = 'debit_amount' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_credit FROM kernel_business_terms WHERE slug = 'credit_amount' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_description FROM kernel_business_terms WHERE slug = 'line_description' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_doc_number FROM kernel_business_terms WHERE slug = 'document_number' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_currency FROM kernel_business_terms WHERE slug = 'currency_code' AND tenant_id IS NULL;
-  SELECT id INTO v_bt_created_by FROM kernel_business_terms WHERE slug = 'created_by' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_journal_date FROM kernel_business_terms WHERE canonical_key = 'journal_date' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_gl_account FROM kernel_business_terms WHERE canonical_key = 'gl_account_code' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_debit FROM kernel_business_terms WHERE canonical_key = 'debit_amount' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_credit FROM kernel_business_terms WHERE canonical_key = 'credit_amount' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_description FROM kernel_business_terms WHERE canonical_key = 'line_description' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_doc_number FROM kernel_business_terms WHERE canonical_key = 'document_number' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_currency FROM kernel_business_terms WHERE canonical_key = 'currency_code' AND tenant_id IS NULL;
+  SELECT id INTO v_bt_created_by FROM kernel_business_terms WHERE canonical_key = 'created_by' AND tenant_id IS NULL;
 
   -- Insert field dictionary entries
   INSERT INTO kernel_field_dictionary (
-    tenant_id, slug, label, description, data_type, format, unit,
-    business_term_id, data_contract_id, constraints, examples, status
+    tenant_id, canonical_key, label, description, data_type, format, unit,
+    business_term_id, data_contract_id, constraints, examples, governance_tier
   )
   VALUES
     -- journal_date
     (NULL, 'journal_date', 'Journal Date', 'Date of the journal entry',
      'date', 'YYYY-MM-DD', NULL,
      v_bt_journal_date, v_contract_id,
-     '{"required": true}', '["2024-01-15", "2024-12-31"]', 'active'),
+     '{"required": true}', '["2024-01-15", "2024-12-31"]', 'tier_1'),
 
     -- gl_account_code
     (NULL, 'gl_account_code', 'GL Account Code', 'General ledger account code',
      'string', NULL, NULL,
      v_bt_gl_account, v_contract_id,
-     '{"required": true, "pattern": "^[0-9]{4,10}$"}', '["1100", "4000", "5100"]', 'active'),
+     '{"required": true, "pattern": "^[0-9]{4,10}$"}', '["1100", "4000", "5100"]', 'tier_1'),
 
     -- debit_amount
     (NULL, 'debit_amount', 'Debit Amount', 'Debit amount in transaction currency',
      'decimal', '#,##0.00', 'MYR',
      v_bt_debit, v_contract_id,
-     '{"minimum": 0}', '["1000.00", "5500.50"]', 'active'),
+     '{"minimum": 0}', '["1000.00", "5500.50"]', 'tier_1'),
 
     -- credit_amount
     (NULL, 'credit_amount', 'Credit Amount', 'Credit amount in transaction currency',
      'decimal', '#,##0.00', 'MYR',
      v_bt_credit, v_contract_id,
-     '{"minimum": 0}', '["1000.00", "5500.50"]', 'active'),
+     '{"minimum": 0}', '["1000.00", "5500.50"]', 'tier_1'),
 
     -- line_description
     (NULL, 'line_description', 'Line Description', 'Description for the journal line',
      'string', NULL, NULL,
      v_bt_description, v_contract_id,
-     '{"maxLength": 512}', '["Office supplies expense", "Sales revenue Q1"]', 'active'),
+     '{"maxLength": 512}', '["Office supplies expense", "Sales revenue Q1"]', 'tier_2'),
 
     -- document_number
     (NULL, 'document_number', 'Document Number', 'External document reference',
      'string', NULL, NULL,
      v_bt_doc_number, v_contract_id,
-     '{"maxLength": 50}', '["INV-2024-001", "JE-00123"]', 'active'),
+     '{"maxLength": 50}', '["INV-2024-001", "JE-00123"]', 'tier_2'),
 
     -- currency_code
     (NULL, 'currency_code', 'Currency Code', 'ISO 4217 currency code',
      'string', NULL, NULL,
      v_bt_currency, v_contract_id,
-     '{"pattern": "^[A-Z]{3}$", "default": "MYR"}', '["MYR", "USD", "SGD"]', 'active'),
+     '{"pattern": "^[A-Z]{3}$", "default": "MYR"}', '["MYR", "USD", "SGD"]', 'tier_1'),
 
     -- created_by
     (NULL, 'created_by', 'Created By', 'User who created the entry',
      'string', NULL, NULL,
      v_bt_created_by, v_contract_id,
-     '{"required": true}', '["user@example.com"]', 'active')
+     '{"required": true}', '["user@example.com"]', 'tier_3')
 
-  ON CONFLICT (tenant_id, slug) DO NOTHING;
+  ON CONFLICT (tenant_id, canonical_key) DO NOTHING;
 
 END $$;
 
@@ -188,7 +188,7 @@ END $$;
 -- 4. FIELD ALIASES (Human/legacy name mappings)
 -- ═══════════════════════════════════════════════════════════════════════════
 
-INSERT INTO kernel_field_aliases (tenant_id, alias_raw, alias_normalized, canonical_slug, source)
+INSERT INTO kernel_field_aliases (tenant_id, alias_raw, alias_normalized, canonical_key, source)
 VALUES
   -- Journal Date aliases
   (NULL, 'Journal Date', 'journal date', 'journal_date', 'manual'),
@@ -247,7 +247,7 @@ DECLARE
 BEGIN
   SELECT id INTO v_contract_id
   FROM kernel_data_contracts
-  WHERE slug = 'journal_entries' AND tenant_id IS NULL;
+  WHERE canonical_key = 'journal_entries' AND tenant_id IS NULL;
 
   -- Link createJournalEntry action to journal_entries contract (write access)
   INSERT INTO kernel_action_data_contracts (tenant_id, action_id, data_contract_id, access_type)

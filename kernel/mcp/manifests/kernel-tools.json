@@ -1,0 +1,30 @@
+{
+  "name": "kernel-tools",
+  "version": "1.0.0",
+  "protocol": "mcp",
+  "protocolVersion": "2025-03-26",
+  "description": "Built-in Kernel MCP tools for governance, auditing, and compliance",
+  "tools": [
+    {
+      "name": "audit_directory_structure",
+      "description": "Audit kernel directory structure for GRCD compliance and modularity violations. Checks against GRCD-KERNEL.md Section 4.1 canonical structure. This tool enforces T-DIR-1 conformance test.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kernelRoot": {
+            "type": "string",
+            "description": "Root directory of kernel (default: current working directory)"
+          },
+          "strict": {
+            "type": "boolean",
+            "description": "If true, treats warnings as errors",
+            "default": false
+          }
+        },
+        "required": []
+      }
+    }
+  ],
+  "resources": []
+}
+

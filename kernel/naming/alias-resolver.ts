@@ -50,7 +50,22 @@ export function normalizeRawName(raw: string): string {
  *    - ask a human/AI to map it
  *    - or fall back to creating a new Business Term
  */
+/**
+ * Resolve alias to canonical key (GRCD-compliant).
+ * @deprecated Use resolveAliasToCanonicalKey instead
+ */
 export async function resolveAliasToCanonicalSlug(
+  tenantId: string | null,
+  rawName: string,
+  aliasLookup: FieldAliasLookup
+): Promise<string | null> {
+  return resolveAliasToCanonicalKey(tenantId, rawName, aliasLookup);
+}
+
+/**
+ * Resolve a raw external name to a canonical key via the alias table (GRCD-compliant).
+ */
+export async function resolveAliasToCanonicalKey(
   tenantId: string | null,
   rawName: string,
   aliasLookup: FieldAliasLookup
@@ -58,6 +73,16 @@ export async function resolveAliasToCanonicalSlug(
   const normalized = normalizeRawName(rawName);
   if (!normalized) return null;
 
+  // Try new method first (canonicalKey)
+  if (typeof (aliasLookup as any).findCanonicalKeyByAlias === 'function') {
+    const canonical = await (aliasLookup as any).findCanonicalKeyByAlias(
+      tenantId,
+      normalized
+    );
+    if (canonical) return canonical;
+  }
+
+  // Fallback to legacy method for backward compatibility
   const canonical = await aliasLookup.findCanonicalSlugByAlias(
     tenantId,
     normalized
@@ -75,27 +100,55 @@ export async function resolveAliasToCanonicalSlug(
  *
  * You can decide whether to accept the fallback or require human approval.
  */
+/**
+ * Resolve or suggest canonical key (GRCD-compliant).
+ * @deprecated Use resolveOrSuggestCanonicalKey instead
+ */
 export async function resolveOrSuggestCanonicalSlug(
   tenantId: string | null,
   rawName: string,
   aliasLookup: FieldAliasLookup
 ): Promise<{ canonicalSlug: string; fromAlias: boolean }> {
+  const result = await resolveOrSuggestCanonicalKey(tenantId, rawName, aliasLookup);
+  return { canonicalSlug: result.canonicalKey, fromAlias: result.fromAlias };
+}
+
+/**
+ * Helper: try alias resolution, else fall back to normalized key (GRCD-compliant).
+ */
+export async function resolveOrSuggestCanonicalKey(
+  tenantId: string | null,
+  rawName: string,
+  aliasLookup: FieldAliasLookup
+): Promise<{ canonicalKey: string; fromAlias: boolean }> {
   const normalized = normalizeRawName(rawName);
   if (!normalized) {
-    return { canonicalSlug: "", fromAlias: false };
+    return { canonicalKey: "", fromAlias: false };
   }
 
+  // Try new method first (canonicalKey)
+  if (typeof (aliasLookup as any).findCanonicalKeyByAlias === 'function') {
+    const fromAlias = await (aliasLookup as any).findCanonicalKeyByAlias(
+      tenantId,
+      normalized
+    );
+    if (fromAlias) {
+      return { canonicalKey: fromAlias, fromAlias: true };
+    }
+  }
+
+  // Fallback to legacy method
   const fromAlias = await aliasLookup.findCanonicalSlugByAlias(
     tenantId,
     normalized
   );
 
   if (fromAlias) {
-    return { canonicalSlug: fromAlias, fromAlias: true };
+    return { canonicalKey: fromAlias, fromAlias: true };
   }
 
-  // Suggest canonical slug by converting normalized phrase to snake_case
-  const canonicalSlug = normalized.split(" ").join("_");
-  return { canonicalSlug, fromAlias: false };
+  // Suggest canonical key by converting normalized phrase to snake_case
+  const canonicalKey = normalized.split(" ").join("_");
+  return { canonicalKey, fromAlias: false };
 }
 

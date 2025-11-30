@@ -1,0 +1,46 @@
+﻿
+> @aibos/kernel@0.1.0 metadata:validate-phase3 D:\AIBOS-PLATFORM\kernel
+> tsx metadata/__tests__/validate-phase3.ts
+
+[dotenv@17.2.3] injecting env (26) from .env -- tip: ΓÜÖ∩╕Å  load multiple .env files with { path: ['.env.local', '.env'] }
+[2025-11-30 15:23:38.401 +0700] [31mERROR[39m (aibos-kernel): [36mΓ¥î Profiling service hasProfiling method: DB query failed after 5 attempts[39m
+    [35mmodule[39m: "metadata:validate-phase3"
+    [35mtest[39m: "Profiling service hasProfiling method"
+    [35mdetails[39m: {
+      "code": "DB_QUERY_FAILED",
+      "cause": {
+        "length": 145,
+        "name": "error",
+        "severity": "ERROR",
+        "code": "22P02",
+        "where": "unnamed portal parameter $2 = '...'",
+        "file": "uuid.c",
+        "line": "138",
+        "routine": "string_to_uuid"
+      },
+      "timestamp": 1764491018401,
+      "name": "KernelError"
+    }
+    error: "DB query failed after 5 attempts"
+[2025-11-30 15:23:41.172 +0700] [31mERROR[39m (aibos-kernel): [36mΓ¥î Quality service getRulesByField method: DB query failed after 5 attempts[39m
+    [35mmodule[39m: "metadata:validate-phase3"
+    [35mtest[39m: "Quality service getRulesByField method"
+    [35mdetails[39m: {
+      "code": "DB_QUERY_FAILED",
+      "cause": {
+        "length": 145,
+        "name": "error",
+        "severity": "ERROR",
+        "code": "22P02",
+        "where": "unnamed portal parameter $2 = '...'",
+        "file": "uuid.c",
+        "line": "138",
+        "routine": "string_to_uuid"
+      },
+      "timestamp": 1764491021172,
+      "name": "KernelError"
+    }
+    error: "DB query failed after 5 attempts"
+[2025-11-30 15:23:42.751 +0700] [31mERROR[39m (aibos-kernel): [36mΓ¥î Phase 3 validation failed[39m
+    [35mmodule[39m: "metadata:validate-phase3"
+ΓÇëELIFECYCLEΓÇë Command failed with exit code 1.

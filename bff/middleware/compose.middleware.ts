@@ -115,15 +115,17 @@ export function createMiddlewareStack(
   manifest: Readonly<BffManifestType>,
   options: {
     env?: 'development' | 'staging' | 'production';
+    db?: any; // Kernel Database instance for persistent stores
+    redis?: any; // Kernel RedisStore instance for rate limiting
   } = {}
 ): MiddlewareStack {
   const env = options.env || 'production';
 
   // Create all middleware instances
   const auth = createAuthMiddleware(manifest);
-  const rateLimit = createRateLimitMiddleware(manifest);
+  const rateLimit = createRateLimitMiddleware(manifest, { redis: options.redis });
   const zoneGuard = createZoneGuardMiddleware(manifest);
-  const audit = createAuditMiddleware(manifest);
+  const audit = createAuditMiddleware(manifest, { db: options.db });
   const sanitizer = createSanitizerMiddleware(manifest);
   const aiFirewall = createAIFirewall(manifest);
   const cors = createCorsMiddleware(manifest);

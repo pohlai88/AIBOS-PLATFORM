@@ -6,6 +6,28 @@
 
 import * as path from "path";
 
+// Load .env file if available (for development)
+// Checks both kernel/.env (preferred) and root .env (fallback)
+try {
+  const dotenv = require('dotenv');
+  const fs = require('fs');
+  
+  // First try kernel/.env (preferred location)
+  const kernelEnvPath = path.join(__dirname, '../.env');
+  if (fs.existsSync(kernelEnvPath)) {
+    dotenv.config({ path: kernelEnvPath });
+  } else {
+    // Fallback to root .env
+    const rootEnvPath = path.join(__dirname, '../../.env');
+    if (fs.existsSync(rootEnvPath)) {
+      dotenv.config({ path: rootEnvPath });
+    }
+  }
+} catch (e) {
+  // dotenv not installed or .env not found, continue without it
+  // Environment variables must be set in shell or process.env
+}
+
 export type StorageMode = "IN_MEMORY" | "SUPABASE";
 
 export interface KernelConfig {
@@ -19,6 +41,7 @@ export interface KernelConfig {
 
   // Postgres (Supabase)
   supabaseDbUrl: string | undefined;
+  supabaseDbUrlFallback: string | undefined;
   dbPoolMax: number;
   dbPoolIdleTimeout: number;
 
@@ -55,7 +78,9 @@ export function loadConfig(): KernelConfig {
     storageMode: (process.env.KERNEL_STORAGE_MODE as StorageMode) || "IN_MEMORY",
 
     // Postgres (Supabase)
-    supabaseDbUrl: process.env.SUPABASE_DB_URL || process.env.DATABASE_URL,
+    // Trim and clean connection strings (remove newlines, carriage returns, extra spaces)
+    supabaseDbUrl: (process.env.SUPABASE_DB_URL || process.env.DATABASE_URL)?.trim().replace(/[\r\n]+/g, ''),
+    supabaseDbUrlFallback: (process.env.SUPABASE_DB_URL_FALLBACK || process.env.DATABASE_URL)?.trim().replace(/[\r\n]+/g, ''),
     dbPoolMax: Number(process.env.DB_POOL_MAX || 10),
     dbPoolIdleTimeout: Number(process.env.DB_POOL_IDLE_TIMEOUT || 30000),
 

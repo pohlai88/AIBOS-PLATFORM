@@ -12,5 +12,6 @@ export { businessTermRepository, BusinessTermRepository } from "./business-term.
 export { dataContractRepository, DataContractRepository } from "./data-contract.repository";
 export { fieldDictionaryRepository, FieldDictionaryRepository } from "./field-dictionary.repository";
 export { fieldAliasRepository, FieldAliasRepository } from "./field-alias.repository";
+export { standardPackRepository, StandardPackRepository } from "./standard-pack.repository";
 export { actionDataContractRepository, ActionDataContractRepository } from "./action-data-contract.repository";
 

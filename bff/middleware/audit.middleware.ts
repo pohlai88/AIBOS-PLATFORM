@@ -17,6 +17,7 @@
 import crypto from 'crypto';
 import type { BffManifestType } from '../bff.manifest';
 import type { AuthContext } from './auth.middleware';
+import { PostgresAuditStore } from '../storage/postgres-audit-store';
 
 // ============================================================================
 // Types
@@ -189,10 +190,23 @@ export function createAuditMiddleware(
     options: {
         config?: Partial<AuditConfig>;
         store?: AuditStore;
+        db?: any; // Kernel Database instance
     } = {}
 ) {
     const config: AuditConfig = { ...DEFAULT_CONFIG, ...options.config };
-    const store = options.store || new InMemoryAuditStore();
+    
+    // Determine which store to use based on environment variable or provided store
+    let store: AuditStore;
+    if (options.store) {
+        store = options.store;
+    } else {
+        const auditStoreType = process.env.BFF_AUDIT_STORE || 'memory';
+        if (auditStoreType === 'postgres' && options.db) {
+            store = new PostgresAuditStore(options.db);
+        } else {
+            store = new InMemoryAuditStore();
+        }
+    }
 
     // Pending audits (request started, response not yet received)
     const pending = new Map<string, PendingAudit>();

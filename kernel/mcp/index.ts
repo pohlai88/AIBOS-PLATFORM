@@ -43,3 +43,7 @@ export type { MCPClientConfig, MCPClientState } from "./sdk/mcp-client";
 
 // Cryptography (F-11: MCP Manifest Signatures)
 export * from "./crypto";
+
+// Tools
+export { directoryAuditTool, auditDirectoryStructure } from "./tools/directory-audit.tool";
+export type { DirectoryViolation, DirectoryAuditResult } from "./tools/directory-audit.tool";

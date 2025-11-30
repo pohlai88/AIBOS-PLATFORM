@@ -25,6 +25,16 @@ export const DataTypeEnum = z.enum([
   "object",
 ]);
 
+// GRCD v4.1.0: Governance Tiers (replaces status enum)
+export const GovernanceTierEnum = z.enum([
+  "tier_1",  // Critical - finance/reporting, requires lineage
+  "tier_2",  // Important - operational, requires profiling
+  "tier_3",  // Standard - general use
+  "tier_4",  // Low priority
+  "tier_5",  // Deprecated/archived
+]);
+
+// Legacy status enum (deprecated, kept for backward compatibility during transition)
 export const FieldStatusEnum = z.enum([
   "draft",
   "active",
@@ -75,12 +85,18 @@ export const AliasSourceEnum = z.enum([
 export const ZBusinessTerm = z.object({
   id: z.string().uuid(),
   tenantId: z.string().uuid().nullable(),
-  slug: z.string().min(1),              // canonical lower_snake_case
-  label: z.string().min(1),             // human-readable
+  canonicalKey: z.string().min(1),              // GRCD: canonical lower_snake_case (replaces slug)
+  label: z.string().min(1),                     // human-readable
   description: z.string().nullable(),
-  domain: z.string().nullable(),        // e.g. "finance", "hr", "sales"
+  domain: z.string().nullable(),                 // e.g. "finance", "hr", "sales"
+  module: z.string().nullable(),                 // GRCD: Module (GL, AR, AP, etc.)
   synonyms: z.array(z.string()).default([]),
-  status: FieldStatusEnum.default("active"),
+  governanceTier: GovernanceTierEnum.default("tier_3"),  // GRCD: Tier 1-5 (replaces status)
+  standardPackIdPrimary: z.string().uuid().nullable(),    // GRCD: Primary SoT pack reference
+  standardPackIdSecondary: z.array(z.string().uuid()).default([]),  // GRCD: Secondary SoT pack references
+  entityUrn: z.string().nullable(),              // GRCD: Unique Resource Name for lineage
+  owner: z.string().nullable(),                  // GRCD: Owner
+  steward: z.string().nullable(),                // GRCD: Steward
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -102,16 +118,20 @@ export type CreateBusinessTerm = z.infer<typeof ZCreateBusinessTerm>;
 export const ZDataContract = z.object({
   id: z.string().uuid(),
   tenantId: z.string().uuid().nullable(),
-  slug: z.string().min(1),              // canonical lower_snake_case
+  canonicalKey: z.string().min(1),              // GRCD: canonical lower_snake_case (replaces slug)
   name: z.string().min(1),
   description: z.string().nullable(),
   version: z.number().int().positive().default(1),
-  owner: z.string().nullable(),         // team/person responsible
-  sourceSystem: z.string().nullable(),  // e.g. "SAP", "Salesforce"
+  owner: z.string().nullable(),                 // team/person responsible
+  steward: z.string().nullable(),               // GRCD: Steward
+  sourceSystem: z.string().nullable(),         // e.g. "SAP", "Salesforce"
   classification: ClassificationEnum.default("internal"), // data classification
   sensitivity: SensitivityEnum.default("internal"),       // sensitivity level
-  status: ContractStatusEnum.default("active"),
-  schema: z.record(z.any()).nullable(), // JSON schema or field definitions
+  governanceTier: GovernanceTierEnum.default("tier_3"),  // GRCD: Tier 1-5 (replaces status)
+  standardPackIdPrimary: z.string().uuid().nullable(),    // GRCD: Primary SoT pack reference
+  standardPackIdSecondary: z.array(z.string().uuid()).default([]),  // GRCD: Secondary SoT pack references
+  entityUrn: z.string().nullable(),              // GRCD: Unique Resource Name for lineage
+  schema: z.record(z.any()).nullable(),         // JSON schema or field definitions
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -133,17 +153,22 @@ export type CreateDataContract = z.infer<typeof ZCreateDataContract>;
 export const ZFieldDictionaryEntry = z.object({
   id: z.string().uuid(),
   tenantId: z.string().uuid().nullable(),
-  slug: z.string().min(1),              // canonical lower_snake_case
+  canonicalKey: z.string().min(1),              // GRCD: canonical lower_snake_case (replaces slug)
   label: z.string().min(1),
   description: z.string().nullable(),
   dataType: DataTypeEnum,
-  format: z.string().nullable(),        // e.g. "YYYY-MM-DD", "###,###.##"
-  unit: z.string().nullable(),          // e.g. "USD", "kg", "%"
+  format: z.string().nullable(),                // e.g. "YYYY-MM-DD", "###,###.##"
+  unit: z.string().nullable(),                  // e.g. "USD", "kg", "%"
   businessTermId: z.string().uuid().nullable(), // link to business term
   dataContractId: z.string().uuid().nullable(), // link to data contract
-  constraints: z.record(z.any()).nullable(), // min, max, pattern, enum, etc.
+  constraints: z.record(z.any()).nullable(),   // min, max, pattern, enum, etc.
   examples: z.array(z.string()).default([]),
-  status: FieldStatusEnum.default("active"),
+  governanceTier: GovernanceTierEnum.default("tier_3"),  // GRCD: Tier 1-5 (replaces status)
+  standardPackIdPrimary: z.string().uuid().nullable(),    // GRCD: Primary SoT pack reference
+  standardPackIdSecondary: z.array(z.string().uuid()).default([]),  // GRCD: Secondary SoT pack references
+  entityUrn: z.string().nullable(),              // GRCD: Unique Resource Name for lineage
+  owner: z.string().nullable(),                  // GRCD: Owner
+  steward: z.string().nullable(),                // GRCD: Steward
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -167,7 +192,7 @@ export const ZFieldAlias = z.object({
   tenantId: z.string().uuid().nullable(),
   aliasRaw: z.string().min(1),          // original external name
   aliasNormalized: z.string().min(1),   // normalized for lookup
-  canonicalSlug: z.string().min(1),     // points to field dictionary slug
+  canonicalKey: z.string().min(1),      // GRCD: points to field dictionary canonical_key (replaces canonical_slug)
   source: AliasSourceEnum.default("manual"),
   confidence: z.number().min(0).max(1).nullable(), // for AI suggestions
   approvedBy: z.string().nullable(),
@@ -187,12 +212,50 @@ export const ZCreateFieldAlias = ZFieldAlias.omit({
 export type CreateFieldAlias = z.infer<typeof ZCreateFieldAlias>;
 
 // ─────────────────────────────────────────────────────────────
+// Standard Pack (GRCD v4.1.0)
+// ─────────────────────────────────────────────────────────────
+
+export const StandardTypeEnum = z.enum([
+  "IFRS",
+  "MFRS",
+  "HL7",
+  "GS1",
+  "HACCP",
+  "CUSTOM",
+]);
+
+export const ZStandardPack = z.object({
+  id: z.string().uuid(),
+  tenantId: z.string().uuid().nullable(),
+  name: z.string().min(1),              // "IFRS_15", "MFRS_1", "HL7_FHIR_R4"
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),  // SemVer: "1.0.0"
+  standardType: StandardTypeEnum,
+  isDeprecated: z.boolean().default(false),
+  definition: z.record(z.any()),        // JSONB pack contents
+  description: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type StandardPack = z.infer<typeof ZStandardPack>;
+
+export const ZCreateStandardPack = ZStandardPack.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type CreateStandardPack = z.infer<typeof ZCreateStandardPack>;
+
+// ─────────────────────────────────────────────────────────────
 // Type Exports
 // ─────────────────────────────────────────────────────────────
 
 export type DataType = z.infer<typeof DataTypeEnum>;
-export type FieldStatus = z.infer<typeof FieldStatusEnum>;
-export type ContractStatus = z.infer<typeof ContractStatusEnum>;
+export type GovernanceTier = z.infer<typeof GovernanceTierEnum>;
+export type StandardType = z.infer<typeof StandardTypeEnum>;
+export type FieldStatus = z.infer<typeof FieldStatusEnum>;  // Deprecated, use GovernanceTier
+export type ContractStatus = z.infer<typeof ContractStatusEnum>;  // Deprecated, use GovernanceTier
 export type Classification = z.infer<typeof ClassificationEnum>;
 export type Sensitivity = z.infer<typeof SensitivityEnum>;
 export type AccessType = z.infer<typeof AccessTypeEnum>;

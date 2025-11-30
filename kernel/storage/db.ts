@@ -10,7 +10,7 @@
  */
 
 import { Pool, PoolConfig, QueryResult as PgQueryResult, QueryResultRow } from "pg";
-import { KernelError } from "../hardening/errors/kernel-error";
+import { KernelError } from "../errors/kernel-error";
 import { getConfig, StorageMode } from "../boot/kernel.config";
 import { baseLogger } from "../observability/logger";
 import { dbQueryDurationSeconds } from "../observability/metrics";
@@ -91,8 +91,16 @@ class SupabaseDb implements Db {
   private baseDelayMs: number;
 
   constructor(connectionString: string, poolConfig: Partial<PoolConfig> = {}) {
+    // Fix for Supabase pooler connections - add pgbouncer=true if using pooler and parameter is missing
+    let fixedConnectionString = connectionString;
+    if (connectionString.includes('pooler.supabase.com') && !connectionString.includes('pgbouncer=true')) {
+      const separator = connectionString.includes('?') ? '&' : '?';
+      fixedConnectionString = `${connectionString}${separator}pgbouncer=true`;
+      baseLogger.info("[DB] Added pgbouncer=true parameter for Supabase pooler connection");
+    }
+    
     this.pool = new Pool({
-      connectionString,
+      connectionString: fixedConnectionString,
       max: poolConfig.max || 10,
       idleTimeoutMillis: poolConfig.idleTimeoutMillis || 30000,
       connectionTimeoutMillis: poolConfig.connectionTimeoutMillis || 5000,
@@ -125,7 +133,7 @@ class SupabaseDb implements Db {
     while (attempt < this.maxRetries) {
       try {
         const result: PgQueryResult<T> = await this.pool.query<T>(text, params);
-        
+
         // Record success metric
         const end = process.hrtime.bigint();
         const durationSec = Number(end - start) / 1e9;
@@ -137,7 +145,62 @@ class SupabaseDb implements Db {
         };
       } catch (err: any) {
         lastError = err;
-        attempt++;
+        
+        // Check if this is a connection error and we have a fallback (check BEFORE incrementing attempt)
+        // Error might be wrapped in KernelError, so check both err and err.cause
+        const rootError = err.cause || err;
+        const isConnectionError = rootError.code === "ENOTFOUND" || 
+                                  rootError.code === "ECONNREFUSED" || 
+                                  err.message?.includes("getaddrinfo") ||
+                                  rootError.syscall === "getaddrinfo" ||
+                                  rootError.message?.includes("getaddrinfo");
+        const fallbackUrl = (this as any).__fallbackUrl;
+        const fallbackConfig = (this as any).__fallbackConfig;
+        
+        // Debug logging
+        if (attempt === 0) {
+          baseLogger.debug({ 
+            hasFallback: !!fallbackUrl, 
+            isConnectionError, 
+            errorCode: rootError.code, 
+            syscall: rootError.syscall,
+            errorMessage: err.message 
+          }, "[DB] Connection error check");
+        }
+        
+        // Try fallback on first attempt (attempt === 0) if connection error
+        if (isConnectionError && fallbackUrl && fallbackConfig && attempt === 0 && !(this as any).__fallbackTried) {
+          // Mark that we've tried fallback to avoid infinite loop
+          (this as any).__fallbackTried = true;
+          
+          baseLogger.warn({ error: err.message, code: err.code, syscall: err.syscall }, "[DB] Primary connection failed, switching to fallback");
+          try {
+            // Create new pool with fallback URL
+            const oldPool = this.pool;
+            this.pool = new Pool({
+              connectionString: fallbackUrl,
+              max: fallbackConfig.max || 10,
+              idleTimeoutMillis: fallbackConfig.idleTimeoutMillis || 30000,
+              connectionTimeoutMillis: 5000,
+            });
+            
+            // Close old pool asynchronously (don't wait)
+            oldPool.end().catch((closeErr) => {
+              baseLogger.warn({ closeErr }, "[DB] Error closing old pool");
+            });
+            
+            baseLogger.info("[DB] Switched to fallback connection");
+            
+            // Retry query with fallback connection (don't increment attempt, just retry)
+            continue; // Retry with new pool
+          } catch (fallbackErr: any) {
+            baseLogger.error({ fallbackError: fallbackErr.message }, "[DB] Fallback connection also failed");
+            lastError = fallbackErr;
+            attempt++; // Increment attempt after fallback fails
+          }
+        } else {
+          attempt++;
+        }
 
         // Don't retry on syntax errors or constraint violations
         if (this.isNonRetryableError(err)) {
@@ -223,6 +286,7 @@ export class Database {
 
   /**
    * Initialize database based on storage mode
+   * Supports fallback connection string if primary fails
    */
   static init(): void {
     if (this.instance) return;
@@ -230,11 +294,30 @@ export class Database {
     const config = getConfig();
 
     if (config.storageMode === "SUPABASE" && config.supabaseDbUrl) {
+      // Create primary connection
       this.instance = new SupabaseDb(config.supabaseDbUrl, {
         max: config.dbPoolMax,
         idleTimeoutMillis: config.dbPoolIdleTimeout,
       });
-      baseLogger.info("[DB] Supabase/Postgres mode");
+      baseLogger.info("[DB] Supabase/Postgres mode (primary connection)");
+      
+      // Store fallback URL for automatic fallback on connection errors
+      if (config.supabaseDbUrlFallback && config.supabaseDbUrlFallback !== config.supabaseDbUrl) {
+        (this.instance as any).__fallbackUrl = config.supabaseDbUrlFallback;
+        (this.instance as any).__fallbackConfig = {
+          max: config.dbPoolMax,
+          idleTimeoutMillis: config.dbPoolIdleTimeout,
+        };
+        baseLogger.info({ fallbackUrl: config.supabaseDbUrlFallback.substring(0, 50) + "..." }, "[DB] Fallback connection configured");
+      } else {
+        baseLogger.warn({ 
+          hasFallback: !!config.supabaseDbUrlFallback,
+          fallbackLength: config.supabaseDbUrlFallback?.length || 0,
+          fallbackEqualsPrimary: config.supabaseDbUrlFallback === config.supabaseDbUrl,
+          primaryLength: config.supabaseDbUrl?.length || 0,
+          envVar: process.env.SUPABASE_DB_URL_FALLBACK ? 'SET (' + process.env.SUPABASE_DB_URL_FALLBACK.length + ' chars)' : 'NOT SET'
+        }, "[DB] Fallback connection NOT configured");
+      }
     } else {
       this.instance = new InMemoryDb();
       baseLogger.info("[DB] In-memory mode");

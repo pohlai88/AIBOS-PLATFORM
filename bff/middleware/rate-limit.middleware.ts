@@ -14,6 +14,7 @@
  */
 
 import type { BffManifestType } from '../bff.manifest';
+import { RedisRateLimitStore } from '../storage/redis-rate-limit-store';
 
 // ============================================================================
 // Types
@@ -201,9 +202,20 @@ export function createRateLimitMiddleware(
   manifest: Readonly<BffManifestType>,
   options: {
     store?: RateLimitStore;
+    redis?: any; // Kernel RedisStore instance
   } = {}
 ) {
-  const store = options.store || new InMemoryRateLimitStore();
+  let store: RateLimitStore;
+  if (options.store) {
+    store = options.store;
+  } else {
+    const rateLimitStoreType = process.env.BFF_RATE_LIMIT_STORE || 'memory';
+    if (rateLimitStoreType === 'redis' && options.redis) {
+      store = new RedisRateLimitStore(options.redis);
+    } else {
+      store = new InMemoryRateLimitStore();
+    }
+  }
   const { rateLimits, enforcement } = manifest;
 
   return async function rateLimit(
