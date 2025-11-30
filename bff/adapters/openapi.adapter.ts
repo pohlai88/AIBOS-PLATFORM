@@ -7,6 +7,8 @@
 import type { BffManifestType } from '../bff.manifest';
 import type { KernelExecutor } from '../gateway/mcp-gateway';
 import { BffSchemas } from '../bff.schema';
+import { generateDiagnostics } from '../diagnostics/diagz';
+import type { MiddlewareStack } from '../middleware/compose.middleware';
 
 // ============================================================================
 // Types
@@ -69,6 +71,9 @@ export interface OpenAPIRoute {
 export class OpenAPIAdapter {
   private routes: OpenAPIRoute[] = [];
   private ready = false;
+  private middlewareStack?: MiddlewareStack;
+  private gatewayStartTime?: number;
+  private adapters?: Map<string, any>;
 
   constructor(
     private readonly kernel: KernelExecutor,
@@ -76,6 +81,19 @@ export class OpenAPIAdapter {
   ) {
     this.registerCoreRoutes();
     this.ready = true;
+  }
+
+  /**
+   * Set middleware stack and gateway context for diagnostics
+   */
+  setDiagnosticsContext(
+    middlewareStack: MiddlewareStack,
+    startTime: number,
+    adapters: Map<string, any>
+  ): void {
+    this.middlewareStack = middlewareStack;
+    this.gatewayStartTime = startTime;
+    this.adapters = adapters;
   }
 
   // ===========================================================================
@@ -158,6 +176,47 @@ export class OpenAPIAdapter {
           userId: ctx.userId,
         });
         return this.wrapResponse(result, ctx.requestId);
+      },
+    });
+
+    // Diagnostics endpoint (system users only)
+    this.routes.push({
+      method: 'GET',
+      path: '/diagz',
+      tags: ['System'],
+      summary: 'Diagnostic information for operations',
+      handler: async (ctx) => {
+        // Only allow system users
+        if (!ctx.roles.includes('system') && ctx.userId !== 'system') {
+          return {
+            success: false,
+            error: {
+              code: 'FORBIDDEN',
+              message: 'Diagnostics endpoint requires system role',
+            },
+            requestId: ctx.requestId,
+          };
+        }
+
+        if (!this.middlewareStack || !this.gatewayStartTime || !this.adapters) {
+          return {
+            success: false,
+            error: {
+              code: 'SERVICE_UNAVAILABLE',
+              message: 'Diagnostics context not available',
+            },
+            requestId: ctx.requestId,
+          };
+        }
+
+        const diagnostics = await generateDiagnostics(
+          this.manifest,
+          this.middlewareStack,
+          this.gatewayStartTime,
+          this.adapters
+        );
+
+        return this.wrapResponse(diagnostics, ctx.requestId);
       },
     });
   }

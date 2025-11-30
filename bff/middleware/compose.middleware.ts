@@ -28,6 +28,7 @@ import { createZoneGuardMiddleware, type ZoneGuardResult } from './zone-guard.mi
 import { createAuditMiddleware } from './audit.middleware';
 import { createSanitizerMiddleware } from './sanitizer.middleware';
 import { createAIFirewall } from './ai-firewall.middleware';
+import { createCacheMiddleware } from './cache.middleware';
 import {
   createCorsMiddleware,
   createRequestHeadersMiddleware,
@@ -94,6 +95,7 @@ export interface MiddlewareStack {
   getSanitizer(): ReturnType<typeof createSanitizerMiddleware>;
   getAIFirewall(): ReturnType<typeof createAIFirewall>;
   getCors(): ReturnType<typeof createCorsMiddleware>;
+  getCache(): ReturnType<typeof createCacheMiddleware>;
 }
 
 // ============================================================================
@@ -116,7 +118,7 @@ export function createMiddlewareStack(
   options: {
     env?: 'development' | 'staging' | 'production';
     db?: any; // Kernel Database instance for persistent stores
-    redis?: any; // Kernel RedisStore instance for rate limiting
+    redis?: any; // Kernel RedisStore instance for rate limiting and caching
   } = {}
 ): MiddlewareStack {
   const env = options.env || 'production';
@@ -128,6 +130,7 @@ export function createMiddlewareStack(
   const audit = createAuditMiddleware(manifest, { db: options.db });
   const sanitizer = createSanitizerMiddleware(manifest);
   const aiFirewall = createAIFirewall(manifest);
+  const cache = createCacheMiddleware(manifest, { redis: options.redis });
   const cors = createCorsMiddleware(manifest);
   const requestHeaders = createRequestHeadersMiddleware(manifest);
   const responseHeaders = createResponseHeadersMiddleware(manifest);
@@ -246,6 +249,33 @@ export function createMiddlewareStack(
       const authContext = authResult.context;
 
       // =====================================================================
+      // 6.5. Cache Check (for GET requests only)
+      // =====================================================================
+      if (req.method === 'GET') {
+        const url = new URL(req.url);
+        const queryParams: Record<string, string> = {};
+        url.searchParams.forEach((value, key) => {
+          queryParams[key] = value;
+        });
+
+        const ifNoneMatch = req.headers.get('If-None-Match');
+        const cacheResult = await cache.checkCache(
+          req.method,
+          path,
+          tenantId,
+          Object.keys(queryParams).length > 0 ? queryParams : undefined,
+          ifNoneMatch || undefined
+        );
+
+        if (cacheResult.cached && cacheResult.response) {
+          return {
+            success: true,
+            response: cacheResult.response,
+          };
+        }
+      }
+
+      // =====================================================================
       // 7. Zone Guard (Tenant Isolation)
       // =====================================================================
       const zoneResult = zoneGuard(authContext, path, undefined, tenantId);
@@ -296,7 +326,14 @@ export function createMiddlewareStack(
       }
 
       // =====================================================================
-      // 10. Audit Request
+      // 10. Cache Invalidation (for mutations)
+      // =====================================================================
+      if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+        await cache.invalidateCache(req.method, path, tenantId);
+      }
+
+      // =====================================================================
+      // 11. Audit Request
       // =====================================================================
       await audit.logRequest(authContext, {
         method: req.method,
@@ -419,6 +456,25 @@ export function createMiddlewareStack(
       headers.set('X-Response-Time', `${duration}ms`);
 
       // =====================================================================
+      // Cache Storage (for successful GET requests)
+      // =====================================================================
+      if (ctx.request.method === 'GET' && statusCode === 200 && responseData) {
+        const url = new URL(ctx.request.url);
+        const queryParams: Record<string, string> = {};
+        url.searchParams.forEach((value, key) => {
+          queryParams[key] = value;
+        });
+
+        await cache.storeCache(
+          ctx.request.method,
+          ctx.path,
+          ctx.auth.tenantId,
+          responseData,
+          Object.keys(queryParams).length > 0 ? queryParams : undefined
+        );
+      }
+
+      // =====================================================================
       // Audit Response
       // =====================================================================
       await audit.logResponse(ctx.auth.requestId, {
@@ -443,6 +499,7 @@ export function createMiddlewareStack(
     getAudit: () => audit,
     getSanitizer: () => sanitizer,
     getAIFirewall: () => aiFirewall,
+    getCache: () => cache,
     getCors: () => cors,
   };
 }

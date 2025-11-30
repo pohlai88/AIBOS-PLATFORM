@@ -41,6 +41,7 @@ export {
 // Audit Middleware
 export {
   createAuditMiddleware,
+  createCacheMiddleware,
   InMemoryAuditStore,
   type AuditEntry,
   type AuditConfig,
